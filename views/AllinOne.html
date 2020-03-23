@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    
+    
+</head>
+
+<body><noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+        <div>
+            <div class="mapBody" style="border: black solid 1px; margin: 30px 5%;  padding: 30px;">
+                <div class="input-group ui-widget" style="border: black solid 1px; margin-bottom: 20px;">
+                    <input type="text" class="form-control" id="mapSearch" placeholder="현재 화장실과 학생회관밖에 없습니다."
+                        aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <!-- <span class="ds-dropdown-menu ds-without-1" role="listbox" id="algolia-autocomplete-listbox-0"
+                        style="position: absolute; top: 100%; z-index: 100; left: 0px; right: auto; display: none;">
+                        <div class="ds-dataset-1">
+                            
+                            <ul id="mapSearchResult">
+                                <li>화장실</li>
+                                <li>학생회관</li>
+                                <li>제4공학관</li>
+                            </ul>
+                        </div>
+                    </span> -->
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button">검색</button>
+                    </div>
+                </div>
+                <div class="" style="border: black solid 1px; margin-bottom: 20px; padding: 15px;">
+                    <input id = "checkBox1" type="checkbox" checked data-toggle="toggle" data-height="30" data-offstyle="outline-secondary">
+                    <label for="checkBox1" class="form-check-label" style="height: 30px; line-height: 30px;" >현재 운영중인 시설만 보기</p></label>
+                </div>
+                <div id="mapSvg" style="border: black solid 1px;  height: 700px;">
+                    <!-- <object type="image/svg+xml" data="sinchon_mainmap.svg">현재 브라우저는 iframe을 지원하지 않습니다.</object> -->
+                    <img src="sinchon_mainmap.svg" id="map"/>
+                </div>
+            </div>
+            <div class="empty"></div>
+        </div>
+    </div>
+   
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/hangul-js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <script>
+        //검색
+        $(function () {
+            // <!-- This part is to use API -->
+            var data = ["화장실", "학생회관"];
+
+            // 한글초성
+            // https://programmer93.tistory.com/16 참고
+            let source = $.map(data, function (item) {
+                chosung = "";
+
+                // full = Hangul.disassemble(item).join("").replace(/ /gi, "");
+
+                Hangul.d(item, true).forEach(function (strItem, index) {
+                    if (strItem[0] != " ") {	//띄어 쓰기가 아니면
+                        chosung += strItem[0];//초성 추가
+                    }
+                });
+                return {
+                    label: chosung + "|" + item,
+                    value: item, //김치 볶음밥
+                    chosung: chosung, //ㄱㅊㅂㅇㅂ
+
+                }
+            });
+
+            $("#mapSearch").autocomplete({
+                source: source,
+                select: function (event, ui) {
+                    console.log(ui.item);
+                },
+                focus: function (event, ui) {
+                    return false;
+                    //event.preventDefault();
+                },
+            }).autocomplete("instance")._renderItem = function (ul, item) {
+                //.autocomplete( "instance" )._renderItem 설절 부분이 핵심
+                return $("<li>")	//기본 tag가 li로 되어 있음 
+                    .append("<div>" + item.value + "</div>")	//여기에다가 원하는 모양의 HTML을 만들면 UI가 원하는 모양으로 변함.
+                    .appendTo(ul);
+            };
+
+        });
+    
+        var zoom = 10;
+
+        $(function() {
+            $("#map").draggable();
+
+            $("#map").on('mousewheel DOMMouseScroll', (event) => {
+
+                var E = event.originalEvent;
+                if (E.detail) {
+                    dy = E.detail * -40;
+                }else{
+                    dy = E.wheelDelta;
+                };
+
+                if(dy>0){
+                    zoom ++;
+                } else {
+                    zoom --;
+                }
+
+                scale = zoom/10
+
+                $('#map').css({
+                    'transform-origin':'scale('+scale+','+scale+')',
+                    '-webkit-transform':'scale('+scale+','+scale+')',
+                    '-moz-transform':'scale('+scale+','+scale+')',
+                    '-o-transform':'scale('+scale+','+scale+')',
+                    '-ms-transform':'scale('+scale+','+scale+')',
+                });
+            });
+        });
+
+        
+    
+    </script>
+
+    <style>
+        .toggle.btn{
+            min-height: 30px !important;
+        }
+        .toggle.btn{
+            right: calc(45px + 5%);
+            position: absolute;;
+        }
+        #mapSvg{
+            overflow: hidden;
+
+        }
+    </style>
+</body>
+
+</html>

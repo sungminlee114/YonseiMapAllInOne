@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+    rel="stylesheet">
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+</head>
+
+<body><noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root">
+    <div>
+      <div class="mapBody" style="border: black solid 1px; margin: 30px 5%;  padding: 30px;">
+        <!-- 검색 -->
+        <div class="input-group ui-widget" style="border: black solid 1px; margin-bottom: 20px;">
+          <input type="text" class="form-control" id="mapSearch" placeholder="현재 화장실과 학생회관밖에 없습니다."
+            aria-label="Recipient's username" aria-describedby="button-addon2" style="height: 40px;">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" onclick="searchKey()">검색</button>
+          </div>
+        </div>
+        <!-- 체크박스 -->
+        <div class="" style="border: black solid 1px; margin-bottom: 20px; padding: 15px;">
+          <input id="switch1" type="checkbox" checked data-toggle="toggle" data-height="30"
+            data-offstyle="outline-secondary">
+          <label for="switch1" class="form-check-label" style="height: 30px; line-height: 30px;">현재 운영중인 시설만 보기</p>
+          </label>
+        </div>
+        <!-- 맵 -->
+        <div id="mapContainer" style="border: black solid 1px;  height: 75vh; background-color: gray;">
+          <canvas id="mapCanvas" style="background-color: gray;">
+
+          </canvas>
+          <!-- <img src="/images/sinchon_mainmap.png" id="map" style="z-index: 2; left: -341px; top: -1514px;" usemap="#clickable"></img>
+          <map name="clickable" id="clickable">
+            <area shape="poly" coords="850,1656,850,1712,852,1712,852,1751,891,1751,891,1656" alt="학생회관">
+          </map> -->
+          <!-- <svg src="/images/sinchon_mainmap.svg" style="z-index: 399; fill:black; float:left">
+            <svg src="/images/sinchon_mainmap.png" id="map" style="z-index: 2; left: -341px; top: -1514px;" usemap="#clickable"></svg> -->
+          <!-- <polygon points="0,0 0,56 2,56 2,95 41,95 41,0" style="fill:lime;stroke:purple;stroke-width:1; z-index:400; position:absolute"/>
+          </svg> -->
+
+          <div id="UI"
+            style="background-color: white;border: blue solid 1px; height: 300px; z-index: 200; position: absolute; display: none;">
+            <button type="button" id="UICloseBtn" class="btn btn-secondary btn-sm"
+              style="position: absolute; z-index: 201; width: 30px; height: 30px;">x</button>
+            <div class="container fluid">
+              <div class="row">
+                <div class="col">
+                  <h2 id="UITitle"> Title </h2>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="empty"></div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/hangul-js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+  <script src="/javascripts/search.js"></script>
+  <script src="/javascripts/map.js"></script>
+  <script>
+    //검색
+
+    var data = ["화장실", "학생회관"];
+    var type = ["facility", "building"]
+
+    //clickable
+    $(() => {
+      $("area").click((e) => {
+        // console.log($(e.target).attr("alt"))
+        // $(e.target).css("border", "red 5px solid")
+        clickBuilding($(e.target).attr("alt"))
+      });
+    });
+
+
+
+    var ui = $("#UI");
+    var mapContainer = $("#mapContainer");
+    var UiCloseBtn = $("#UICloseBtn");
+    var resizeUI = () => {
+
+      //ui
+      var bottomMap = mapContainer[0].getBoundingClientRect().top + mapContainer[0].getBoundingClientRect().height - ui[0].getBoundingClientRect().height + window.scrollY;;
+      var leftMap = mapContainer[0].getBoundingClientRect().left;
+      ui.css("top", bottomMap);
+      ui.css("width", mapContainer[0].getBoundingClientRect().width);
+      ui.css("left", leftMap);
+
+      //close
+      UiCloseBtn.css("left", mapContainer[0].getBoundingClientRect().width - 50);
+      UiCloseBtn.css("top", 20)
+
+      //
+
+    }
+
+    //click building
+    var uiContent = $("#UI .container")
+    var clickBuilding = (title) => {
+      ui.css("display", "inline");
+      resizeUI();
+      $("#UITitle").text(title);
+    }
+
+
+    var UIClose = (e) => {
+      ui.css("display", "none");
+    }
+
+    UiCloseBtn.click(UIClose);
+
+    // -----------------------------
+
+    var zoom = 2;
+    var pixelRatio;
+    var sx, sy, sw, sh,
+      cx = 0, cy = 0, cw, ch,
+      mx, my;
+
+    var iw, ih;
+
+    var mapCanvas = document.getElementById("mapCanvas");
+    var ctx = mapCanvas.getContext("2d");
+    var imgClo
+
+    var drawQ = [];
+
+
+
+    var drawImage = () => {
+      ctx.drawImage(imgClo, sx, sy, sw, sh, cx, cy, cw, ch);
+    }
+
+    var redrawCanvas = () => {
+      drawImage();
+      // drawQ.forEach(element => {
+      //   element();
+      // });
+    };
+
+    var resizeCanvas = () => {
+      //canvas
+      cw = mapContainer[0].getBoundingClientRect().width;
+      ch = mapContainer[0].getBoundingClientRect().height;
+      ctx.canvas.width = cw;
+      ctx.canvas.height = ch;
+      sw = Math.floor(cw / zoom); sh = Math.floor(ch / zoom);
+      var s = getXYfromWHnMid(sw, sh, mx, my);
+      sx = s[0]; sy = s[1];
+      redrawCanvas();
+    };
+  
+
+    var initCanvas = () => {
+
+      imgClo = new Image();
+
+      cw = mapContainer[0].getBoundingClientRect().width;
+      ch = mapContainer[0].getBoundingClientRect().height;
+      ctx.canvas.width = cw;
+      ctx.canvas.height = ch;
+      //페이지 로드후 이미지가 로드 되었을 때 이미지 출력
+      imgClo.addEventListener('load', function () {
+        // console.log("load")
+        //canvas.drawImage() 함수를 사용하여 이미지 출력
+        //drawImage ( image, x, y )
+        //drawImage ( image, x, y, width, height )
+        //drawImage ( image, sx, sy, sWidth, sHeight, x, y, Width, Height )
+        iw = this.width; ih = this.height;
+
+        zoom = Math.max((cw / iw), (ch / ih)) + 1;
+
+        sw = Math.floor(cw / zoom); sh = Math.floor(ch / zoom);
+        mx = 806; my = 1774;
+        var s = getXYfromWHnMid(sw, sh, mx, my);
+        sx = s[0]; sy = s[1];
+        drawImage();
+        drawQ.push(drawImage)
+      }, false);
+
+      //이미지 경로 설정
+      imgClo.src = "/images/sinchon_mainmap.png";
+
+    }
+
+    window.onload = function () {
+      initCanvas();
+    };
+
+    window.addEventListener("resize", resizeUI);
+    window.addEventListener("resize", resizeCanvas);
+
+
+  </script>
+
+  <style>
+    .toggle.btn {
+      min-height: 30px !important;
+    }
+
+    .toggle.btn {
+      right: calc(45px + 5%);
+      position: absolute;
+    }
+
+    #mapContainer {
+      overflow: hidden;
+
+    }
+
+    area {
+      cursor: pointer;
+    }
+
+    h2 {
+      text-align: center;
+    }
+  </style>
+</body>
+
+</html>
