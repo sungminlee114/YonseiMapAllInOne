@@ -5,26 +5,34 @@ var wrapFunction = function(fn, context, params) {
   };
 };
 
-var setMiddleView = (m) => {
-    var a = coordIm2CanvasSingle(m), b = {x: cx + cw/2, y: cy + ch/2};
-    var c = get2dDiff(b,a);
-    console.log(m)
-    moveView(c);
+var alignViewToMiddle = m => {
+  mx = m.x;
+  my = m.y;
+  var a = coordIm2CanvasSingle(m),
+    b = { x: cx + cw / 2, y: cy + ch / 2 };
+  var c = get2dDiff(b, a);
+  // var aa = Math.abs(c.x), ab = Math.abs(c.y);
+  // for(var i = 0; i < Math.min(aa, ab); i++){
+  //     if(moveView() == false)
+  //         break;
 
+  // }
+  // console.log(m)
+  moveView(c, true);
+  redrawCanvas();
 };
 
-let coordIm2CanvasSingle = (pos) =>{
-    var rx = cx + ((pos.x - sx) / sw) * cw,
-      ry = cy + ((pos.y - sy) / sh) * ch;
-      return { x: rx, y: ry }
-}
+let coordIm2CanvasSingle = pos => {
+  var rx = cx + ((pos.x - sx) / sw) * cw,
+    ry = cy + ((pos.y - sy) / sh) * ch;
+  return { x: rx, y: ry };
+};
 
 let coordIm2Canvas = imVertexs => {
   var ret = [];
   imVertexs.forEach(imVertex => {
-
     // if (rx >= cx && rx < cx + cw && ry >= cy && ry < cy + ch) {
-      ret.push(coordIm2CanvasSingle(imVertex));
+    ret.push(coordIm2CanvasSingle(imVertex));
     // }
   });
   return ret;
@@ -106,9 +114,9 @@ let fillByImageVertex = (area, color) => {
 };
 
 let strokeByImageVertex = (area, color) => {
-    ctx.beginPath();
-    area = coordIm2Canvas(area);
-    // console.log(area)
+  ctx.beginPath();
+  area = coordIm2Canvas(area);
+  // console.log(area)
   ctx.moveTo(area[0].x, area[0].y);
   for (var i = 1; i < area.length; i++) {
     ctx.lineTo(area[i].x, area[i].y);
@@ -120,9 +128,9 @@ let strokeByImageVertex = (area, color) => {
 
 let pushDrawQ = (building, color, state, type, draw = true) => {
   var f;
-  if ((type == "stroke"))
+  if (type == "stroke")
     f = wrapFunction(strokeByImageVertex, this, [building.area, color]);
-  else if ((type == "fill"))
+  else if (type == "fill")
     f = wrapFunction(fillByImageVertex, this, [building.area, color]);
   drawQ.push({ func: f, id: building.id, state: state });
   if (draw) redrawCanvas();
@@ -173,7 +181,7 @@ var changeZoom = (_zoom, o) => {
   redrawCanvas();
 };
 
-var moveView = diff => {
+var moveView = (diff, large = false) => {
   var mcx = diff.x,
     mcy = diff.y;
   var msx = mcx / zoom;
@@ -182,22 +190,34 @@ var moveView = diff => {
   //checkMove
   var rx = sx + msx,
     ry = sy + msy;
+    sx = msx >= 0 ? Math.min(rx, iw - sw - 1) : Math.max(rx, 0);
+    sy = msy >= 0 ? Math.min(ry, ih - sh - 1) : Math.max(ry, 0);
+
+    // sx = rx;
+    // sy = ry;
+    // console.log(msx)
+    redrawCanvas();
+    return true;
+    //   mx =
 
   //   console.log([mcx, mcy])
-
-  if (
-    (rx >= 0 && rx + sw < iw && ry >= 0 && ry + sh < ih) ||
-    (rx < 0 && msx > 0) ||
-    (rx + sw >= iw && msx < 0) ||
-    (ry < 0 && msy > 0) ||
-    (ry + sh >= ih && msy < 0)
-  ) {
-    sx += msx;
-    sy += msy;
-    mx += msx;
-    my += msy;
-    redrawCanvas();
-  } else console.log([rx, rx + sw, iw, sy, ry + sh, ih]);
+//   else {
+//     if (
+//       (rx >= 0 && rx + sw < iw && ry >= 0 && ry + sh < ih) ||
+//       (rx < 0 && msx > 0) ||
+//       (rx + sw >= iw && msx < 0) ||
+//       (ry < 0 && msy > 0) ||
+//       (ry + sh >= ih && msy < 0)
+//     ) {
+//       sx += msx;
+//       sy += msy;
+//       mx += msx;
+//       my += msy;
+//       if (!large) redrawCanvas();
+//       return true;
+//     } else console.log([rx, rx + sw, iw, sy, ry + sh, ih]);
+//   }
+//   return false;
 };
 
 var click = (e, check = false) => {
@@ -364,7 +384,7 @@ var resizeCanvas = () => {
   ctx.canvas.height = ch;
   sw = Math.floor(cw / zoom);
   sh = Math.floor(ch / zoom);
-  setMiddleView({x:mx, y:my});
+  alignViewToMiddle({ x: mx, y: my });
   redrawCanvas();
 };
 
@@ -395,8 +415,8 @@ var initCanvas = () => {
       my = 2045;
       sx = 0;
       sy = 0;
+      alignViewToMiddle({ x: mx, y: my });
       ctx.drawImage(imgClo, sx, sy, sw, sh, cx, cy, cw, ch);
-      setMiddleView({x:mx, y:my});
       // drawQ.push(wrapDrawImage, this, []);
     },
     false
@@ -410,7 +430,7 @@ var isHovering = false,
 
 //click building
 var clickBuilding = building => {
-    unclickBuilding(prevClickingBuilding)
+  unclickBuilding(prevClickingBuilding);
   if (pointingBuilding == null) pointingBuilding = building;
   prevClickingBuilding = pointingBuilding;
   if (
