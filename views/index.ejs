@@ -45,7 +45,7 @@
           </svg> -->
 
           <div id="UI"
-            style="background-color: white;border: blue solid 1px; height: 300px; z-index: 200; position: absolute; display: none;">
+            style="background-color: white;border: blue solid 1px; height: 30vh; z-index: 200; position: absolute; display: none;">
             <button type="button" id="UICloseBtn" class="btn btn-secondary btn-sm"
               style="position: absolute; z-index: 201; width: 30px; height: 30px;">x</button>
             <div class="container fluid">
@@ -198,6 +198,8 @@
         tool: 'mouse',
         action: 'mouseDown'
       }
+      clickCnt += 1;
+        doubleClickTime = new Date();
     }
     let dragFlag = false
     let handleMouseMove = (e) => {
@@ -214,7 +216,7 @@
         inputState.action = 'mouseMove'
       }
 
-      if (inputState.action == 'mouseDrag') {
+      if (inputState.action == 'mouseDrag'  && (new Date().getTime() - doubleClickTime.getTime() > 80)) {
         if(dragFlag)
         drag(e)
       } else {
@@ -266,9 +268,7 @@
         }
 
         clickCnt += 1;
-        // console.log(clickCnt)
         doubleClickTime = new Date();
-        dragTime = doubleClickTime.getTime();
       // }
     }
 
@@ -278,8 +278,6 @@
 
       e = e.changedTouches;
       //pinch
-      
-      // dragTime += (new Date().getTime() - );
       
       if (e.length == 2) {
         
