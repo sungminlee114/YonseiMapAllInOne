@@ -11,6 +11,8 @@ var searchKey = (e, _key) => {
         var i = buildingList.findIndex((item)=>{
           return (item.name == key)
         })
+        setMiddleView({x:buildingList[i].area[0].x, y:buildingList[i].area[0].y})
+        redrawCanvas()
         clickBuilding(buildingList[i])
       }
     }

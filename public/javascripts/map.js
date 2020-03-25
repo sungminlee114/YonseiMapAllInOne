@@ -5,20 +5,26 @@ var wrapFunction = function(fn, context, params) {
   };
 };
 
-var getXYfromWHnMid = (w, h, mx, my) => {
-  x = mx - w / 2;
-  y = my - h / 2;
-  return [x, y];
+var setMiddleView = (m) => {
+    var a = coordIm2CanvasSingle(m), b = {x: cx + cw/2, y: cy + ch/2};
+    var c = get2dDiff(b,a);
+    console.log(m)
+    moveView(c);
+
 };
+
+let coordIm2CanvasSingle = (pos) =>{
+    var rx = cx + ((pos.x - sx) / sw) * cw,
+      ry = cy + ((pos.y - sy) / sh) * ch;
+      return { x: rx, y: ry }
+}
 
 let coordIm2Canvas = imVertexs => {
   var ret = [];
   imVertexs.forEach(imVertex => {
-    var rx = cx + ((imVertex.x - sx) / sw) * cw,
-      ry = cy + ((imVertex.y - sy) / sh) * ch;
 
     // if (rx >= cx && rx < cx + cw && ry >= cy && ry < cy + ch) {
-      ret.push({ x: rx, y: ry });
+      ret.push(coordIm2CanvasSingle(imVertex));
     // }
   });
   return ret;
@@ -358,9 +364,7 @@ var resizeCanvas = () => {
   ctx.canvas.height = ch;
   sw = Math.floor(cw / zoom);
   sh = Math.floor(ch / zoom);
-  var s = getXYfromWHnMid(sw, sh, mx, my);
-  sx = s[0];
-  sy = s[1];
+  setMiddleView({x:mx, y:my});
   redrawCanvas();
 };
 
@@ -387,12 +391,12 @@ var initCanvas = () => {
 
       sw = Math.floor(cw / zoom);
       sh = Math.floor(ch / zoom);
-      mx = 806;
-      my = 1774;
-      var s = getXYfromWHnMid(sw, sh, mx, my);
-      sx = s[0];
-      sy = s[1];
+      mx = 1112;
+      my = 2045;
+      sx = 0;
+      sy = 0;
       ctx.drawImage(imgClo, sx, sy, sw, sh, cx, cy, cw, ch);
+      setMiddleView({x:mx, y:my});
       // drawQ.push(wrapDrawImage, this, []);
     },
     false

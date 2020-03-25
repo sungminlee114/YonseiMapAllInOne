@@ -15,11 +15,10 @@
 <body><noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root">
     <div>
-      <div class="mapBody" style="border: black solid 1px; margin: 30px 5%;  padding: 30px;">
+      <div class="mapBody" style="border: black solid 1px; margin: 30px 150px;  padding: 30px;">
         <!-- 검색 -->
         <div class="input-group ui-widget" style="border: black solid 1px; margin-bottom: 20px;">
-          <input type="text" class="form-control" id="mapSearch" placeholder="화장실, 학생회관, 중앙도서관, 백주년기념관"
-            aria-label="Recipient's username" aria-describedby="button-addon2" style="height: 40px;">
+          <input type="text" class="form-control" id="mapSearch" placeholder="화장실, 학생회관, 중앙도서관, 백주년기념관"style="height: 40px;">
           <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" onclick="searchKey()">검색</button>
           </div>
@@ -32,7 +31,7 @@
           </label>
         </div>
         <!-- 맵 -->
-        <div id="mapContainer" style="border: black solid 1px;  height: 75vh; background-color: gray;">
+        <div id="mapContainer" style="border: black solid 1px;  height: 60vh; background-color: gray;">
           <canvas id="mapCanvas" style="background-color: gray;">
 
           </canvas>
@@ -190,6 +189,8 @@
 
     //handle mouse
     let handleMouseDown = (e) => {
+      dragFlag = true;
+      // document.ondragstart= () => {return false}
       // e.preventDefault();
       // e.stopPropagation();
       cPosCache = updateCache(cPosCache, getPointerPosinCanvas(e));
@@ -198,10 +199,14 @@
         action: 'mouseDown'
       }
     }
-
+    let dragFlag = false
     let handleMouseMove = (e) => {
-      e.preventDefault();
+      
+      if(dragFlag){
+        e.preventDefault();
       e.stopPropagation();
+      }
+      
 
       if (inputState.action == 'mouseDown') {
         inputState.action = 'mouseDrag'
@@ -210,6 +215,7 @@
       }
 
       if (inputState.action == 'mouseDrag') {
+        if(dragFlag)
         drag(e)
       } else {
         checkHovering(e)
@@ -217,8 +223,7 @@
     }
 
     let handleMouseUp = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+      // document.ondragstart= () => {return true}
       if (inputState.action == 'mouseDown') {
         inputState.action = 'mouseClick'
         click(e);
@@ -325,9 +330,20 @@
     document.addEventListener("mousemove", handleMouseMove, {
       passive: false
     });
-    document.addEventListener("mouseup", handleMouseUp, {
-      passive: false
-    })
+    mapCanvas.addEventListener("mouseup", handleMouseUp)
+
+    // document.addEventListener("mousemove", (e =>{
+    //   // console.log(dragFlag)
+    //   if(dragFlag){
+    //     e.preventDefault()
+    //     e.stopPropagation()
+    //   }
+    // }),{passive:false})
+
+    document.addEventListener("mouseup",(e=>{
+      dragFlag = false;
+    }))
+
     mapCanvas.addEventListener(
       "onwheel" in document ?
       "wheel" :
@@ -348,6 +364,10 @@
       passive: false
     });
 
+    // document.addEventListener("mousemove", (e) =>{
+      
+    // })
+
 
 
     window.onload = function () {
@@ -364,7 +384,7 @@
     }
 
     .toggle.btn {
-      right: calc(45px + 5%);
+      right: calc(45px + 150px);
       position: absolute;
     }
 
