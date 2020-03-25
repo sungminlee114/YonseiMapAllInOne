@@ -66,11 +66,11 @@
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-    crossorigin="anonymous"></script>
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+  </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-    crossorigin="anonymous"></script>
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+  </script>
   <script src="https://unpkg.com/hangul-js" type="text/javascript"></script>
   <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
   <script src="/javascripts/search.js"></script>
@@ -81,125 +81,215 @@
     var data = ["화장실", "학생회관"];
     var type = ["facility", "building"]
 
-    //clickable
-    $(() => {
-      $("area").click((e) => {
-        // console.log($(e.target).attr("alt"))
-        // $(e.target).css("border", "red 5px solid")
-        clickBuilding($(e.target).attr("alt"))
-      });
-    });
-
-
 
     var ui = $("#UI");
     var mapContainer = $("#mapContainer");
     var UiCloseBtn = $("#UICloseBtn");
     var resizeUI = () => {
 
-      //ui
-      var bottomMap = mapContainer[0].getBoundingClientRect().top + mapContainer[0].getBoundingClientRect().height - ui[0].getBoundingClientRect().height + window.scrollY;;
+      //body
+      var bottomMap = mapContainer[0].getBoundingClientRect().top + mapContainer[0].getBoundingClientRect().height -
+        ui[0].getBoundingClientRect().height + window.scrollY;;
       var leftMap = mapContainer[0].getBoundingClientRect().left;
       ui.css("top", bottomMap);
       ui.css("width", mapContainer[0].getBoundingClientRect().width);
       ui.css("left", leftMap);
 
-      //close
+      //closeBtn
       UiCloseBtn.css("left", mapContainer[0].getBoundingClientRect().width - 50);
       UiCloseBtn.css("top", 20)
-
-      //
-
     }
 
-    //click building
-    var uiContent = $("#UI .container")
-    var clickBuilding = (title) => {
+
+
+    let openUI = (building) => {
       ui.css("display", "inline");
+      $("#UITitle").text(building.name);
       resizeUI();
-      $("#UITitle").text(title);
     }
 
-
-    var UIClose = (e) => {
+    var closeUI = () => {
       ui.css("display", "none");
     }
 
-    UiCloseBtn.click(UIClose);
+    document.getElementById("UICloseBtn").addEventListener('click',(e) => {
+      unclickBuilding(prevClickingBuilding);
+    });
 
     // -----------------------------
 
-    var zoom = 2;
-    var pixelRatio;
-    var sx, sy, sw, sh,
-      cx = 0, cy = 0, cw, ch,
-      mx, my;
-
-    var iw, ih;
-
-    var mapCanvas = document.getElementById("mapCanvas");
-    var ctx = mapCanvas.getContext("2d");
-    var imgClo
-
-    var drawQ = [];
 
 
+    let buildingArea = [{
+      x: 1158,
+      y: 2047
+    }, {
+      x: 1158 + 46,
+      y: 2047
+    }, {
+      x: 1158 + 46,
+      y: 2047 + 39
+    }, {
+      x: 1158,
+      y: 2047 + 39
+    }];
+    let buildingId = 1;
+    let buildingName = "백주년기념관"
+    let buildingList = [{
+      area: buildingArea,
+      id: buildingId,
+      name: buildingName
+    }]
 
-    var drawImage = () => {
-      ctx.drawImage(imgClo, sx, sy, sw, sh, cx, cy, cw, ch);
-    }
 
-    var redrawCanvas = () => {
-      drawImage();
-      // drawQ.forEach(element => {
-      //   element();
-      // });
+    var inputState = {
+      tool: null,
+      action: null
     };
 
-    var resizeCanvas = () => {
-      //canvas
-      cw = mapContainer[0].getBoundingClientRect().width;
-      ch = mapContainer[0].getBoundingClientRect().height;
-      ctx.canvas.width = cw;
-      ctx.canvas.height = ch;
-      sw = Math.floor(cw / zoom); sh = Math.floor(ch / zoom);
-      var s = getXYfromWHnMid(sw, sh, mx, my);
-      sx = s[0]; sy = s[1];
-      redrawCanvas();
-    };
-  
-
-    var initCanvas = () => {
-
-      imgClo = new Image();
-
-      cw = mapContainer[0].getBoundingClientRect().width;
-      ch = mapContainer[0].getBoundingClientRect().height;
-      ctx.canvas.width = cw;
-      ctx.canvas.height = ch;
-      //페이지 로드후 이미지가 로드 되었을 때 이미지 출력
-      imgClo.addEventListener('load', function () {
-        // console.log("load")
-        //canvas.drawImage() 함수를 사용하여 이미지 출력
-        //drawImage ( image, x, y )
-        //drawImage ( image, x, y, width, height )
-        //drawImage ( image, sx, sy, sWidth, sHeight, x, y, Width, Height )
-        iw = this.width; ih = this.height;
-
-        zoom = Math.max((cw / iw), (ch / ih)) + 1;
-
-        sw = Math.floor(cw / zoom); sh = Math.floor(ch / zoom);
-        mx = 806; my = 1774;
-        var s = getXYfromWHnMid(sw, sh, mx, my);
-        sx = s[0]; sy = s[1];
-        drawImage();
-        drawQ.push(drawImage)
-      }, false);
-
-      //이미지 경로 설정
-      imgClo.src = "/images/sinchon_mainmap.png";
-
+    //handle mouse
+    let handleMouseDown = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      cPosCache = updateCache(cPosCache, getPointerPosinCanvas(e));
+      inputState = {
+        tool: 'mouse',
+        action: 'mouseDown'
+      }
     }
+
+    let handleMouseMove = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (inputState.action == 'mouseDown') {
+        inputState.action = 'mouseDrag'
+      } else if (inputState.action != 'mouseDrag') {
+        inputState.action = 'mouseMove'
+      }
+
+      if (inputState.action == 'mouseDrag') {
+        drag(e)
+      } else {
+        checkHovering(e)
+      }
+    }
+
+    let handleMouseUp = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (inputState.action == 'mouseDown') {
+        inputState.action = 'mouseClick'
+        click(e);
+      } else if (inputState.action == 'mouseDrag') {
+        dragEnd(e);
+        inputState.action = 'mouseUp'
+      }
+    }
+
+    //handle mouseScroll
+    let handleScroll = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // inputState.action = "Scroll"
+      zoomScroll(e)
+    }
+
+    //handle touch
+
+    let doubleClickTime, dragTime = 0;
+    let handleTouchStart = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e = e.changedTouches[0]
+      // console.log("start", inputState.action)
+      cPosCache = updateCache(cPosCache, getPointerPosinCanvas(e));
+      if (inputState.action == "touchClick" && (new Date().getTime() - doubleClickTime.getTime()) < 300) {
+        inputState.action = "touchDoubleClick"
+        
+      } else {
+        
+        inputState = {
+          tool: 'touch',
+          action: 'touchStart'
+        }
+        doubleClickTime = new Date();
+        dragTime = doubleClickTime.getTime();
+      }
+    }
+
+    let handleTouchMove = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      e = e.changedTouches;
+      //pinch
+      
+      // dragTime += (new Date().getTime() - );
+      
+      if (e.length == 2) {
+        
+        pinchZoom(e)
+        inputState.action = 'touchPinchZoom'
+      } else if (inputState.action == 'touchStart' && (new Date().getTime() - doubleClickTime.getTime() > 50)) {
+        inputState.action = 'touchDrag'
+      }
+
+      if (inputState.action == 'touchDrag') {
+        drag(e[0])
+      }
+    }
+
+    let handleTouchEnd = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e = e.changedTouches[0]
+      console.log("end", inputState.action)
+      if (inputState.action == 'touchStart') {
+        inputState.action = 'touchClick'
+        click(e, true);
+      } else if (inputState.action == 'touchDrag') {
+        dragEnd(e);
+        inputState.action = 'touchEnd'
+      } else if (inputState.action == "touchDoubleClick") {
+        doubleClickZoom(e);
+      } else if(inputState.action == "touchPinchZoom"){
+        updateCache(cDistCache, null)
+        updateCache(cDistCache, null)
+      }
+    }
+
+    //add MouseListener
+    mapCanvas.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener("mousemove", handleMouseMove, {
+      passive: false
+    });
+    document.addEventListener("mouseup", handleMouseUp, {
+      passive: false
+    })
+    mapCanvas.addEventListener(
+      "onwheel" in document ?
+      "wheel" :
+      "onmousewheel" in document ?
+      "mousewheel" :
+      "DOMMouseScroll",
+      handleScroll, {
+        passive: false
+      }
+    );
+
+    //add TouchListener
+    mapCanvas.addEventListener("touchstart", handleTouchStart, {
+      passive: false
+    });
+    mapCanvas.addEventListener("touchmove", handleTouchMove, {
+      passive: false
+    });
+    mapCanvas.addEventListener("touchend", handleTouchEnd, {
+      passive: false
+    });
+
+
 
     window.onload = function () {
       initCanvas();
@@ -207,8 +297,6 @@
 
     window.addEventListener("resize", resizeUI);
     window.addEventListener("resize", resizeCanvas);
-
-
   </script>
 
   <style>
