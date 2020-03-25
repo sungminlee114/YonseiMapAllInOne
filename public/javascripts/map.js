@@ -424,7 +424,7 @@ var clickBuilding = building => {
 };
 
 let unclickBuilding = building => {
-  deleteDrawQ(building, null);
+  deleteDrawQ(building, "click");
   closeUI();
   isClicking = false;
 };
