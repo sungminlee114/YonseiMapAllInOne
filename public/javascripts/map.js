@@ -5,9 +5,14 @@ var wrapFunction = function(fn, context, params) {
   };
 };
 
-var alignViewToMiddle = m => {
+var alignViewToMiddle = (m, zoomReset = false) => {
   mx = m.x;
   my = m.y;
+  if(zoomReset){
+    var _zoom = Math.max(cw / iw, ch / ih) + 1;
+    changeZoom(_zoom, ({x:cx, y:cy}))
+  }
+    
   var a = coordIm2CanvasSingle(m),
     b = { x: cx + cw / 2, y: cy + ch / 2 };
   var c = get2dDiff(b, a);
