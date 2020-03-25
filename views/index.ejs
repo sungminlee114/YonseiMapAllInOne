@@ -197,25 +197,29 @@
 
     //handle touch
 
-    let doubleClickTime, dragTime = 0;
+    let doubleClickTime, clickCnt = 0;
+
     let handleTouchStart = (e) => {
       e.preventDefault();
       e.stopPropagation();
       e = e.changedTouches[0]
       // console.log("start", inputState.action)
       cPosCache = updateCache(cPosCache, getPointerPosinCanvas(e));
-      if (inputState.action == "touchClick" && (new Date().getTime() - doubleClickTime.getTime()) < 300) {
-        inputState.action = "touchDoubleClick"
+      // if (inputState.action == "touchClick" && (new Date().getTime() - doubleClickTime.getTime()) < 300) {
+      //   inputState.action = "touchDoubleClick"
         
-      } else {
+      // } else {
         
         inputState = {
           tool: 'touch',
           action: 'touchStart'
         }
+
+        clickCnt += 1;
+        // console.log(clickCnt)
         doubleClickTime = new Date();
         dragTime = doubleClickTime.getTime();
-      }
+      // }
     }
 
     let handleTouchMove = (e) => {
@@ -231,7 +235,7 @@
         
         pinchZoom(e)
         inputState.action = 'touchPinchZoom'
-      } else if (inputState.action == 'touchStart' && (new Date().getTime() - doubleClickTime.getTime() > 50)) {
+      } else if (inputState.action == 'touchStart' && (new Date().getTime() - doubleClickTime.getTime() > 80)) {
         inputState.action = 'touchDrag'
       }
 
@@ -244,15 +248,27 @@
       e.preventDefault();
       e.stopPropagation();
       e = e.changedTouches[0]
-      console.log("end", inputState.action)
       if (inputState.action == 'touchStart') {
         inputState.action = 'touchClick'
-        click(e, true);
+        // sleep
+        // if(new Date().getTime() - doubleClickTime.getTime() > 80)
+        if(clickCnt == 1){
+          setTimeout(()=>{
+          if(clickCnt >= 2){
+            doubleClickZoom(e);
+          } else {
+            click(e, true);
+          }
+          clickCnt = 0;
+        }, 80)
+        }
+        
       } else if (inputState.action == 'touchDrag') {
         dragEnd(e);
+        clickCnt = 0;
         inputState.action = 'touchEnd'
-      } else if (inputState.action == "touchDoubleClick") {
-        doubleClickZoom(e);
+      // } else if (inputState.action == "touchDoubleClick") {
+      //   doubleClickZoom(e);
       } else if(inputState.action == "touchPinchZoom"){
         updateCache(cDistCache, null)
         updateCache(cDistCache, null)
