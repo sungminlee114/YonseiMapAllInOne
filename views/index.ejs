@@ -46,8 +46,8 @@
 
           <div id="UI"
             style="background-color: white;border: blue solid 1px; height: 30vh; z-index: 200; position: absolute; display: none;">
-            <button type="button" id="UICloseBtn" class="btn btn-secondary btn-sm"
-              style="position: absolute; z-index: 201; width: 30px; height: 30px;">x</button>
+            <!-- <button type="button" id="UICloseBtn" class="btn btn-secondary btn-sm"
+              style="position: absolute; z-index: 201; width: 30px; height: 30px;">x</button> -->
             <div class="container fluid">
               <div class="row">
                 <div class="col">
@@ -96,8 +96,8 @@
       ui.css("left", leftMap);
 
       //closeBtn
-      UiCloseBtn.css("left", mapContainer[0].getBoundingClientRect().width - 50);
-      UiCloseBtn.css("top", 20)
+      // UiCloseBtn.css("left", mapContainer[0].getBoundingClientRect().width - 50);
+      // UiCloseBtn.css("top", 20)
     }
 
 
@@ -112,9 +112,9 @@
       ui.css("display", "none");
     }
 
-    document.getElementById("UICloseBtn").addEventListener('click',(e) => {
-      unclickBuilding(prevClickingBuilding);
-    });
+    // document.getElementById("UICloseBtn").addEventListener('click',(e) => {
+    //   unclickBuilding(prevClickingBuilding);
+    // });
 
     // -----------------------------
 
@@ -225,6 +225,7 @@
     }
 
     let handleMouseUp = (e) => {
+      clickCnt = 0;
       // document.ondragstart= () => {return true}
       if (inputState.action == 'mouseDown') {
         inputState.action = 'mouseClick'
