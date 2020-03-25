@@ -18,7 +18,7 @@
       <div class="mapBody" style="border: black solid 1px; margin: 30px 5%;  padding: 30px;">
         <!-- 검색 -->
         <div class="input-group ui-widget" style="border: black solid 1px; margin-bottom: 20px;">
-          <input type="text" class="form-control" id="mapSearch" placeholder="현재 화장실과 학생회관밖에 없습니다."
+          <input type="text" class="form-control" id="mapSearch" placeholder="화장실, 학생회관, 중앙도서관, 백주년기념관"
             aria-label="Recipient's username" aria-describedby="button-addon2" style="height: 40px;">
           <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" onclick="searchKey()">검색</button>
@@ -26,8 +26,8 @@
         </div>
         <!-- 체크박스 -->
         <div class="" style="border: black solid 1px; margin-bottom: 20px; padding: 15px;">
-          <input id="switch1" type="checkbox" checked data-toggle="toggle" data-height="30"
-            data-offstyle="outline-secondary">
+          <input id="switch1" type="checkbox" data-toggle="toggle" data-height="30"
+            data-offstyle="outline-secondary" oninput="handleTimeFilter">
           <label for="switch1" class="form-check-label" style="height: 30px; line-height: 30px;">현재 운영중인 시설만 보기</p>
           </label>
         </div>
@@ -75,11 +75,12 @@
   <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
   <script src="/javascripts/search.js"></script>
   <script src="/javascripts/map.js"></script>
+  <script src="/javascripts/filter.js"></script>
   <script>
     //검색
 
-    var data = ["화장실", "학생회관"];
-    var type = ["facility", "building"]
+    var data = ["화장실", "학생회관", "백주년기념관", "중앙도서관"];
+    var type = ["facility", "building", "building",  "building"]
 
 
     var ui = $("#UI");
@@ -120,25 +121,65 @@
 
 
 
-    let buildingArea = [{
-      x: 1158,
-      y: 2047
-    }, {
-      x: 1158 + 46,
-      y: 2047
-    }, {
-      x: 1158 + 46,
-      y: 2047 + 39
-    }, {
-      x: 1158,
-      y: 2047 + 39
-    }];
-    let buildingId = 1;
-    let buildingName = "백주년기념관"
+    // let buildingArea = [{
+    //   x: 1158,
+    //   y: 2047
+    // }, {
+    //   x: 1158 + 46,
+    //   y: 2047
+    // }, {
+    //   x: 1158 + 46,
+    //   y: 2047 + 39
+    // }, {
+    //   x: 1158,
+    //   y: 2047 + 39
+    // }];
+    // let buildingId = 1;
+    // let buildingName = "백주년기념관"
     let buildingList = [{
-      area: buildingArea,
-      id: buildingId,
-      name: buildingName
+      area: [{x: 1158, y: 2047}, {
+      x: 1158 + 46,
+      y: 2047
+    }, {
+      x: 1158 + 46,
+      y: 2047 + 39
+    }, {
+      x: 1158,
+      y: 2047 + 39
+    }],
+      id: 1,
+      name: "백주년기념관",
+      on: false
+    },{
+      area: [{x: 1149 , y: 1815}, 
+      {
+      x: 1193 ,
+      y: 1815
+    }, {
+      x: 1193,
+      y: 1953
+    }, {
+      x: 1149,
+      y: 1953
+    }],
+      id: 2,
+      name: "학생회관",
+      on: true
+    },{
+      area: [{x: 982  , y: 1843 }, 
+      {
+      x: 1033  ,
+      y: 1843 
+    }, {
+      x: 1033 ,
+      y: 1934
+    }, {
+      x: 982,
+      y: 1934
+    }],
+      id: 3,
+      name: "중앙도서관",
+      on: false
     }]
 
 
@@ -149,8 +190,8 @@
 
     //handle mouse
     let handleMouseDown = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+      // e.preventDefault();
+      // e.stopPropagation();
       cPosCache = updateCache(cPosCache, getPointerPosinCanvas(e));
       inputState = {
         tool: 'mouse',
@@ -200,8 +241,12 @@
     let doubleClickTime, clickCnt = 0;
 
     let handleTouchStart = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+      // e.preventDefault();
+      // e.stopPropagation();
+      // mapContainer.focus()
+
+      // console.log("adf")
+      document.getElementById("mapSearch").blur()
       e = e.changedTouches[0]
       // console.log("start", inputState.action)
       cPosCache = updateCache(cPosCache, getPointerPosinCanvas(e));
@@ -295,9 +340,7 @@
     );
 
     //add TouchListener
-    mapCanvas.addEventListener("touchstart", handleTouchStart, {
-      passive: false
-    });
+    mapCanvas.addEventListener("touchstart", handleTouchStart,);
     mapCanvas.addEventListener("touchmove", handleTouchMove, {
       passive: false
     });

@@ -1,4 +1,5 @@
 var searchKey = (e, _key) => {
+  document.getElementById("mapSearch").blur()
     var key = _key
     if (key == null)
       key = $("#mapSearch").val();
@@ -6,7 +7,11 @@ var searchKey = (e, _key) => {
     console.log(key)
     if (index != -1) {
       if (type[index] == "building") {
-        clickBuilding(key);
+        
+        var i = buildingList.findIndex((item)=>{
+          return (item.name == key)
+        })
+        clickBuilding(buildingList[i])
       }
     }
   }
@@ -36,6 +41,7 @@ var searchKey = (e, _key) => {
     $("#mapSearch").autocomplete({
       source: source,
       select: function (event, ui) {
+        document.getElementById("mapSearch").blur()
         searchKey(event, ui.item.value)
       },
       focus: function (event, ui) {

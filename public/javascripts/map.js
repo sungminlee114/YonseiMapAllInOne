@@ -17,9 +17,9 @@ let coordIm2Canvas = imVertexs => {
     var rx = cx + ((imVertex.x - sx) / sw) * cw,
       ry = cy + ((imVertex.y - sy) / sh) * ch;
 
-    if (rx >= cx && rx < cx + cw && ry >= cy && ry < cy + ch) {
+    // if (rx >= cx && rx < cx + cw && ry >= cy && ry < cy + ch) {
       ret.push({ x: rx, y: ry });
-    }
+    // }
   });
   return ret;
 };
@@ -100,8 +100,9 @@ let fillByImageVertex = (area, color) => {
 };
 
 let strokeByImageVertex = (area, color) => {
-  ctx.beginPath();
-  area = coordIm2Canvas(area);
+    ctx.beginPath();
+    area = coordIm2Canvas(area);
+    // console.log(area)
   ctx.moveTo(area[0].x, area[0].y);
   for (var i = 1; i < area.length; i++) {
     ctx.lineTo(area[i].x, area[i].y);
@@ -113,9 +114,9 @@ let strokeByImageVertex = (area, color) => {
 
 let pushDrawQ = (building, color, state, type, draw = true) => {
   var f;
-  if ((type = "stroke"))
+  if ((type == "stroke"))
     f = wrapFunction(strokeByImageVertex, this, [building.area, color]);
-  else if ((type = "fill"))
+  else if ((type == "fill"))
     f = wrapFunction(fillByImageVertex, this, [building.area, color]);
   drawQ.push({ func: f, id: building.id, state: state });
   if (draw) redrawCanvas();
@@ -292,13 +293,13 @@ let pinchZoom = e => {
   var a = getPointerPosinCanvas(e[0]),
     b = getPointerPosinCanvas(e[1]);
   updateCache(cDistCache, Math.hypot(a.x - b.x, a.y - b.y));
-  
+
   var _zoom = zoom;
   if (cDistCache.prev != null) {
-      var p = 0;
-      var d = cDistCache.current - cDistCache.prev;
-      if (d > 0) p = 1;
-      else if (d < 0) p = -1;
+    var p = 0;
+    var d = cDistCache.current - cDistCache.prev;
+    if (d > 0) p = 1;
+    else if (d < 0) p = -1;
     //   alert(d)
 
     _zoom += p * (0.0001 + zoom * 0.05);
@@ -405,8 +406,9 @@ var isHovering = false,
 
 //click building
 var clickBuilding = building => {
-  if (pointingBuilding != null) prevClickingBuilding = pointingBuilding;
-
+    unclickBuilding(prevClickingBuilding)
+  if (pointingBuilding == null) pointingBuilding = building;
+  prevClickingBuilding = pointingBuilding;
   if (
     !drawQ.find(item => {
       return item.id == pointingBuilding.id && item.state == "click";
