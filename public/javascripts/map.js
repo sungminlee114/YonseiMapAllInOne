@@ -369,7 +369,14 @@ var iw, ih;
 
 var mapCanvas = document.getElementById("mapCanvas");
 var ctx = mapCanvas.getContext("2d");
-var imgClo;
+var imgClo = new Image();
+    imgClo.src = "/images/sinchon_mainmap.png";
+
+    imgClo.addEventListener("load",
+    function() {
+      console.log("load img")
+      initCanvas();
+    }, false)
 
 var drawQ = [];
 
@@ -394,24 +401,24 @@ var resizeCanvas = () => {
 };
 
 var initCanvas = () => {
-  imgClo = new Image();
+  console.log("initCanvas")
+  // imgClo = new Image();
 
   cw = mapContainer[0].getBoundingClientRect().width;
   ch = mapContainer[0].getBoundingClientRect().height;
   ctx.canvas.width = cw;
   ctx.canvas.height = ch;
   //페이지 로드후 이미지가 로드 되었을 때 이미지 출력
-  imgClo.addEventListener(
-    "load",
-    function() {
+  // imgClo.addEventListener(
+  //   "load",
+  //   function() {
       // console.log("load")
       //canvas.drawImage() 함수를 사용하여 이미지 출력
       //drawImage ( image, x, y )
       //drawImage ( image, x, y, width, height )
       //drawImage ( image, sx, sy, sWidth, sHeight, x, y, Width, Height )
-      iw = this.width;
-      ih = this.height;
-
+      iw = imgClo.width;
+      ih = imgClo.height;
       zoom = Math.max(cw / iw, ch / ih) + 1;
 
       sw = Math.floor(cw / zoom);
@@ -423,12 +430,12 @@ var initCanvas = () => {
       alignViewToMiddle({ x: mx, y: my });
       ctx.drawImage(imgClo, sx, sy, sw, sh, cx, cy, cw, ch);
       // drawQ.push(wrapDrawImage, this, []);
-    },
-    false
-  );
+  //   },
+  //   false
+  // );
 
   //이미지 경로 설정
-  imgClo.src = "/images/sinchon_mainmap.png";
+  // imgClo.src = "/images/sinchon_mainmap.png";
 };
 var isHovering = false,
   isClicking = false;
