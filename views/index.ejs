@@ -85,8 +85,10 @@ box-shadow: 15px 3px 12px -5px rgba(0,0,0,0.38);
       z-index: 100;
       background-color: white;
       border-radius: 0px 5px 5px 0px;
+      top: calc(50% - 33px);
       height: 66px;
       width: 16px;
+      left : 250px;
       padding: 0;
       border: none;
       outline: none;
@@ -525,10 +527,10 @@ box-shadow: 3px 3px 13px 3px rgba(0,0,0,0.6);
     const sidebarCollapse = document.getElementById("sidebarCollapse");
     const searchBoxDiv = document.getElementById("searchBoxDiv");
     window.onload = () => {
-      resizeAll();
+      resizeAll(true);
     }
 
-    var resizeAll = () => {
+    var resizeAll = (first) => {
 
       var bottomMap = mapBody.getBoundingClientRect().height;
       var widthMap = mapBody.getBoundingClientRect().width;
@@ -541,22 +543,16 @@ box-shadow: 3px 3px 13px 3px rgba(0,0,0,0.6);
       }
 
       //sidebarheader
-      
       searchBoxDiv.style.marginTop =
         `${95 - 33 - document.getElementById("sidebar-header-title").getBoundingClientRect().height}px`;
       searchBoxDiv.style.display = "flex";
-        //sidebarCollapse
-      if (sideBar.classList[0] == "closed") {
-        //to close
-        sidebarCollapse.style.left = `0px`
-      } else {
-        sidebarCollapse.style.left = `${parseFloat(sideBar.style.width) - 2}px`;
-      }
 
-      sidebarCollapse.style.top = `${bottomMap/2}px`;
-      // sidebarCollapse.style.height = `${0}px`;
 
       //sidebarCollapse
+      // sidebarCollapse.style.top = `${bottomMap/2 - 33}px`;
+      // sidebarCollapse.style.height = `${0}px`;
+
+      
       if (sideBar.classList[0] == "closed") {
         //to close
         sidebarCollapse.style.left = `0px`
@@ -579,7 +575,7 @@ box-shadow: 3px 3px 13px 3px rgba(0,0,0,0.6);
 
 
       //canvas
-      resizeCanvas()
+      resizeCanvas(first)
 
     }
 

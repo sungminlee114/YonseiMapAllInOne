@@ -22,7 +22,7 @@ var alignViewToMiddle = (m, zoomReset = false) => {
   //         break;
 
   // }
-  // console.log(m)
+  
   moveView(c, true);
   redrawCanvas();
 };
@@ -187,6 +187,9 @@ var changeZoom = (_zoom, o) => {
 };
 
 var moveView = (diff, large = false) => {
+
+
+
   var mcx = diff.x,
     mcy = diff.y;
   var msx = mcx / zoom;
@@ -363,7 +366,9 @@ var sx,
   cw,
   ch,
   mx,
-  my;
+  my,
+  cmx, //current middle cache
+  cmy;
 
 var iw, ih;
 
@@ -382,13 +387,16 @@ var drawQ = [];
 
 var redrawCanvas = () => {
   ctx.drawImage(imgClo, sx, sy, sw, sh, cx, cy, cw, ch);
-  // console.log("redraw", drawQ)
+  cmx = (sx + sw/2);
+  cmy = (sy + sh/2);
+  // console.log("redraw", sx, sy, sw, sh)
   drawQ.forEach(q => {
     q.func();
   });
+  console.log("redraw2", cmx, cmy)
 };
 
-var resizeCanvas = () => {
+var resizeCanvas = (first) => {
   //canvas
   cw = mapContainer[0].getBoundingClientRect().width;
   ch = mapContainer[0].getBoundingClientRect().height;
@@ -396,7 +404,13 @@ var resizeCanvas = () => {
   ctx.canvas.height = ch;
   sw = Math.floor(cw / zoom);
   sh = Math.floor(ch / zoom);
-  alignViewToMiddle({ x: mx, y: my });
+  
+  if(first){
+    console.log("asdfas")
+    alignViewToMiddle({ x: mx, y: my });
+  }else{
+    alignViewToMiddle({ x: cmx, y: cmy });
+  }
   // redrawCanvas();
 };
 
