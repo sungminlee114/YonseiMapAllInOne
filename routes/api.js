@@ -5,6 +5,8 @@ console.log("api.js");
 
 var dbs = require('../api/dbs')
 
+var validateCookie = 'a@#@W$@DAH#H#%'
+
 router.delete('/:campus/building/:BID', (req, res, next)=>{
     //delete
     if(req.cookies.loggedIn == validateCookie){

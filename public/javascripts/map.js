@@ -397,7 +397,7 @@ var resizeCanvas = () => {
   sw = Math.floor(cw / zoom);
   sh = Math.floor(ch / zoom);
   alignViewToMiddle({ x: mx, y: my });
-  redrawCanvas();
+  // redrawCanvas();
 };
 
 var initCanvas = () => {
@@ -460,3 +460,20 @@ let unclickBuilding = building => {
   closeUI();
   isClicking = false;
 };
+
+function getLocation() {
+  if (navigator.geolocation) { // GPS를 지원하면
+    navigator.geolocation.getCurrentPosition(function(position) {
+      alert(position.coords.latitude + ' ' + position.coords.longitude);
+    }, function(error) {
+      console.error(error);
+    }, {
+      enableHighAccuracy: false,
+      maximumAge: 0,
+      timeout: Infinity
+    });
+  } else {
+    alert('GPS를 지원하지 않습니다');
+  }
+}
+
