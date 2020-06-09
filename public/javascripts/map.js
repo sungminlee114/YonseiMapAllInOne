@@ -465,13 +465,13 @@ var clickBuilding = building => {
     })
   )
     pushDrawQ(building, "red", "click", "stroke");
-  openUI(building);
+  // openUI(building);
   isClicking = true;
 };
 
 let unclickBuilding = building => {
   deleteDrawQ(building, "click");
-  closeUI();
+  // closeUI();
   isClicking = false;
 };
 
