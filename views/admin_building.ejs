@@ -434,18 +434,22 @@
             <table id = "facility_list" class="table table-striped" style="font-size: 0.9em; table-layout: fixed; word-break:break-all;">
                 <thead class="thead-dark">
                   <tr>
-                    <th scope="col" style="width: 86px;">시설번호</th>
-                    <th scope="col" style="width: 170px;">종류</th>
-                    <th scope="col" style="width: 170px;">이름</th>
-                    <th scope="col" style="width: 200px;">운영시간</th>
+                    <th scope="col" style="">시설<br>번호</th>
+                    <th scope="col" style="">종류</th>
+                    <th scope="col" style="">이름</th>
+                    <th scope="col" style="">학기중 평일</th>
+                    <th scope="col" style="">학기중 주말</th>
+                    <th scope="col" style="">방학중 평일</th>
+                    <th scope="col" style="">방학중 주말</th>
                     <th scope="col" style="">위치</th>
-                    <th scope="col" style="width: 100px;">수정하기</th>
+                    <th scope="col" style="">특이사항</th>
+                    <th scope="col" style="">수정하기</th>
                   </tr>
                 </thead>
                 <tbody>
                     
                     <tr>
-                        <th scope="row" colspan="6" id = "addFacilities" >시설 추가하기</td>
+                        <th scope="row" colspan="10" id = "addFacilities" >시설 추가하기</td>
                     </tr>
                 </tbody>
               </table>
@@ -504,7 +508,7 @@
                     {
                         data.forEach(e=>{
                             var table = document.getElementById('facility_list');
-                            table.insertRow(table.rows.length - 1).innerHTML = ` <tr> <th scope="row">${e.FID}</th> <td>${e.FTYPE}</td> <td>${e.FNAME}</td> <td>${e.FOPENTIME}</td> <td>${e.FLOCATION}</td> <td id = "editCell_${e.FID}"><span class=""><a class="edit editFacility">수정</a> | <a class="edit deleteFacility">삭제</a></span><span class="hideButtons"><a class="edit saveFacility ">저장</a> | <a class="edit cancelEdit ">취소</a></span></td></tr>`
+                            table.insertRow(table.rows.length - 1).innerHTML = ` <tr> <th scope="row">${e.FID}</th> <td>${e.FTYPE}</td> <td>${e.FNAME}</td> <td>${e.FTIME_SEM_DAY}</td> <td>${e.FTIME_SEM_END}</td> <td>${e.FTIME_VAC_DAY}</td> <td>${e.FTIME_VAC_END}</td> <td>${e.FLOCATION}</td> <td>${e.FETC1}</td> <td id = "editCell_${e.FID}"><span class=""><a class="edit editFacility">수정</a> | <a class="edit deleteFacility">삭제</a></span><span class="hideButtons"><a class="edit saveFacility ">저장</a> | <a class="edit cancelEdit ">취소</a></span></td></tr>`
                         })
 
                         Array.prototype.forEach.call(document.getElementsByClassName("deleteFacility"), el=>{
@@ -524,10 +528,6 @@
                         })
                     }
                 })
-                // raw.cells[0].innerHTML = data.BID;
-                // raw.cells[1].innerHTML = data.BNAME;
-                // raw.cells[2].innerHTML = data.BOPENTIME;
-                // raw.cells[3].innerHTML = data.BAREA;
                 // location.reload()
                 // console.log('ok!', response.status, response.body, response.json());
             } else if (response.status == 403){
@@ -566,10 +566,6 @@
             });
 
             if(response.ok){
-                // raw.cells[0].innerHTML = data.BID;
-                // raw.cells[1].innerHTML = data.BNAME;
-                // raw.cells[2].innerHTML = data.BOPENTIME;
-                // raw.cells[3].innerHTML = data.BAREA;
                 location.reload()
                 // console.log('ok!', response.status, response.body, response.text());
             } else if (response.status == 403){
@@ -598,12 +594,16 @@
             FID : raw.cells[0].textContent,
             FTYPE : raw.cells[1].firstChild.value,
             FNAME : raw.cells[2].firstChild.value,
-            FOPENTIME : raw.cells[3].firstChild.value,
-            FLOCATION : raw.cells[4].firstChild.value,
+            FTIME_SEM_DAY : raw.cells[3].firstChild.value,
+            FTIME_SEM_END : raw.cells[4].firstChild.value,
+            FTIME_VAC_DAY : raw.cells[5].firstChild.value,
+            FTIME_VAC_END : raw.cells[6].firstChild.value,
+            FLOCATION : raw.cells[7].firstChild.value,
+            FETC1 : raw.cells[8].firstChild.value,
         };
 
         for (const [key, value] of Object.entries(data)) {
-            if(value == ""){
+            if(value == "" && key != 'FETC1'){
                 alert("데이터에 공백이 있을 순 없습니다.")
                 return
             }
@@ -624,10 +624,6 @@
                     });
 
             if(response.ok){
-                // raw.cells[0].innerHTML = data.BID;
-                // raw.cells[1].innerHTML = data.BNAME;
-                // raw.cells[2].innerHTML = data.BOPENTIME;
-                // raw.cells[3].innerHTML = data.BAREA;
                 location.reload()
                 // console.log('ok!', response.status, response.body, response.text());
             } else if (response.status == 403){
@@ -700,15 +696,16 @@
         let temp = raw.cells
 
         for(var i = 1; i < table.rows[0].cells.length - 1; i++){
-            console.log(i)
-            var input = document.createElement("input")
+            var input = document.createElement("textarea")
             input.type = "text"
             input.name = `cell_${i}`
-            input.style = "width: 100%;"
+            input.style = "width: 100%; resize:both;"
             input.value = temp[i].textContent
             
             tempEditVal[i] = temp[i].textContent
-            raw.cells[i].removeChild(raw.cells[i].firstChild)
+            if(tempEditVal[i] !== ''){
+                raw.cells[i].removeChild(raw.cells[i].firstChild)
+            }
             raw.cells[i].appendChild(input)
         }
         raw.cells[table.rows[0].cells.length - 1].firstChild.classList.add("hideButtons")
@@ -727,12 +724,16 @@
             FTYPE : raw.cells[1].firstChild.value,
             FNAME : raw.cells[2].firstChild.value,
             FBID : <%= building %>,
-            FOPENTIME : raw.cells[3].firstChild.value,
-            FLOCATION : raw.cells[4].firstChild.value,
+            FTIME_SEM_DAY : raw.cells[3].firstChild.value,
+            FTIME_SEM_END : raw.cells[4].firstChild.value,
+            FTIME_VAC_DAY : raw.cells[5].firstChild.value,
+            FTIME_VAC_END : raw.cells[6].firstChild.value,
+            FLOCATION : raw.cells[7].firstChild.value,
+            FETC1 : raw.cells[8].firstChild.value,
         };
 
         for (const [key, value] of Object.entries(data)) {
-            if(value == ""){
+            if(value == "" && key != 'FETC1'){
                 alert("데이터에 공백이 있을 순 없습니다.")
                 return
             }
@@ -753,10 +754,6 @@
                     });
 
             if(response.ok){
-                // raw.cells[0].innerHTML = data.BID;
-                // raw.cells[1].innerHTML = data.BNAME;
-                // raw.cells[2].innerHTML = data.BOPENTIME;
-                // raw.cells[3].innerHTML = data.BAREA;
                 response.text().then(data=>{
                     location.reload()
 
@@ -805,10 +802,10 @@
 
         row.insertCell(0).appendChild(document.createTextNode(" ... "))
         for(var i = 1; i < tbody.parentNode.rows[0].cells.length - 1; i++){
-            var input = document.createElement("input")
+            var input = document.createElement("textarea")
             input.type = "text"
             input.name = `cell_${i}`
-            input.style = "width: 100%;"
+            input.style = "width: 100%; resize:both;"
             row.insertCell(i).appendChild(input)
         }
         var a = document.createElement("a")

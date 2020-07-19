@@ -14,7 +14,12 @@ console.log("admin.js");
 
 // var dbs = require('../api/dbs')
 
-
+// var ID = 'admin@yonsei.ac.kr'
+  var ID = 'admin'
+  var PW = 'admin'
+  // var ID = '1'
+  // var PW = '1'
+  var validateCookie = 'bqweqeqDFQW12'
 
   router.use('/:campus/main', (req, res, next)=>{
   
@@ -70,7 +75,7 @@ router.use('/', function(req, res, next) {
     res.render('adminLogin', { retry : false});
   } else if ( req.cookies.loggedIn == 'false') {
     res.render('adminLogin', { retry : true});
-  } else if ( req.cookies.loggedIn == 'a@#@W$@DAH#H#%'){
+  } else if ( req.cookies.loggedIn == 'bqweqeqDFQW12'){
     res.redirect('/admin/sinchon/main');
   } else {
     res.render('adminLogin', { retry : null});

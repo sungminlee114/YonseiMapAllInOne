@@ -3,9 +3,21 @@ var router = express.Router();
 
 console.log("api.js");
 
-var dbs = require('../api/dbs')
+var dbs = require('../api/dbs');
+const app = require('../app');
 
-var validateCookie = 'a@#@W$@DAH#H#%'
+var validateCookie = 'bqweqeqDFQW12'
+
+router.get('/:campus/building', (req, res, next) =>{
+  
+  if(req.params.campus == 'sinchon'){
+    res.send((req.app.get('buildingData').sinchon))
+  } else if (req.params.campus == 'songdo'){
+    res.send(req.app.get('buildingData').songdo)
+  } else{
+    return "wrong campus"
+  }
+})
 
 router.delete('/:campus/building/:BID', (req, res, next)=>{
     //delete
@@ -44,6 +56,7 @@ router.delete('/:campus/building/:BID', (req, res, next)=>{
       res.send('비정상적인 접근')
     }
   })
+
 router.post('/:campus/building', (req, res, next)=>{
     //add
   if(req.cookies.loggedIn == validateCookie){
@@ -57,7 +70,8 @@ router.post('/:campus/building', (req, res, next)=>{
         res.send('wrong campus');
         return;
     }
-    db.query(`INSERT INTO BUILDINGS(BID, BNAME, BOPENTIME, BAREA) VALUES(${postReq.BID}, '${postReq.BNAME}', '${postReq.BOPENTIME}', '${postReq.BAREA}') `, (err, result) => {
+    db.query(`INSERT INTO BUILDINGS(BID, BNAME, BTIME_SEM_DAY, BTIME_SEM_END, BTIME_VAC_DAY, BTIME_VAC_END, BAREA, BETC)
+     VALUES(${postReq.BID}, '${postReq.BNAME}', '${postReq.BTIME_SEM_DAY}', '${postReq.BTIME_SEM_END}', '${postReq.BTIME_VAC_DAY}', '${postReq.BTIME_VAC_END}', '${postReq.BAREA}', '${postReq.BETC}') `, (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400
@@ -85,7 +99,7 @@ router.put('/:campus/building/:BID', (req, res, next)=>{
         res.send('wrong campus');
         return;
     }
-    db.query(`UPDATE BUILDINGS SET BNAME = '${postReq.BNAME}', BOPENTIME = '${postReq.BOPENTIME}', BAREA = '${postReq.BAREA}' WHERE BID = ${postReq.BID}`, (err, result) => {
+    db.query(`UPDATE BUILDINGS SET BNAME = '${postReq.BNAME}', BTIME_SEM_DAY = '${postReq.BTIME_SEM_DAY}', BTIME_SEM_END = '${postReq.BTIME_SEM_END}', BTIME_VAC_DAY = '${postReq.BTIME_VAC_DAY}', BTIME_VAC_END = '${postReq.BTIME_VAC_END}', BAREA = '${postReq.BAREA}', BETC = '${postReq.BETC}' WHERE BID = ${postReq.BID}`, (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400
@@ -170,7 +184,8 @@ router.post('/:campus/facility', (req, res, next)=>{
         res.send('wrong campus');
         return;
     }
-    db.query(`INSERT INTO FACILITIES(FTYPE, FNAME, FBID, FOPENTIME, FLOCATION) VALUES('${postReq.FTYPE}', '${postReq.FNAME}', ${postReq.FBID}, '${postReq.FOPENTIME}', '${postReq.FLOCATION}') `, (err, result) => {
+    db.query(`INSERT INTO FACILITIES(FTYPE, FNAME, FBID, FTIME_SEM_DAY, FTIME_SEM_END, FTIME_VAC_DAY, FTIME_VAC_END, FLOCATION, FETC1) 
+    VALUES('${postReq.FTYPE}', '${postReq.FNAME}', ${postReq.FBID}, '${postReq.FTIME_SEM_DAY}', '${postReq.FTIME_SEM_END}', '${postReq.FTIME_VAC_DAY}', '${postReq.FTIME_VAC_END}', '${postReq.FLOCATION}', '${postReq.FETC1}') `, (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400
@@ -197,7 +212,12 @@ router.put('/:campus/facility/:FID', (req, res, next)=>{
         res.send('wrong campus');
         return;
     }
-    db.query(`UPDATE FACILITIES SET FTYPE = '${postReq.FTYPE}', FNAME = '${postReq.FNAME}', FOPENTIME = '${postReq.FOPENTIME}', FLOCATION = '${postReq.FLOCATION}' WHERE FID = ${postReq.FID}`, (err, result) => {
+    db.query(`UPDATE FACILITIES SET FTYPE = '${postReq.FTYPE}', FNAME = '${postReq.FNAME}', 
+    FTIME_SEM_DAY = '${postReq.FTIME_SEM_DAY}',
+    FTIME_SEM_END = '${postReq.FTIME_SEM_END}',
+    FTIME_VAC_DAY = '${postReq.FTIME_VAC_DAY}',
+    FTIME_VAC_END = '${postReq.FTIME_VAC_END}', FLOCATION = '${postReq.FLOCATION}',
+    FETC1 = '${postReq.FETC1}' WHERE FID = ${postReq.FID}`, (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400

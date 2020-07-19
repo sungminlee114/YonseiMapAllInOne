@@ -435,11 +435,15 @@
             <table id = "building_list" class="table table-striped" style="font-size: 0.9em; table-layout: fixed; word-break:break-all; ">
                 <thead class="thead-dark">
                   <tr>
-                    <th scope="col" style="width: 86px;">건물번호</th>
-                    <th scope="col" style="width: 170px;">이름</th>
-                    <th scope="col" style="width: 200px;">운영시간</th>
-                    <th scope="col" style="">지도내 좌표</th>
-                    <th scope="col" style="width: 100px;">수정하기</th>
+                    <th scope="col" style="">건물<br/>번호</th>
+                    <th scope="col" style="">이름</th>
+                    <th scope="col" style="">학기중 평일</th>
+                    <th scope="col" style="">학기중 주말</th>
+                    <th scope="col" style="">방학중 평일</th>
+                    <th scope="col" style="">방학중 주말</th>
+                    <th scope="col" style="width:160px;min-width : 160px;max-width: 160px;">지도내 좌표</th>
+                    <th scope="col" style="">특이사항</th>
+                    <th scope="col" style="">수정하기</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -447,13 +451,17 @@
                     <tr id = "row_<%=i%>">
                         <th scope="row"><%=buildingData[campus][i].BID%></th>
                         <td><%=buildingData[campus][i].BNAME%></td>
-                        <td><%=buildingData[campus][i].BOPENTIME%></td>
+                        <td><%=buildingData[campus][i].BTIME_SEM_DAY%></td>
+                        <td><%=buildingData[campus][i].BTIME_SEM_END%></td>
+                        <td><%=buildingData[campus][i].BTIME_VAC_DAY%></td>
+                        <td><%=buildingData[campus][i].BTIME_VAC_END%></td>
                         <td><%=buildingData[campus][i].BAREA%></td>
+                        <td><%=buildingData[campus][i].BETC%></td>
                         <td id = "editCell_<%=i%>"><span class=""><a class="edit editBuilding">수정</a> | <a class="edit deleteBuilding">삭제</a></span><span class="hideButtons"><a class="edit saveBuilding ">저장</a> | <a class="edit cancelEdit ">취소</a></span></td>
                     </tr>
                     <% }) %>
                     <tr>
-                        <th scope="row" colspan="5" id = "addBuildings" >건물 추가하기</td>
+                        <th scope="row" colspan="9" id = "addBuildings" >건물 추가하기</td>
                     </tr>
                 </tbody>
               </table>
@@ -512,10 +520,7 @@
             });
 
             if(response.ok){
-                // raw.cells[0].innerHTML = data.BID;
-                // raw.cells[1].innerHTML = data.BNAME;
-                // raw.cells[2].innerHTML = data.BOPENTIME;
-                // raw.cells[3].innerHTML = data.BAREA;
+                
                 location.reload()
                 // console.log('ok!', response.status, response.body, response.text());
             } else if (response.status == 403){
@@ -543,12 +548,16 @@
         var data = {
             BID : raw.cells[0].textContent,
             BNAME : raw.cells[1].firstChild.value,
-            BOPENTIME : raw.cells[2].firstChild.value,
-            BAREA : raw.cells[3].firstChild.value,
+            BTIME_SEM_DAY : raw.cells[2].firstChild.value,
+            BTIME_SEM_END : raw.cells[3].firstChild.value,
+            BTIME_VAC_DAY : raw.cells[4].firstChild.value,
+            BTIME_VAC_END : raw.cells[5].firstChild.value,
+            BAREA : raw.cells[6].firstChild.value,
+            BETC : raw.cells[7].firstChild.value,
         };
 
         for (const [key, value] of Object.entries(data)) {
-            if(value == ""){
+            if(value == "" && key != 'BETC'){
                 alert("데이터에 공백이 있을 순 없습니다.")
                 return
             }
@@ -569,10 +578,6 @@
                     });
 
             if(response.ok){
-                // raw.cells[0].innerHTML = data.BID;
-                // raw.cells[1].innerHTML = data.BNAME;
-                // raw.cells[2].innerHTML = data.BOPENTIME;
-                // raw.cells[3].innerHTML = data.BAREA;
                 location.reload()
                 // console.log('ok!', response.status, response.body, response.text());
             } else if (response.status == 403){
@@ -585,6 +590,7 @@
                         alert("건물번호는 비워둘 수 없습니다.")
                     } else if (data.code == "ER_BAD_FIELD_ERROR"){
                         alert("건물번호는 숫자여야 합니다.")
+                        console.log(data)
                     } else {
                         alert(data.code)
                     }
@@ -645,15 +651,18 @@
         let temp = raw.cells
 
         for(var i = 1; i < table.rows[0].cells.length - 1; i++){
-            var input = document.createElement("input")
+            var input = document.createElement("textarea")
             input.type = "text"
             input.name = `cell_${i}`
-            input.style = "width: 100%;"
+            input.style = "width: 100%; resize:both;"
             input.value = temp[i].textContent
             
             tempEditVal[i] = temp[i].textContent
-            raw.cells[i].removeChild(raw.cells[i].firstChild)
+            if(tempEditVal[i] !== ''){
+                raw.cells[i].removeChild(raw.cells[i].firstChild)
+            }
             raw.cells[i].appendChild(input)
+            
         }
         raw.cells[table.rows[0].cells.length - 1].firstChild.classList.add("hideButtons")
         raw.cells[table.rows[0].cells.length - 1].lastChild.classList.remove("hideButtons")
@@ -674,12 +683,16 @@
         var data = {
             BID : raw.cells[0].firstChild.value,
             BNAME : raw.cells[1].firstChild.value,
-            BOPENTIME : raw.cells[2].firstChild.value,
-            BAREA : raw.cells[3].firstChild.value,
+            BTIME_SEM_DAY : raw.cells[2].firstChild.value,
+            BTIME_SEM_END : raw.cells[3].firstChild.value,
+            BTIME_VAC_DAY : raw.cells[4].firstChild.value,
+            BTIME_VAC_END : raw.cells[5].firstChild.value,
+            BAREA : raw.cells[6].firstChild.value,
+            BETC : raw.cells[7].firstChild.value,
         };
 
         for (const [key, value] of Object.entries(data)) {
-            if(value == ""){
+            if(value == "" && key != 'BETC'){
                 alert("데이터에 공백이 있을 순 없습니다.")
                 return
             }
@@ -700,10 +713,6 @@
                     });
 
             if(response.ok){
-                // raw.cells[0].innerHTML = data.BID;
-                // raw.cells[1].innerHTML = data.BNAME;
-                // raw.cells[2].innerHTML = data.BOPENTIME;
-                // raw.cells[3].innerHTML = data.BAREA;
                 location.reload()
                 // console.log('ok!', response.status, response.body, response.text());
             } else if (response.status == 403){
@@ -751,10 +760,10 @@
         }
 
         for(var i = 0; i < tbody.parentNode.rows[0].cells.length - 1; i++){
-            var input = document.createElement("input")
+            var input = document.createElement("textarea")
             input.type = "text"
             input.name = `cell_${i}`
-            input.style = "width: 100%;"
+            input.style = "width: 100%; resize:both;"
             row.insertCell(i).appendChild(input)
         }
         var a = document.createElement("a")

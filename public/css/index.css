@@ -1,0 +1,345 @@
+@import url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css);
+
+body {
+  font-family: "NanumSquare", sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* .toggle.btn {
+  min-height: 30px !important;
+}
+
+.toggle.btn {
+  right: calc(45px + 150px);
+  position: absolute;
+} */
+
+.backgroud {
+  height: calc(100vh - 60px);
+  background-color: #F6F6F6;
+  padding: 30px 8vw;
+}
+
+#mapContainer {
+  -webkit-box-shadow: 15px 10px 12px -5px rgba(0, 0, 0, 0.38);
+  -moz-box-shadow: 15px 10px 12px -5px rgba(0, 0, 0, 0.38);
+  box-shadow: 15px 10px 12px -5px rgba(0, 0, 0, 0.38);
+  /* overflow: hidden; */
+  top: 0;
+  z-index: 20;
+  position: absolute;
+  background-color: gray;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+area {
+  cursor: pointer;
+}
+
+h2 {
+  text-align: center;
+}
+
+.mapBody {
+  position: relative;
+  margin: 0px;
+  background-color: white;
+  height: 100%;
+}
+
+/*sidebar*/
+#sidebar {
+  position: absolute;
+  width: 250px;
+  height: 100%;
+  z-index: 99;
+  background: white;
+  color: black;
+  top: 0px;
+  -webkit-box-shadow: 15px 3px 12px -5px rgba(0, 0, 0, 0.38);
+  -moz-box-shadow: 15px 3px 12px -5px rgba(0, 0, 0, 0.38);
+  box-shadow: 15px 3px 12px -5px rgba(0, 0, 0, 0.38);
+}
+
+/* #sidebar.closed {
+display: none !important;
+} */
+
+#sidebarCollapse {
+  position: relative;
+  display: inline-block;
+  z-index: 100;
+  background-color: white;
+  border-radius: 0px 5px 5px 0px;
+  top: calc(50% - 33px);
+  height: 66px;
+  width: 16px;
+  left: 250px;
+  padding: 0;
+  border: none;
+  outline: none;
+  -webkit-box-shadow: 3px 3px 3px 3px rgba(80, 49, 49, 0.1);
+  -moz-box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+  position: relative;
+  background-color: #EDEDED;
+  height: 155px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
+
+}
+
+
+/* Toggling the sidebar header content, hide the big heading [h3] and showing the small heading [strong] and vice versa*/
+
+#sidebar h2 {
+  color: #1F3C73;
+  font-size: 17px;
+  text-align: center;
+  font-weight: 900;
+}
+
+#sidebar h2::after {
+  content: "";
+
+  display: block;
+  /* This will put the pseudo element on its own line. */
+  margin: 0 auto;
+  /* This will center the border. */
+  margin-top: 4px;
+  width: 40%;
+
+  border-bottom: 0.3px solid grey !important;
+}
+
+#sidebar h3 {
+  color: #1F3C73;
+  font-size: 23px;
+  text-align: center;
+  font-weight: 900;
+}
+
+#sidebar .sidebar-body {
+  padding: 20px;
+  position: absolute;
+  padding-bottom: 0;
+}
+
+.sidebar-body::after {
+  content: "";
+  display: block;
+  /* This will put the pseudo element on its own line. */
+  margin: 0 auto;
+  /* This will center the border. */
+  margin-top: 10px;
+  width: 92%;
+  border-bottom: 0.5px solid black !important;
+}
+
+#sidebar ul li a {
+  text-align: left;
+}
+
+#sidebar.active ul li a {
+  padding: 20px 10px;
+  text-align: center;
+  font-size: 0.85em;
+}
+
+#sidebar.active ul li a i {
+  margin-right: 0;
+  display: block;
+  font-size: 1.8em;
+  margin-bottom: 5px;
+}
+
+/* Same dropdown links padding*/
+#sidebar.active ul ul a {
+
+  padding: 10px !important;
+}
+
+/* Changing the arrow position to bottom center position, 
+ translateX(50%) works with right: 50% 
+ to accurately  center the arrow */
+#sidebar.active .dropdown-toggle::after {
+  top: auto;
+  bottom: 10px;
+  right: 50%;
+  -webkit-transform: translateX(50%);
+  -ms-transform: translateX(50%);
+  transform: translateX(50%);
+}
+
+/*silder*/
+.sliderBack {
+  height: 36px;
+  width: 90px;
+  border-radius: 30px;
+  border: 0px;
+  right: 30px;
+
+  z-index: 22;
+  position: absolute;
+  background-color: #ABCADD;
+  display: flex;
+  cursor: pointer;
+  /* padding: 0px 4px; */
+  -webkit-box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.6);
+  box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.6);
+}
+
+.sliderBack div {
+  z-index: 120;
+  color: white;
+  font-size: 13px;
+  /* display: inline; */
+  /* display: flex; */
+  height: 100%;
+  width: 50%;
+  align-self: center;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  /* position: absolute;
+  top: 2px; */
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-box-shadow: inset 0px -58px 61px -61px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: inset 0px -58px 61px -61px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0px -58px 61px -61px rgba(0, 0, 0, 0.3);
+}
+
+.sliderBack .left {
+  border-radius: 30px 0px 0px 30px;
+}
+
+.sliderBack .right {
+  border-radius: 0px 30px 30px 0px;
+}
+
+.sliderBack .selected {
+  background-color: #1F3C73ab;
+  -webkit-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
+}
+
+@media screen and (max-width: 768px) {
+
+  /* 모바일에 사용될 스트일 시트를 여기에 작성합니다. */
+  .backgroud {
+    padding: 0px 0px;
+    height: calc(100vh - 60px);
+  }
+
+  #mapContainer {
+    /* z-index: 20; */
+    margin-top: 95px;
+  }
+
+  #sidebar {
+    width: 100%;
+    height: 0;
+    background: none;
+    /* z-index: -9; */
+    /* left: 10%; */
+  }
+
+  .sidebar-header {
+    padding: 20px 10px 10px 10px;
+    width: 100%;
+    height: 95px;
+  }
+
+  #sidebarCollapse {
+    display: none;
+  }
+
+  .sidebar-body {
+    width: 94%;
+    left: 3%;
+    height: 200px;
+    /* bottom: 20px; */
+    position: absolute;
+    background: #f7f7f7;
+    /* border: 1px solid black; */
+    border-radius: 10px;
+    -webkit-box-shadow: 10px 5px 12px -5px rgba(0, 0, 0, 0.38);
+    -moz-box-shadow: 10px 5px 12px -5px rgba(0, 0, 0, 0.38);
+    box-shadow: 10px 5px 12px -5px rgba(0, 0, 0, 0.38);
+  }
+
+  #mapSearch {
+    width: calc(100% - 50px) !important;
+    margin-left: 10px;
+    z-index: 30;
+  }
+
+  /*silder*/
+  .sliderBack {
+    height: 30px;
+    width: 80px;
+    border-radius: 20px;
+    border: 0px;
+    right: 30px;
+
+    z-index: 22;
+    position: absolute;
+    background-color: #ABCADD;
+    display: flex;
+    cursor: pointer;
+    /* padding: 0px 4px; */
+    -webkit-box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.6);
+    -moz-box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.6);
+    box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.6);
+  }
+
+  .sliderBack div {
+    z-index: 120;
+    color: white;
+    font-size: 13px;
+    /* display: inline; */
+    /* display: flex; */
+    height: 100%;
+    width: 50%;
+    align-self: center;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    /* position: absolute;
+  top: 2px; */
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-box-shadow: inset 0px -58px 61px -61px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0px -58px 61px -61px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0px -58px 61px -61px rgba(0, 0, 0, 0.3);
+  }
+
+  .sliderBack .left {
+    border-radius: 30px 0px 0px 30px;
+  }
+
+  .sliderBack .right {
+    border-radius: 0px 30px 30px 0px;
+  }
+
+  .sliderBack .selected {
+    background-color: #1F3C73ab;
+    -webkit-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
+    -moz-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
+    box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
+  }
+}

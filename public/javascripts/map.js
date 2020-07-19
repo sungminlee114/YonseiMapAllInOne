@@ -71,29 +71,18 @@ let get2dDiff = (i, f) => {
   return { x: f.x - i.x, y: f.y - i.y };
 };
 
-let isinArea = (pos, area) => {
-  //send +x ray, even number intersect : outside
-  var cnt = false;
-  for (var i = 0; i < area.length; i++) {
-    var j = i + 1;
-    if (j == area.length) {
-      j = 0;
-    }
-
-    //between y
-    if ((area[i].y - pos.y) * (area[j].y - pos.y) < 0) {
-      var a =
-        ((pos.y - area[j].y) / (area[i].y - area[j].y)) *
-          (area[i].x - area[j].x) +
-        area[j].x;
-      if (a == pos.x) {
-        return true;
-      } else if (a > pos.x) {
-        cnt = !cnt;
-      }
-    }
+let isinArea = (point, area) => {
+  var x = point.x, y = point.y;
+  var inside = false;
+  for (var i = 0, j = area.length - 1; i < area.length; j = i++) {
+      var xi = area[i].x, yi = area[i].y;
+      var xj = area[j].x, yj = area[j].y;
+      let isYBetween = (yi > y) != (yj > y);
+      let isXIntersect = (x < ((xj - xi) * (y - yi) / (yj - yi)) + xi);
+      var intersect = (isYBetween) && (isXIntersect);
+      if (intersect) inside = !inside;
   }
-  return cnt;
+  return inside;
 };
 
 let isinBuildings = (pos, buildingList) => {
@@ -393,7 +382,7 @@ var redrawCanvas = () => {
   drawQ.forEach(q => {
     q.func();
   });
-  console.log("redraw2", cmx, cmy)
+  // console.log("redraw2", cmx, cmy)
 };
 
 var resizeCanvas = (first) => {
@@ -406,7 +395,7 @@ var resizeCanvas = (first) => {
   sh = Math.floor(ch / zoom);
   
   if(first){
-    console.log("asdfas")
+    // console.log("asdfas")
     alignViewToMiddle({ x: mx, y: my });
   }else{
     alignViewToMiddle({ x: cmx, y: cmy });

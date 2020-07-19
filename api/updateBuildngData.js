@@ -4,20 +4,10 @@ let updateBuildingData = async (app)=> {
     var res = await queryBuildingData();
     var temp = {'sinchon': {}, 'songdo': {}}
     res.sinchon.forEach(element => {
-        temp.sinchon[element.BID] = {
-            BID : element.BID,
-            BNAME : element.BNAME, 
-            BOPENTIME : element.BOPENTIME,
-            BAREA : element.BAREA,
-        }
+        temp.sinchon[element.BID] = element;
     });
     res.songdo.forEach(element => {
-        temp.songdo[element.BID] = {
-            BID : element.BID,
-            BNAME : element.BNAME, 
-            BOPENTIME : element.BOPENTIME,
-            BAREA : element.BAREA,
-        }
+        temp.songdo[element.BID] = element;
     });
     
     app.set('buildingData' ,temp)
