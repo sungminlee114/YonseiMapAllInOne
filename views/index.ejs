@@ -11,7 +11,8 @@
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link rel="stylesheet" href="/css/nav.css">
   <link rel="stylesheet" href="/css/index.css">
-
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
@@ -123,94 +124,116 @@
       <div class="backgroud">
 
         <div class="mapBody">
-          <nav id="sidebar" class="">
+          <nav id="sidebar" class="closed">
 
             <!-- header -->
-            <div class="sidebar-header">
+            <div id="sidebar-header" class="opened">
+              <a id="phone-sidebar-toggler" href="javascript:void(0);" class="icon" onclick="toggleSideBar()">
+                <i class="fa fa-bars"></i>
+              </a>
               <h3 style="margin: 0;" id="sidebar-header-title">지도 All-in-One</h3>
               <!-- 검색 -->
               <div id="searchBoxDiv" class="input-group ui-widget form-control"
                 style="height: 33px; padding: 3px 5px; display: none;">
                 <input type="text" class="" id="mapSearch" placeholder="건물, 시설 검색"
-                  style="height: 100%; font-size: 0.7em; border: none; outline: none; width: 88%;">
-                <div class="" onclick="searchKey()" style="display: flex;
-                justify-content: center; cursor: p1ointer;
-                align-items: center; font-size: 1em;padding: 0;  height: 100%;">🔎</div>
+                  style="height: 100%; font-size: 0.7em; border: none; outline: none; width: calc(100% - 25px);">
+                <div id="searchButton" class="my-btn" onclick="searchKey()">🔎</div>
               </div>
             </div>
 
-            <!-- body -->
-            <div class="sidebar-body" id="sidebar-facilitys">
-              <h2> 시설 안내 </h2>
-              <div class="row">
-                <div class="col" style="width: 10%;">
-                  a
-                </div>
-                <div class="col" style="width: 14%;">
-                  1
-                </div>
-                <div class="col" style="width: 14%;">
-                  2
-                </div>
-                <div class="col" style="width: 14%;">
-                  3
-                </div>
-                <div class="col" style="width: 14%;">
-                  4
-                </div>
-                <div class="col" style="width: 14%;">
-                  5
-                </div>
-                <div class="col" style="width: 10%;">
-                  0
+            <!-- main -->
+            <div id="sidebar-type-main" class="sidebar-body-frame">
+              <!-- <div class="sidebar-body" id="sidebar-main-facilitys">
+                <h2> 시설 안내 </h2>
+                <div class="row icons">
+                  <div class="icon-div col-3 d-flex">
+                    <object type="image/svg+xml" data="images/icon_toilet.svg" title="toilet">현재 브라우저는 iframe을 지원하지
+                      않습니다.</object>
+                  </div>
+                  <div class="icon-div col-3 d-flex">
+                    <object type="image/svg+xml" data="images/icon_elevator.svg" title="elevator">현재 브라우저는 iframe을 지원하지
+                      않습니다.</object>
+                  </div>
+                  <div class="icon-div col-3 d-flex">
+                    <object type="image/svg+xml" data="images/icon_water.svg" title="water">현재 브라우저는 iframe을 지원하지
+                      않습니다.</object>
+                  </div>
+                  <div class="icon-div col-3 d-flex">
+                    <object type="image/svg+xml" data="images/icon_vending_machine.svg" title="vending_machine">현재 브라우저는
+                      iframe을 지원하지 않습니다.</object>
+                  </div>
                 </div>
               </div>
+              <div class="sidebar-body" id="sidebar-main-direction">
+                <h2> 이동시간 </h2>
+                <div class="row sidebar-main-direction-row">
+                  <div class="col-12">
+                    <div id="direction_start" class="input-group ui-widget form-control dir-searchbox-div">
+                      <input type="text" class="" id="directionStartSearch" placeholder="출발지를 입력하세요."
+                        style="height: 100%; font-size: 0.7em; border: none; outline: none; width: 88%;">
+                    </div>
+                    <div id="direction_end" class="input-group ui-widget form-control dir-searchbox-div">
+                      <input type="text" class="" id="directionEndSearch" placeholder="도착지를 입력하세요."
+                        style="height: 100%; font-size: 0.7em; border: none; outline: none; width: 88%;">
+                    </div>
+                  </div>
+                  <div class="col-12" style="margin-top: 10px;">
+                    <div id="direction_search" class="my-btn">찾기</div>
+                  </div>
+                </div>
+              </div> -->
             </div>
+            
+            <!-- building -->
+            <!-- <div id="sidebar-type-building" class="sidebar-body-frame" style="display:none">
+              <div class="text-center" id="sidebar-building-loading">
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
 
-            <!-- <ul class="list-unstyled components">
-                <p>Dummy Heading</p>
-                <li class="active">
-                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Home</a>
-                    <ul class="collapse list-unstyled" id="homeSubmenu">
-                        <li>
-                            <a href="#">Home 1</a>
-                        </li>
-                        <li>
-                            <a href="#">Home 2</a>
-                        </li>
-                        <li>
-                            <a href="#">Home 3</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">About</a>
-                </li>
-                <li>
-                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>
-                    <ul class="collapse list-unstyled" id="pageSubmenu">
-                        <li>
-                            <a href="#">Page 1</a>
-                        </li>
-                        <li>
-                            <a href="#">Page 2</a>
-                        </li>
-                        <li>
-                            <a href="#">Page 3</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Portfolio</a>
-                </li>
-                <li>
-                    <a href="#">Contact</a>
-                </li>
-            </ul> -->
+              <div class="d-flex" id="sidebar-building-tabButtonDiv">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons" id="sidebar-building-tabButtonGroup">
+                  <label class="btn btn-light active sidebar-building-tabButtonClass">
+                    <input type="radio" name="options" id="sidebar-building-tabButton-buildingDetail" autocomplete="off" checked> 상세 정보
+                  </label>
+                  <label class="btn btn-light sidebar-building-tabButtonClass">
+                    <input type="radio" name="options" id="sidebar-building-tabButton-buildingFacilities" autocomplete="off"> 시설 정보
+                  </label>
+                </div>
+                <div class="btn-group" data-toggle="buttons" id="sidebar-building-goBack">
+                  <button type="button" class="btn btn-light sidebar-building-tabButtonClass">↩️
+                  </button>
+                </div>
+              </div>
 
+              <div class="sidebar-body" id="sidebar-building-buildingDetail">
+                <h2> 상세 정보 </h2>
+                <h5> 백양관 </h5>
+                <img src="/images/buildings/sinchon/baekyang.png" id="sidebar-building-picture"/>
+                <h5> 운영 시간 </h5>
+                <p> 00:00 ~ 00:00</p>
+                <h5> 건물 정보</h5>
+                <p> Lorem Ipsum </p>
+                <h5> 연락처 </h5>
+                <p> 02-1234-5678 </p>
+              </div>
+
+              <div id="sidebar-building-buildingFacilities" style="display: none;">
+                <h2> 시설 정보 </h2>
+                <h5> 백양관 </h5>
+                <img src="/images/buildings/sinchon/baekyang.png" id="sidebar-building-picture"/>
+                <h5> 운영 시간 </h5>
+                <p> 00:00 ~ 00:00</p>
+                <h5> 건물 정보</h5>
+                <p> Lorem Ipsum </p>
+                <h5> 연락처 </h5>
+                <p> 02-1234-5678 </p>
+              </div>
+            </div> -->
           </nav>
-          <button id="sidebarCollapse">
-            <span id="collapseArrow" style="color:#1F3C73">◀</span>
+          <button id="sidebarCollapse" style="left : 0px;">
+            <span id="collapseArrow" style="color:#1F3C73">▶</span>
           </button>
 
 
@@ -225,57 +248,46 @@
             <div class="left selected">지하</div>
             <div class="right">지상</div>
             <!-- <span id="Floor" class="sliderBody left"></span> -->
-        </div>
+          </div>
 
-        <div id="toggleTime" class="sliderBack left">
-          <div class="left selected">실시간</div>
-          <div class="right">전시간</div>
-          <!-- <span id="Floor" class="sliderBody left"></span> -->
-        </div>
+          <div id="toggleTime" class="sliderBack left">
+            <div class="left selected">실시간</div>
+            <div class="right">전시간</div>
+            <!-- <span id="Floor" class="sliderBody left"></span> -->
+          </div>
 
-        <!-- <div class="" style="border: black solid 1px; margin-bottom: 20px; padding: 15px;">
+          <!-- <div class="" style="border: black solid 1px; margin-bottom: 20px; padding: 15px;">
             <input id="switch1" type="checkbox" data-toggle="toggle" data-height="30" data-offstyle="outline-secondary"
               oninput="handleTimeFilter">
             <label for="switch1" class="form-check-label" style="height: 30px; line-height: 30px;">현재 운영중인 시설만 보기</p>
             </label>
           </div> -->
-        <!-- 맵 -->
-        <div id="mapContainer">
-          <canvas id="mapCanvas" style="background-color: gray; border:0">
+          <!-- 맵 -->
+          <div id="mapContainer">
+            <canvas id="mapCanvas" style="background-color: gray; border:0">
 
-          </canvas>
-          <!-- <img src="/images/sinchon_mainmap.png" id="map" style="z-index: 2; left: -341px; top: -1514px;" usemap="#clickable"></img>
+            </canvas>
+            <!-- <img src="/images/sinchon_mainmap.png" id="map" style="z-index: 2; left: -341px; top: -1514px;" usemap="#clickable"></img>
             <map name="clickable" id="clickable">
               <area shape="poly" coords="850,1656,850,1712,852,1712,852,1751,891,1751,891,1656" alt="학생회관">
             </map> -->
-          <!-- <svg src="/images/sinchon_mainmap.svg" style="z-index: 399; fill:black; float:left">
+            <!-- <svg src="/images/sinchon_mainmap.svg" style="z-index: 399; fill:black; float:left">
               <svg src="/images/sinchon_mainmap.png" id="map" style="z-index: 2; left: -341px; top: -1514px;" usemap="#clickable"></svg> -->
-          <!-- <polygon points="0,0 0,56 2,56 2,95 41,95 41,0" style="fill:lime;stroke:purple;stroke-width:1; z-index:400; position:absolute"/>
+            <!-- <polygon points="0,0 0,56 2,56 2,95 41,95 41,0" style="fill:lime;stroke:purple;stroke-width:1; z-index:400; position:absolute"/>
             </svg> -->
 
-          <!-- <div id="UI"
-              style="background-color: white;border: blue solid 1px; height: 30vh; z-index: 200; position: absolute; display: none;">
-              <button type="button" id="UICloseBtn" class="btn btn-secondary btn-sm"
-                style="position: absolute; z-index: 201; width: 30px; height: 30px;">x</button>
-              <div class="container fluid">
-                <div class="row">
-                  <div class="col">
-                    <h2 id="UITitle"> Title </h2>
-                  </div>
-                </div>
-              </div>
-            </div> -->
+          </div>
         </div>
       </div>
+      <div class="empty"></div>
     </div>
-    <div class="empty"></div>
-  </div>
   </div>
 
+  <script src="/javascripts/data.js"></script>
   <script src="/javascripts/map.js"></script>
-  <script src="/javascripts/index.js"></script>
-  <script src="/javascripts/search.js"></script>
+  <script src="/javascripts/sidebar.js"></script>
   <script src="/javascripts/filter.js"></script>
+  <script src="/javascripts/index.js"></script>
 
 
   <!-- <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script> -->

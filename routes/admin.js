@@ -15,26 +15,27 @@ console.log("admin.js");
 // var dbs = require('../api/dbs')
 
 // var ID = 'admin@yonsei.ac.kr'
-  var ID = 'admin'
-  var PW = 'admin'
-  // var ID = '1'
-  // var PW = '1'
-  var validateCookie = 'bqweqeqDFQW12'
+var ID = 'admin'
+var PW = 'admin'
+// var ID = '1'
+// var PW = '1'
+var validateCookie = 'bqweqeqDFQW12'
 
-  router.use('/:campus/main', (req, res, next)=>{
-  
-    // console.log(sinchonDB)
-    //cookie로 로그인체크, vulnerable
-      if(req.cookies.loggedIn == validateCookie){
-        var buildingData = req.app.get('buildingData')
-        // buildingData.sinchonBuildings[401] = 'afads'
-        // console.log(buildingData['sinchon']['301'])
-        res.render('admin', {buildingData:buildingData, campus: req.params.campus, building: 'main' });
-    
-      } else {
-        res.redirect('/admin')
-      }
-    })
+router.use('/:campus/main', (req, res, next)=>{
+
+// console.log(sinchonDB)
+//cookie로 로그인체크, vulnerable
+    if(req.cookies.loggedIn == validateCookie){
+        console.log("asdfa")
+    var buildingData = req.app.get('buildingData')
+    // buildingData.sinchonBuildings[401] = 'afads'
+    // console.log(buildingData['sinchon']['301'])
+    res.render('admin', {buildingData:buildingData, campus: req.params.campus, building: 'main' });
+
+    } else {
+    res.redirect('/admin')
+    }
+})
 
 router.use('/:campus/:building', (req, res, next)=>{
   

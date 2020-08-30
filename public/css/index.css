@@ -42,6 +42,52 @@ h2 {
   text-align: center;
 }
 
+.ui-menu {
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.my-btn {
+  font-family: "NanumSquare";
+  border: 0.5px solid #ced4da;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 3px 5px;
+  font-size: 1rem;
+}
+
+.my-dropdown {
+  font-family: "NanumSquare";
+  border: 0.5px solid #ced4da;
+  border-radius: 5px;
+  padding: 2px 10px;
+}
+
+.my-dropdown::after{
+  content: "▼";
+  float: right;
+  border:none;
+  /* vertical-align: 2px; */
+}
+
+.my-dropdownBody {
+  width: 100%;
+  margin-top:0px;
+}
+
+#sidebar h2.mytab-selected::after {
+  border-bottom: 3px solid #1F3C73 !important;
+  width: 100%;
+}
+
+.dropdown-item {
+  padding : 3px 1em 3px .4em;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+  background-color: #007bff;
+}
+
 .mapBody {
   position: relative;
   margin: 0px;
@@ -61,11 +107,12 @@ h2 {
   -webkit-box-shadow: 15px 3px 12px -5px rgba(0, 0, 0, 0.38);
   -moz-box-shadow: 15px 3px 12px -5px rgba(0, 0, 0, 0.38);
   box-shadow: 15px 3px 12px -5px rgba(0, 0, 0, 0.38);
+  margin-left: 0;
 }
 
-/* #sidebar.closed {
-display: none !important;
-} */
+#sidebar.closed {
+  margin-left: -1300px;
+}
 
 #sidebarCollapse {
   position: relative;
@@ -85,7 +132,11 @@ display: none !important;
   box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-header {
+#phone-sidebar-toggler{
+  display: none;
+}
+
+#sidebar-header {
   position: relative;
   background-color: #EDEDED;
   height: 155px;
@@ -93,22 +144,34 @@ display: none !important;
   padding-bottom: 30px;
   padding-left: 20px;
   padding-right: 20px;
+}
 
+#searchButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  height: 100%;
+  background-color: #e2e3e5;
+  width: 25px;
 }
 
 
 /* Toggling the sidebar header content, hide the big heading [h3] and showing the small heading [strong] and vice versa*/
 
+.no-after::after {
+  content: none !important;
+}
+
 #sidebar h2 {
   color: #1F3C73;
-  font-size: 17px;
+  font-size: 1rem;
   text-align: center;
   font-weight: 900;
 }
 
 #sidebar h2::after {
   content: "";
-
   display: block;
   /* This will put the pseudo element on its own line. */
   margin: 0 auto;
@@ -126,9 +189,33 @@ display: none !important;
   font-weight: 900;
 }
 
-#sidebar .sidebar-body {
+#sidebar h5 {
+  color: #1F3C73;
+  font-size: 0.85rem;
+  text-align: left;
+  font-weight: 900;
+  margin-bottom: 0.3rem;
+}
+
+#sidebar p {
+  font-size: 0.75rem;
+}
+
+.sidebar-body-frame {
+  overflow-y: scroll; 
+  height: calc(100% - 155px);
+  max-height: calc(100% - 155px);
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.sidebar-body-frame::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-body {
+  margin:0px;
   padding: 20px;
-  position: absolute;
   padding-bottom: 0;
 }
 
@@ -142,6 +229,113 @@ display: none !important;
   width: 92%;
   border-bottom: 0.5px solid black !important;
 }
+
+.sidebar-body > .row {
+  margin: auto;
+}
+
+/* spinner */
+#sidebar-building-loading {
+    width: 100%;
+    height:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 시설 안내 */
+
+.icon-div {
+  /* background-color: #1F3C73;
+  border-radius: 20%; */
+}
+
+.icon-div object {
+  width: inherit;
+}
+
+/* 길찾기 */
+.sidebar-main-direction-row {
+  align-items: center;
+  padding: 3px 0px;
+}
+
+.dir-searchbox-div {
+  height: 20px;
+  padding: 3px 5px;
+  border-radius: 15px;
+  margin: 5px 0px;
+  /* width: 150px; */
+  /* right: 30px; */
+  /* position: absolute; */
+}
+
+#direction_search {
+  float: right;
+  background-color: white;
+  border-color: #1F3C73;
+  font-size: 0.7rem;
+}
+
+/* 빌딩정보 */
+
+/* #sidebar-building-tabButtonDiv{
+  padding: 10px;
+  position: absolute;
+  width: 100%;
+  background-color: #f5f5f5;
+  height: 55px;
+}
+
+#sidebar-building-tabButtonGroup{
+  width: 180px;
+  height: 100%;
+}
+
+.sidebar-building-tabButtonClass{
+  border: 1px solid;
+  border-radius: 0px;
+  font-size:0.75rem;
+  box-shadow: none !important;
+  
+  align-items: center;
+  justify-content: center;
+  display: flex;
+
+}
+
+#sidebar-building-goBack {
+  height: 100%;
+  padding: 0px;
+  border: 0px;
+  float: right;
+  margin-left:10px;
+} */
+
+#sidebar-building-tab {
+  margin-bottom: 10px;
+}
+
+.sidebar-building-tabButton {
+  cursor: pointer;
+}
+
+#sidebar-building-picture {
+  max-width:100%;
+  margin-bottom: 1rem;
+}
+
+#sidebar-buildingFacilities-dropdown{
+  font-size: 0.7rem;
+  margin-bottom: 20px;
+}
+
+#sidebar-buildingFacilities-dropdownBody{
+  font-size: 0.7rem;
+}
+
+
+/* 공통? */
 
 #sidebar ul li a {
   text-align: left;
@@ -229,7 +423,7 @@ display: none !important;
 }
 
 .sliderBack .selected {
-  background-color: #1F3C73ab;
+  background-color: #1F3C73;
   -webkit-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
   -moz-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
   box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
@@ -244,47 +438,60 @@ display: none !important;
   }
 
   #mapContainer {
-    /* z-index: 20; */
     margin-top: 95px;
   }
 
-  #sidebar {
-    width: 100%;
-    height: 0;
-    background: none;
-    /* z-index: -9; */
-    /* left: 10%; */
+  #sidebar-header {
+    padding: 20px 10px 10px 10px;
+    width: 100vw;
+    height: 95px;
+    margin-left: 0px;
+  }
+  
+  .opened {
+    margin-left: 1300px !important;
   }
 
-  .sidebar-header {
-    padding: 20px 10px 10px 10px;
-    width: 100%;
-    height: 95px;
+  #phone-sidebar-toggler{
+    display: block;
+    position: fixed;
+    margin-top: -10px;
+    width: 25px;
+    text-align: center;
+    border: 0.5px solid black;
+    color: black;
   }
+  
+
+  .sidebar-body-frame{
+    background : white;
+    height: calc(100% - 95px);
+    max-height: none;
+  }
+
 
   #sidebarCollapse {
     display: none;
   }
 
   .sidebar-body {
-    width: 94%;
+    
+    /* width: 94%;
     left: 3%;
     height: 200px;
-    /* bottom: 20px; */
     position: absolute;
     background: #f7f7f7;
-    /* border: 1px solid black; */
     border-radius: 10px;
     -webkit-box-shadow: 10px 5px 12px -5px rgba(0, 0, 0, 0.38);
     -moz-box-shadow: 10px 5px 12px -5px rgba(0, 0, 0, 0.38);
-    box-shadow: 10px 5px 12px -5px rgba(0, 0, 0, 0.38);
+    box-shadow: 10px 5px 12px -5px rgba(0, 0, 0, 0.38); */
   }
 
-  #mapSearch {
+  /* #mapSearch {
     width: calc(100% - 50px) !important;
     margin-left: 10px;
     z-index: 30;
-  }
+  } */
 
   /*silder*/
   .sliderBack {

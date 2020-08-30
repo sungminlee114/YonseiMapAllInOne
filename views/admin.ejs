@@ -250,7 +250,6 @@
         min-height: 100vh;
         transition: all 0.3s;
     }
-
     #content .edit{
         text-decoration: underline;
         color:skyblue;
@@ -258,18 +257,14 @@
     #content .edit:hover{
         color: blue;
         cursor : pointer;
-
     }
-
     #content .hideButtons{
         display: none;
     }
-
     #content #addBuildings {
         text-align: center; 
         background-color: #6161618a;
     }
-
     #content #addBuildings:hover {
         cursor: pointer;
         opacity: 0.7;
@@ -402,7 +397,6 @@
 
             <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
-
                     <button type="button" id="sidebarCollapse" class="btn btn-info">
                         <svg class="svg-inline--fa fa-align-left fa-w-14" aria-hidden="true" data-prefix="fas" data-icon="align-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M288 44v40c0 8.837-7.163 16-16 16H16c-8.837 0-16-7.163-16-16V44c0-8.837 7.163-16 16-16h256c8.837 0 16 7.163 16 16zM0 172v40c0 8.837 7.163 16 16 16h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16zm16 312h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm256-200H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16h256c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16z"></path></svg><i class="fas fa-align-left"></i>
                         <span>Toggle Sidebar</span>
@@ -410,7 +404,6 @@
                     <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <svg class="svg-inline--fa fa-align-justify fa-w-14" aria-hidden="true" data-prefix="fas" data-icon="align-justify" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M0 84V44c0-8.837 7.163-16 16-16h416c8.837 0 16 7.163 16 16v40c0 8.837-7.163 16-16 16H16c-8.837 0-16-7.163-16-16zm16 144h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 256h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0-128h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path></svg><i class="fas fa-align-justify"></i>
                     </button>
-
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav navbar-nav ml-auto">
                             <li class="nav-item active">
@@ -435,15 +428,11 @@
             <table id = "building_list" class="table table-striped" style="font-size: 0.9em; table-layout: fixed; word-break:break-all; ">
                 <thead class="thead-dark">
                   <tr>
-                    <th scope="col" style="">건물<br/>번호</th>
-                    <th scope="col" style="">이름</th>
-                    <th scope="col" style="">학기중 평일</th>
-                    <th scope="col" style="">학기중 주말</th>
-                    <th scope="col" style="">방학중 평일</th>
-                    <th scope="col" style="">방학중 주말</th>
-                    <th scope="col" style="width:160px;min-width : 160px;max-width: 160px;">지도내 좌표</th>
-                    <th scope="col" style="">특이사항</th>
-                    <th scope="col" style="">수정하기</th>
+                    <th scope="col" style="width: 86px;">건물번호</th>
+                    <th scope="col" style="width: 170px;">이름</th>
+                    <th scope="col" style="width: 200px;">운영시간</th>
+                    <th scope="col" style="">지도내 좌표</th>
+                    <th scope="col" style="width: 100px;">수정하기</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -451,17 +440,13 @@
                     <tr id = "row_<%=i%>">
                         <th scope="row"><%=buildingData[campus][i].BID%></th>
                         <td><%=buildingData[campus][i].BNAME%></td>
-                        <td><%=buildingData[campus][i].BTIME_SEM_DAY%></td>
-                        <td><%=buildingData[campus][i].BTIME_SEM_END%></td>
-                        <td><%=buildingData[campus][i].BTIME_VAC_DAY%></td>
-                        <td><%=buildingData[campus][i].BTIME_VAC_END%></td>
+                        <td><%=buildingData[campus][i].BOPENTIME%></td>
                         <td><%=buildingData[campus][i].BAREA%></td>
-                        <td><%=buildingData[campus][i].BETC%></td>
                         <td id = "editCell_<%=i%>"><span class=""><a class="edit editBuilding">수정</a> | <a class="edit deleteBuilding">삭제</a></span><span class="hideButtons"><a class="edit saveBuilding ">저장</a> | <a class="edit cancelEdit ">취소</a></span></td>
                     </tr>
                     <% }) %>
                     <tr>
-                        <th scope="row" colspan="9" id = "addBuildings" >건물 추가하기</td>
+                        <th scope="row" colspan="5" id = "addBuildings" >건물 추가하기</td>
                     </tr>
                 </tbody>
               </table>
@@ -469,19 +454,13 @@
             <!-- <h2>Collapsible Sidebar Using Bootstrap 4</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
             <div class="line"></div>
-
             <h2>Lorem Ipsum Dolor</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
             <div class="line"></div>
-
             <h2>Lorem Ipsum Dolor</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
             <div class="line"></div>
-
             <h3>Lorem Ipsum Dolor</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p> -->
         </div>
@@ -518,9 +497,11 @@
                 redirect: 'follow', // manual, *follow, error
                 referrer: 'no-referrer', // no-referrer, *client
             });
-
             if(response.ok){
-                
+                // raw.cells[0].innerHTML = data.BID;
+                // raw.cells[1].innerHTML = data.BNAME;
+                // raw.cells[2].innerHTML = data.BOPENTIME;
+                // raw.cells[3].innerHTML = data.BAREA;
                 location.reload()
                 // console.log('ok!', response.status, response.body, response.text());
             } else if (response.status == 403){
@@ -539,7 +520,6 @@
                 console.error(`Error: ${err}`);
                 }
     }
-
     let saveBuildingFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -548,16 +528,11 @@
         var data = {
             BID : raw.cells[0].textContent,
             BNAME : raw.cells[1].firstChild.value,
-            BTIME_SEM_DAY : raw.cells[2].firstChild.value,
-            BTIME_SEM_END : raw.cells[3].firstChild.value,
-            BTIME_VAC_DAY : raw.cells[4].firstChild.value,
-            BTIME_VAC_END : raw.cells[5].firstChild.value,
-            BAREA : raw.cells[6].firstChild.value,
-            BETC : raw.cells[7].firstChild.value,
+            BOPENTIME : raw.cells[2].firstChild.value,
+            BAREA : raw.cells[3].firstChild.value,
         };
-
         for (const [key, value] of Object.entries(data)) {
-            if(value == "" && key != 'BETC'){
+            if(value == ""){
                 alert("데이터에 공백이 있을 순 없습니다.")
                 return
             }
@@ -576,8 +551,11 @@
                 referrer: 'no-referrer', // no-referrer, *client
                 body: JSON.stringify(data), // body data type must match "Content-Type" header
                     });
-
             if(response.ok){
+                // raw.cells[0].innerHTML = data.BID;
+                // raw.cells[1].innerHTML = data.BNAME;
+                // raw.cells[2].innerHTML = data.BOPENTIME;
+                // raw.cells[3].innerHTML = data.BAREA;
                 location.reload()
                 // console.log('ok!', response.status, response.body, response.text());
             } else if (response.status == 403){
@@ -590,7 +568,6 @@
                         alert("건물번호는 비워둘 수 없습니다.")
                     } else if (data.code == "ER_BAD_FIELD_ERROR"){
                         alert("건물번호는 숫자여야 합니다.")
-                        console.log(data)
                     } else {
                         alert(data.code)
                     }
@@ -603,14 +580,12 @@
                 console.error(`Error: ${err}`);
                 }
     }
-
     let cancelEditFunc = (e) => {
         e.preventDefault();
         e.stopPropagation();
         
         var raw = e.target.parentNode.parentNode.parentNode
         var table = raw.parentNode.parentNode;
-
         for(var i = 1; i < table.rows[0].cells.length - 1; i++){
             
             raw.cells[i].removeChild(raw.cells[i].firstChild)
@@ -620,60 +595,46 @@
         raw.cells[table.rows[0].cells.length - 1].firstChild.classList.remove("hideButtons")
         
         focusedEditRow = null;
-
         // var raw = e.target.parentNode.parentNode.parentNode
         // console.log(tempEditRaw, raw)
         // raw.parentNode.replaceChild(tempEditRaw, raw)
         // raw.parentNode.removeChild(raw);
         // document.getElementById('addBuildings').classList.remove("hideButtons")
     }
-
     var tempEditVal = {}
     var focusedEditRow = null;
-
     let editBuildingFunc = (e)=>{
         e.preventDefault();
         e.stopPropagation();
-
         var raw = e.target.parentNode.parentNode.parentNode
         var table = raw.parentNode.parentNode;
         
         if (focusedEditRow != null){
-
             document.getElementById('building_list').rows[focusedEditRow].cells[table.rows[0].cells.length - 1].lastChild.lastChild.click()
         }
-
         if (document.getElementsByClassName("cancelRegister").length > 0){
             document.getElementById('building_list').rows[table.rows.length-2].cells[table.rows[0].cells.length - 1].lastChild.lastChild.click()
         }
-
         focusedEditRow = raw.rowIndex;
         let temp = raw.cells
-
         for(var i = 1; i < table.rows[0].cells.length - 1; i++){
-            var input = document.createElement("textarea")
+            var input = document.createElement("input")
             input.type = "text"
             input.name = `cell_${i}`
-            input.style = "width: 100%; resize:both;"
+            input.style = "width: 100%;"
             input.value = temp[i].textContent
             
             tempEditVal[i] = temp[i].textContent
-            if(tempEditVal[i] !== ''){
-                raw.cells[i].removeChild(raw.cells[i].firstChild)
-            }
+            raw.cells[i].removeChild(raw.cells[i].firstChild)
             raw.cells[i].appendChild(input)
-            
         }
         raw.cells[table.rows[0].cells.length - 1].firstChild.classList.add("hideButtons")
         raw.cells[table.rows[0].cells.length - 1].lastChild.classList.remove("hideButtons")
         
         // document.getElementById('addBuildings').classList.add("hideButtons")
     }
-
     
-
     
-
     
     let registerBuildingFunc = async (e) => {
         e.preventDefault();
@@ -683,16 +644,11 @@
         var data = {
             BID : raw.cells[0].firstChild.value,
             BNAME : raw.cells[1].firstChild.value,
-            BTIME_SEM_DAY : raw.cells[2].firstChild.value,
-            BTIME_SEM_END : raw.cells[3].firstChild.value,
-            BTIME_VAC_DAY : raw.cells[4].firstChild.value,
-            BTIME_VAC_END : raw.cells[5].firstChild.value,
-            BAREA : raw.cells[6].firstChild.value,
-            BETC : raw.cells[7].firstChild.value,
+            BOPENTIME : raw.cells[2].firstChild.value,
+            BAREA : raw.cells[3].firstChild.value,
         };
-
         for (const [key, value] of Object.entries(data)) {
-            if(value == "" && key != 'BETC'){
+            if(value == ""){
                 alert("데이터에 공백이 있을 순 없습니다.")
                 return
             }
@@ -711,8 +667,11 @@
                 referrer: 'no-referrer', // no-referrer, *client
                 body: JSON.stringify(data), // body data type must match "Content-Type" header
                     });
-
             if(response.ok){
+                // raw.cells[0].innerHTML = data.BID;
+                // raw.cells[1].innerHTML = data.BNAME;
+                // raw.cells[2].innerHTML = data.BOPENTIME;
+                // raw.cells[3].innerHTML = data.BAREA;
                 location.reload()
                 // console.log('ok!', response.status, response.body, response.text());
             } else if (response.status == 403){
@@ -735,35 +694,29 @@
                 console.error(`Error: ${err}`);
                 }
     }
-
     
-
     let cancelRegisterFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
         var raw = e.target.parentNode.parentNode.parentNode
         raw.parentNode.removeChild(raw);
         document.getElementById('addBuildings').classList.remove("hideButtons")
-
     }
                     
     
-
     document.getElementById('addBuildings').addEventListener('click',(e)=>{
         e.preventDefault();
         e.stopPropagation();
         var tbody = e.target.parentNode.parentNode
         var row = tbody.insertRow(tbody.parentNode.rows.length-2)
-
         if (focusedEditRow != null){
             document.getElementById('building_list').rows[focusedEditRow].cells[tbody.parentNode.rows[0].cells.length - 1].lastChild.lastChild.click()
         }
-
         for(var i = 0; i < tbody.parentNode.rows[0].cells.length - 1; i++){
-            var input = document.createElement("textarea")
+            var input = document.createElement("input")
             input.type = "text"
             input.name = `cell_${i}`
-            input.style = "width: 100%; resize:both;"
+            input.style = "width: 100%;"
             row.insertCell(i).appendChild(input)
         }
         var a = document.createElement("a")
@@ -772,7 +725,6 @@
         a.addEventListener('click', registerBuildingFunc);
         
         var txt = document.createTextNode(" | ")
-
         var b = document.createElement("a")
         b.className = "edit cancelRegister";
         b.innerHTML = "취소"
@@ -784,7 +736,6 @@
         row.insertCell(tbody.parentNode.rows[0].cells.length - 1).appendChild(span)
         document.getElementById('addBuildings').classList.add("hideButtons")
     });
-
     window.onload = () =>{
         //Focus & Activate Effect
         document.getElementById('list_<%=campus%>').classList.add("active")
@@ -799,15 +750,12 @@
             
             el.addEventListener("click", deleteBuildingFunc)
         })
-
         Array.prototype.forEach.call(document.getElementsByClassName("editBuilding"), el=>{
             el.addEventListener("click", editBuildingFunc)
         })
-
         Array.prototype.forEach.call(document.getElementsByClassName("cancelEdit"), el=>{
             el.addEventListener("click", cancelEditFunc)
         })
-
         Array.prototype.forEach.call(document.getElementsByClassName("saveBuilding"), el=>{
             el.addEventListener("click", saveBuildingFunc)
         })

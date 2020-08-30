@@ -1,94 +1,111 @@
-// utils
-var wrapFunction = function(fn, context, params) {
-  return function() {
+/*
+이 js파일은 index.ejs의 지도화면에 관한 함수들이 있는 파일입니다.
+
+만든이 : 연세대학교 제55대 총학생회 Mate 사무운영국원, 공과대학 글로벌융합공학부 18학번 이성민 (starmin114@yonsei.ac.kr)
+*/
+
+/* -- [utils] -- */
+let wrapFunction = function (fn, context, params) {
+  return function () {
     fn.apply(context, params);
   };
 };
 
-var alignViewToMiddle = (m, zoomReset = false) => {
-  mx = m.x;
-  my = m.y;
-  if(zoomReset){
-    var _zoom = Math.max(cw / iw, ch / ih) + 1;
-    changeZoom(_zoom, ({x:cx, y:cy}))
-  }
-    
-  var a = coordIm2CanvasSingle(m),
-    b = { x: cx + cw / 2, y: cy + ch / 2 };
-  var c = get2dDiff(b, a);
-  // var aa = Math.abs(c.x), ab = Math.abs(c.y);
-  // for(var i = 0; i < Math.min(aa, ab); i++){
-  //     if(moveView() == false)
-  //         break;
-
-  // }
-  
-  moveView(c, true);
-  redrawCanvas();
+//두 점좌표의 차이(f - i) 반환
+let get2dDiff = (i, f) => {
+  return { x: f.x - i.x, y: f.y - i.y };
 };
 
-let coordIm2CanvasSingle = pos => {
-  var rx = cx + ((pos.x - sx) / sw) * cw,
-    ry = cy + ((pos.y - sy) / sh) * ch;
+//점좌표가 구역안에 있는지 반환
+let isinArea = (point, area) => {
+  let x = point.x,
+    y = point.y;
+  let inside = false;
+  for (let i = 0, j = area.length - 1; i < area.length; j = i++) {
+    let xi = area[i].x,
+      yi = area[i].y;
+    let xj = area[j].x,
+      yj = area[j].y;
+    let isYBetween = yi > y != yj > y;
+    let isXIntersect = x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    let intersect = isYBetween && isXIntersect;
+    if (intersect) inside = !inside;
+  }
+  return inside;
+};
+
+//한 건물의 area의 평균 구하기
+let getAveragePointOfArea = (area) => {
+  let len = area.length;
+  let pos = {x:0, y:0};
+  for(let i = 0; i < len; i++){
+    pos.x += area[i].x
+    pos.y += area[i].y
+  }
+  pos = {
+    x: pos.x / len,
+    y: pos.y / len
+  }
+  return pos
+}
+
+//prev 와 current로 이루어진 cache 업데이트
+let updateCache = (cache, data) => {
+  cache.prev = cache.current;
+  cache.current = data;
+  return cache;
+};
+
+//그림좌표계의 점좌표를 화면좌표계의 점좌표로 변환
+let coordIm2CanvasSingle = (iPos) => {
+  let rx = canvasSize.x + ((iPos.x - screenSize.x) / screenSize.w) * canvasSize.w,
+    ry = canvasSize.y + ((iPos.y - screenSize.y) / screenSize.h) * canvasSize.h;
   return { x: rx, y: ry };
 };
 
-let coordIm2Canvas = imVertexs => {
-  var ret = [];
-  imVertexs.forEach(imVertex => {
-    // if (rx >= cx && rx < cx + cw && ry >= cy && ry < cy + ch) {
+//화면좌표계의 점좌표를 그림좌표계의 점좌표로 변환
+let coordCanvas2ImSingle = (cPos) => {
+  let rx = screenSize.x + ((cPos.x - canvasSize.x) / canvasSize.w) * screenSize.w,
+    ry = screenSize.y + ((cPos.y - canvasSize.y) / canvasSize.h) * screenSize.h;
+  return { x: rx, y: ry };
+};
+
+//그림좌표계의 점좌표들을 화면좌표계의 점좌표들로 변환
+let coordIm2Canvas = (imVertexs) => {
+  let ret = [];
+  imVertexs.forEach((imVertex) => {
+    // if (rx >= canvasSize.x && rx < canvasSize.x + canvasSize.w && ry >= canvasSize.y && ry < canvasSize.y + canvasSize.h) {
     ret.push(coordIm2CanvasSingle(imVertex));
     // }
   });
   return ret;
 };
 
-let getPointerPosinCanvas = e => {
+//화면좌표계에서의 포인터좌표 반환
+let getPointerPosinCanvas = (e) => {
   return {
-    x: e.pageX - mapContainer[0].getBoundingClientRect().left - window.scrollX,
-    y: e.pageY - mapContainer[0].getBoundingClientRect().top - window.scrollY
+    x: e.pageX - mapContainer.getBoundingClientRect().left - window.scrollX,
+    y: e.pageY - mapContainer.getBoundingClientRect().top - window.scrollY,
   };
 };
 
-let getPointerPosinImage = e => {
+//그림좌표계에서의 포인터좌표 반환
+let getPointerPosinImage = (e) => {
   let canvasPos = getPointerPosinCanvas(e);
-
-  var rx = sx + (canvasPos.x / cw) * sw,
-    ry = sy + (canvasPos.y / ch) * sh;
-
-  return { x: rx, y: ry };
+  return coordCanvas2ImSingle(canvasPos);
 };
 
-let updateCache = (cache, data) => {
-  cache.prev = cache.current;
-  cache.current = data;
-  // console.log("updateCache1",cache.prev)
-  return cache;
-};
-
-let get2dDiff = (i, f) => {
-  // console.log("diff",i,f)
-  return { x: f.x - i.x, y: f.y - i.y };
-};
-
-let isinArea = (point, area) => {
-  var x = point.x, y = point.y;
-  var inside = false;
-  for (var i = 0, j = area.length - 1; i < area.length; j = i++) {
-      var xi = area[i].x, yi = area[i].y;
-      var xj = area[j].x, yj = area[j].y;
-      let isYBetween = (yi > y) != (yj > y);
-      let isXIntersect = (x < ((xj - xi) * (y - yi) / (yj - yi)) + xi);
-      var intersect = (isYBetween) && (isXIntersect);
-      if (intersect) inside = !inside;
-  }
-  return inside;
-};
-
-let isinBuildings = (pos, buildingList) => {
-  var ret = null;
-  buildingList.some(building => {
-    if (isinArea(pos, building.area)) {
+//(마우스)좌표가 속한 구역의 빌딩정보 반환
+let isinBuildings = (ipos, buildingList) => {
+  let currentScreenBoundary = [
+    {x: screenSize.x, y: screenSize.y},
+    {x: screenSize.x, y: screenSize.y + screenSize.h},
+    {x: screenSize.x + screenSize.w, y: screenSize.y + screenSize.h},
+    {x: screenSize.x + screenSize.w, y: screenSize.y}
+  ]
+  let ret = null;
+  buildingList.some((building) => {
+    if (isinArea(ipos, building.area) && isinArea(ipos, currentScreenBoundary)) {
       ret = building;
       return true;
     } else return false;
@@ -96,23 +113,25 @@ let isinBuildings = (pos, buildingList) => {
   return ret;
 };
 
-let fillByImageVertex = (area, color) => {
+//그림좌표계상의 구역들을 색칠
+let fillByImageVertex = (iarea, color) => {
   ctx.beginPath();
-  area = coordIm2Canvas(area);
-  ctx.moveTo(area[0].x, area[0].y);
-  for (var i = 1; i < area.length; i++) {
-    ctx.lineTo(area[i].x, area[i].y);
+  sarea = coordIm2Canvas(iarea);
+  ctx.moveTo(area[0].x, sarea[0].y);
+  for (let i = 1; i < sarea.length; i++) {
+    ctx.lineTo(area[i].x, sarea[i].y);
   }
   ctx.fillStyle = color;
   ctx.fill();
 };
 
+//그림좌표계상의 구역들의 선을 그림
 let strokeByImageVertex = (area, color) => {
   ctx.beginPath();
   area = coordIm2Canvas(area);
   // console.log(area)
   ctx.moveTo(area[0].x, area[0].y);
-  for (var i = 1; i < area.length; i++) {
+  for (let i = 1; i < area.length; i++) {
     ctx.lineTo(area[i].x, area[i].y);
   }
   ctx.lineTo(area[0].x, area[0].y);
@@ -120,8 +139,9 @@ let strokeByImageVertex = (area, color) => {
   ctx.stroke();
 };
 
+// draw할 것들을 저장
 let pushDrawQ = (building, color, state, type, draw = true) => {
-  var f;
+  let f;
   if (type == "stroke")
     f = wrapFunction(strokeByImageVertex, this, [building.area, color]);
   else if (type == "fill")
@@ -131,106 +151,164 @@ let pushDrawQ = (building, color, state, type, draw = true) => {
   // console.log("push", building, state, Q)
 };
 
+// draw할 필요 없는것들을 제외
 let deleteDrawQ = (building, state, draw = true) => {
-  drawQ = drawQ.filter(function(item) {
-    // console.log(item.id, building.id, item.state, state)
+  drawQ = drawQ.filter(function (item) {
     if (building != null && state != null)
       return item.id != building.id || item.state != state;
     else if (building == null) return item.state != state;
     else if (state == null) return item.id != building.id;
     else return false;
   });
-  // console.log("delete", building, state, drawQ)
   if (draw) redrawCanvas();
 };
 
-// method
+/* ================================ */
 
-var changeZoom = (_zoom, o) => {
-  // if(_zoom != null)
-  var l1x = o.x - cx,
-    l1y = o.y - cy,
-    osx = sx + (l1x / cw) * sw,
-    osy = sy + (l1y / ch) * sh;
+/* [drawing functions] */
 
-  var rw = cw / _zoom,
-    rh = ch / _zoom,
-    rx = osx - (l1x / cw) * rw,
-    ry = osy - (l1y / ch) * rh;
-
-  // console.log([ox, oy, rx, ry, rw, ry, _zoom]);
-
-  if (
-    ((rx >= 0 && rx + rw < iw && ry >= 0 && ry + rh < ih) || _zoom > zoom) &&
-    _zoom < 5 &&
-    _zoom > 0
-  ) {
-    (sw = rw), (sh = rh), (sx = rx), (sy = ry), (zoom = _zoom);
-    mx = sx + sw / 2;
-    my = sy + sh / 2;
-    // redrawCanvas();
-    //
-  } else console.log([rx, ry, rw, ry, _zoom]);
-  // console.log(_zoom, ox, oy, l1x/cw, l1y/cw, "/n", (l1x+l2x)/cw,  osx, osy, sx, sy);
-  redrawCanvas();
-};
-
-var moveView = (diff, large = false) => {
-
-
-
-  var mcx = diff.x,
-    mcy = diff.y;
-  var msx = mcx / zoom;
-  var msy = mcy / zoom;
-
-  //checkMove
-  var rx = sx + msx,
-    ry = sy + msy;
-    sx = msx >= 0 ? Math.min(rx, iw - sw - 1) : Math.max(rx, 0);
-    sy = msy >= 0 ? Math.min(ry, ih - sh - 1) : Math.max(ry, 0);
-
-    // sx = rx;
-    // sy = ry;
-    // console.log(msx)
-    redrawCanvas();
-    return true;
-    //   mx =
-
-  //   console.log([mcx, mcy])
-//   else {
-//     if (
-//       (rx >= 0 && rx + sw < iw && ry >= 0 && ry + sh < ih) ||
-//       (rx < 0 && msx > 0) ||
-//       (rx + sw >= iw && msx < 0) ||
-//       (ry < 0 && msy > 0) ||
-//       (ry + sh >= ih && msy < 0)
-//     ) {
-//       sx += msx;
-//       sy += msy;
-//       mx += msx;
-//       my += msy;
-//       if (!large) redrawCanvas();
-//       return true;
-//     } else console.log([rx, rx + sw, iw, sy, ry + sh, ih]);
-//   }
-//   return false;
-};
-
-var click = (e, check = false) => {
-  let pos = getPointerPosinImage(e);
-  if (check) pointingBuilding = isinBuildings(pos, buildingList);
-  if (pointingBuilding != null) {
-    clickBuilding(pointingBuilding);
-  } else if (isClicking && pointingBuilding == null) {
-    unclickBuilding(prevClickingBuilding);
+//각 지도의 중앙좌표 상수
+const mapMiddleCoord = {
+  sinchon: {
+    x : 1112,
+    y : 2045
   }
 };
 
-var pointingBuilding = null,
+let zoom = 2;
+
+//실제 캔버스의 크기 (x,y,w,h)
+//x, y는 항상 0임.
+let canvasSize = {
+  x : 0,
+  y : 0
+};
+
+//그림에서 느끼는 zoom된 캔버스의 크기 (x,y,w,h)
+let screenSize = {
+  x : 0,
+  y : 0
+};
+
+//실제 그림크기(w,h)
+let imageSize = {
+};
+
+// // 스크린의 중앙 (x, y)
+let screenMiddle = {
+};
+
+let mapCanvas = document.getElementById("mapCanvas");
+let ctx = mapCanvas.getContext("2d");
+let drawQ = [];
+
+let isHovering = false,
+  isClicking = false;
+
+/* -- load image -- */ 
+
+let imgClo = new Image();
+imgClo.src = "/images/sinchon_mainmap.png";
+
+imgClo.addEventListener("load",() => {
+    console.log("load img");
+    imageSize.w = imgClo.width;
+    imageSize.h = imgClo.height;
+    resizeCanvas(true);
+  },false);
+
+ /* -- functions -- */
+  
+// 그림좌표계의 점좌표를 화면의 정중앙으로 이동
+let alignScreenToMiddle = (m, zoomReset = false) => {
+  if (zoomReset) {
+    let _zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h) + 1;
+    changeZoom(_zoom, { x: canvasSize.x, y: canvasSize.y });
+  }
+
+  let a = coordIm2CanvasSingle(m),
+    b = { x: canvasSize.x + canvasSize.w / 2, y: canvasSize.y + canvasSize.h / 2 };
+  let c = get2dDiff(b, a);
+
+  moveScreen(c, true);
+
+  //redraw안에서 m 업데이트시켜줌.
+  redrawCanvas();
+};
+
+//화면내에 그림을 채워줌.
+let redrawCanvas = () => {
+  ctx.drawImage(imgClo, screenSize.x, screenSize.y, screenSize.w, screenSize.h, canvasSize.x, canvasSize.y, canvasSize.w, canvasSize.h);
+  screenMiddle.x = screenSize.x + screenSize.w / 2;
+  screenMiddle.y = screenSize.y + screenSize.h / 2;
+  
+  //길, 건물 outline등을 모두 그려줘야함.
+  drawQ.forEach((q) => {
+    q.func();
+  });
+};
+
+let resizeCanvas = first => {
+  //canvas
+  canvasSize.w = mapContainer.getBoundingClientRect().width;
+  canvasSize.h = mapContainer.getBoundingClientRect().height;
+  ctx.canvas.width = canvasSize.w;
+  ctx.canvas.height = canvasSize.h;
+
+  //최적의 zoom으로 초기화
+  if (first)
+    zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h) + 1;
+
+  screenSize.w = Math.floor(canvasSize.w / zoom);
+  screenSize.h = Math.floor(canvasSize.h / zoom);
+
+  if (first)
+    alignScreenToMiddle(mapMiddleCoord.sinchon);
+  else
+    alignScreenToMiddle(screenMiddle);
+};
+
+//zoom하기
+let changeZoom = (_zoom, cPos) => {
+  let iPos = coordCanvas2ImSingle(cPos);
+  let l = get2dDiff(canvasSize, cPos);
+
+  let rw = canvasSize.w / _zoom,
+    rh = canvasSize.h / _zoom,
+    rx = iPos.x - ( l.x / canvasSize.w) * rw,
+    ry = iPos.y - ( l.y / canvasSize.h) * rh;
+  if (
+    ((rx >= 0 && rx + rw < imageSize.w && ry >= 0 && ry + rh < imageSize.h) || _zoom > zoom) &&
+    _zoom < 5 &&
+    _zoom > 0
+  ) {
+    (screenSize.w = rw), (screenSize.h = rh), (screenSize.x = rx), (screenSize.y = ry), (zoom = _zoom);
+  } 
+  else console.log([rx, ry, rw, ry, _zoom]);
+  redrawCanvas();
+};
+
+//화면 옮기기
+const moveScreen = (diff, large = false) => {
+  let mcx = diff.x,
+    mcy = diff.y;
+  let msx = mcx / zoom;
+  let msy = mcy / zoom;
+
+  //checkMove (최대범위 이상 나가지 못하게)
+  let rx = screenSize.x + msx,
+    ry = screenSize.y + msy;
+  screenSize.x = msx >= 0 ? Math.min(rx, imageSize.w - screenSize.w - 1) : Math.max(rx, 0);
+  screenSize.y = msy >= 0 ? Math.min(ry, imageSize.h - screenSize.h - 1) : Math.max(ry, 0);
+
+  redrawCanvas();
+  return true;
+};
+
+let pointingBuilding = null,
   prevClickingBuilding;
 
-let checkHovering = e => {
+let checkHovering = (e) => {
   let pos = getPointerPosinImage(e);
   pointingBuilding = isinBuildings(pos, buildingList);
   if (inputState && pointingBuilding != null) {
@@ -244,66 +322,71 @@ let checkHovering = e => {
   }
 };
 
-var cPosCache = {
+let uncheckHovering = () => {
+  deleteDrawQ(null, "hover", "stroke", drawQ);
+  isHovering = false;
+}
+
+//click building
+let clickBuilding = (building) => {
+  // 화면 맞추고 줌
+  alignScreenToMiddle(
+    getAveragePointOfArea(building.area),
+    true
+  );
+  changeZoom(1.5, coordIm2CanvasSingle({ x: building.area[0].x, y: building.area[0].y }));
+  
+
+  unclickBuilding();
+  pointingBuilding = building
+  // if (pointingBuilding == null) pointingBuilding = building;
+  // prevClickingBuilding = pointingBuilding;
+  if (
+    !drawQ.find((item) => {
+      return item.id == pointingBuilding.id && item.state == "click";
+    })
+  )
+    pushDrawQ(building, "red", "click", "stroke");
+
+  isClicking = true;
+
+  if (!sidebarIsOpened()) toggleSideBar();
+  sidebar_loadBuildingDetail(building)
+};
+
+let unclickBuilding = (building) => {
+  deleteDrawQ(building, "click");
+  isClicking = false;
+  sidebar_loadMain();
+};
+
+let unclickEveryBuilding = () => {
+  unclickBuilding(null);
+};
+
+/* ================================ */
+
+
+/* [handle user interaction] */
+let cPosCache = {
   prev: null,
-  current: null
+  current: null,
 };
-
-var cDistCache = {
+let cDistCache = {
   prev: null,
-  current: null
+  current: null,
 };
 
-// let click = (e) =>{
-
-// };
-
-// drag and Mobile zoom
-// var startX, startY;
-// var isDrag = false;
-// var prevDiff = -1;
-// var dragStart = e => {
-//   if (e.touches != undefined) {
-//     e.preventDefault();
-//     e.stopPropagation();
-//   }
-//   startX = e.pageX;
-//   startY = e.pageY;
-//   if (isDrag == false) {
-//     //check click building
-//     if (true) {
-//       isDrag = true;
-//     }
-//   }
-// };
-
-let drag = e => {
-  cPosCache = updateCache(cPosCache, getPointerPosinCanvas(e));
-  // console.log("drag1",e)
-  // console.log("drag2",cPosCache.prev)
-  // console.log("drag2",cPosCache)
-  moveView(get2dDiff(cPosCache.current, cPosCache.prev));
-};
-
-var dragEnd = e => {};
-
-// mapCanvas.addEventListener("touchcancel", dragStop, { passive: false });
-
-// PC zoom
-
-var zoomScroll = e => {
-  //   if ($("#mapCanvas:hover").length != 0) {
-  //     e.preventDefault();
-  //     e.stopPropagation();
-  //   }
-
+/* ---- zoom ----*/
+//middle wheel zoom (PC)
+let scrollZoom = (e) => {
   if (e.detail) {
     dy = e.detail * -40;
   } else {
     dy = e.wheelDelta;
   }
 
-  var _zoom = zoom;
+  let _zoom = zoom;
   if (dy > 0) {
     _zoom += 0.1;
   } else {
@@ -312,15 +395,16 @@ var zoomScroll = e => {
   changeZoom(_zoom, getPointerPosinCanvas(e));
 };
 
-let pinchZoom = e => {
-  var a = getPointerPosinCanvas(e[0]),
+//two finger zoom (mobile)
+let pinchZoom = (e) => {
+  let a = getPointerPosinCanvas(e[0]),
     b = getPointerPosinCanvas(e[1]);
   updateCache(cDistCache, Math.hypot(a.x - b.x, a.y - b.y));
 
-  var _zoom = zoom;
+  let _zoom = zoom;
   if (cDistCache.prev != null) {
-    var p = 0;
-    var d = cDistCache.current - cDistCache.prev;
+    let p = 0;
+    let d = cDistCache.current - cDistCache.prev;
     if (d > 0) p = 1;
     else if (d < 0) p = -1;
     //   alert(d)
@@ -328,155 +412,65 @@ let pinchZoom = e => {
     _zoom += p * (0.0001 + zoom * 0.05);
 
     // console.log(_zoom)
-    var midx = (a.x + b.x) / 2,
+    let midx = (a.x + b.x) / 2,
       midy = (a.y + b.y) / 2;
     changeZoom(_zoom, { x: midx, y: midy });
   }
 };
 
-let doubleClickZoom = e => {
-  var _zoom = zoom;
-  // console.log(zoom)
-  var rat = 2;
+//double click/tap zoom (PC & mobile)
+let doubleClickZoom = (e) => {
+  let _zoom = zoom;
+  let rat = 2;
   if (zoom < 2) _zoom = rat * zoom;
   else _zoom = (1 / rat) * zoom;
 
   changeZoom(_zoom, getPointerPosinCanvas(e));
 };
 
-var zoom = 2;
-var pixelRatio;
-var sx,
-  sy,
-  sw,
-  sh,
-  cx = 0,
-  cy = 0,
-  cw,
-  ch,
-  mx,
-  my,
-  cmx, //current middle cache
-  cmy;
-
-var iw, ih;
-
-var mapCanvas = document.getElementById("mapCanvas");
-var ctx = mapCanvas.getContext("2d");
-var imgClo = new Image();
-    imgClo.src = "/images/sinchon_mainmap.png";
-
-    imgClo.addEventListener("load",
-    function() {
-      console.log("load img")
-      initCanvas();
-    }, false)
-
-var drawQ = [];
-
-var redrawCanvas = () => {
-  ctx.drawImage(imgClo, sx, sy, sw, sh, cx, cy, cw, ch);
-  cmx = (sx + sw/2);
-  cmy = (sy + sh/2);
-  // console.log("redraw", sx, sy, sw, sh)
-  drawQ.forEach(q => {
-    q.func();
-  });
-  // console.log("redraw2", cmx, cmy)
+/* ---- drag ----*/
+let drag = (e) => {
+  cPosCache = updateCache(cPosCache, getPointerPosinCanvas(e));
+  moveScreen(get2dDiff(cPosCache.current, cPosCache.prev));
 };
 
-var resizeCanvas = (first) => {
-  //canvas
-  cw = mapContainer[0].getBoundingClientRect().width;
-  ch = mapContainer[0].getBoundingClientRect().height;
-  ctx.canvas.width = cw;
-  ctx.canvas.height = ch;
-  sw = Math.floor(cw / zoom);
-  sh = Math.floor(ch / zoom);
+let dragEnd = (e) => {};
+
+/* ---- click ---- */
+
+let click = (e, check = false) => {
+  let pos = getPointerPosinImage(e);
+  if (check) pointingBuilding = isinBuildings(pos, buildingList);
   
-  if(first){
-    // console.log("asdfas")
-    alignViewToMiddle({ x: mx, y: my });
-  }else{
-    alignViewToMiddle({ x: cmx, y: cmy });
+  if (pointingBuilding != null) {
+    clickBuilding(pointingBuilding);
+  } else {
+    //바닥 클릭시 취소
+    unclickBuilding();
   }
-  // redrawCanvas();
 };
 
-var initCanvas = () => {
-  console.log("initCanvas")
-  // imgClo = new Image();
+/* ================================ */
 
-  cw = mapContainer[0].getBoundingClientRect().width;
-  ch = mapContainer[0].getBoundingClientRect().height;
-  ctx.canvas.width = cw;
-  ctx.canvas.height = ch;
-  //페이지 로드후 이미지가 로드 되었을 때 이미지 출력
-  // imgClo.addEventListener(
-  //   "load",
-  //   function() {
-      // console.log("load")
-      //canvas.drawImage() 함수를 사용하여 이미지 출력
-      //drawImage ( image, x, y )
-      //drawImage ( image, x, y, width, height )
-      //drawImage ( image, sx, sy, sWidth, sHeight, x, y, Width, Height )
-      iw = imgClo.width;
-      ih = imgClo.height;
-      zoom = Math.max(cw / iw, ch / ih) + 1;
-
-      sw = Math.floor(cw / zoom);
-      sh = Math.floor(ch / zoom);
-      mx = 1112;
-      my = 2045;
-      sx = 0;
-      sy = 0;
-      alignViewToMiddle({ x: mx, y: my });
-      ctx.drawImage(imgClo, sx, sy, sw, sh, cx, cy, cw, ch);
-      // drawQ.push(wrapDrawImage, this, []);
-  //   },
-  //   false
-  // );
-
-  //이미지 경로 설정
-  // imgClo.src = "/images/sinchon_mainmap.png";
-};
-var isHovering = false,
-  isClicking = false;
-
-//click building
-var clickBuilding = building => {
-  unclickBuilding(prevClickingBuilding);
-  if (pointingBuilding == null) pointingBuilding = building;
-  prevClickingBuilding = pointingBuilding;
-  if (
-    !drawQ.find(item => {
-      return item.id == pointingBuilding.id && item.state == "click";
-    })
-  )
-    pushDrawQ(building, "red", "click", "stroke");
-  // openUI(building);
-  isClicking = true;
-};
-
-let unclickBuilding = building => {
-  deleteDrawQ(building, "click");
-  // closeUI();
-  isClicking = false;
-};
+/* [GPS] */
 
 function getLocation() {
-  if (navigator.geolocation) { // GPS를 지원하면
-    navigator.geolocation.getCurrentPosition(function(position) {
-      alert(position.coords.latitude + ' ' + position.coords.longitude);
-    }, function(error) {
-      console.error(error);
-    }, {
-      enableHighAccuracy: false,
-      maximumAge: 0,
-      timeout: Infinity
-    });
+  if (navigator.geolocation) {
+    // GPS를 지원하면
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        alert(position.coords.latitude + " " + position.coords.longitude);
+      },
+      function (error) {
+        console.error(error);
+      },
+      {
+        enableHighAccuracy: false,
+        maximumAge: 0,
+        timeout: Infinity,
+      }
+    );
   } else {
-    alert('GPS를 지원하지 않습니다');
+    alert("GPS를 지원하지 않습니다");
   }
 }
-
