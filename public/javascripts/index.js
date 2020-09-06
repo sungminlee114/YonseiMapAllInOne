@@ -26,6 +26,19 @@ window.onload = () => {
   cacheMediaIsPhone = isPhone()
   if(!cacheMediaIsPhone)
     toggleSideBar();
+  else{
+    var _body = document.documentElement;
+    if (_body.requestFullscreen) {
+      _body.requestFullscreen();
+    } else if (_body.webkitrequestFullscreen) {
+      _body.webkitrequestFullscreen();
+    } else if (_body.mozrequestFullscreen) {
+      _body.mozrequestFullscreen();
+    } else if (_body.msrequestFullscreen) {
+      _body.msrequestFullscreen();
+    }
+    window. scrollTo(0, 0);
+  }
   sidebar_loadMain();
   resizeAll(true);
 };
@@ -150,8 +163,7 @@ var resizeAll = first => {
 
   //sidebar inside
   resizeSidebarInside()
-
-  //canvas
+  resizeCanvas(first);
   resizeCanvas(first);
 };
 
@@ -190,10 +202,10 @@ let toggleSideBar = () => {
   } else {
     if (!sidebarIsOpened()) {
       sideBar.classList.remove("closed");
-      sidebarCollapse.innerHTML = "◀";
+      sidebarCollapse.innerHTML = `<span id="collapseArrow" style="color:#1F3C73">◀</span>`;
     } else {
       sideBar.classList.add("closed");
-      sidebarCollapse.innerHTML = "▶";
+      sidebarCollapse.innerHTML = `<span id="collapseArrow" style="color:#1F3C73">▶</span>`;
     }
   }
 
