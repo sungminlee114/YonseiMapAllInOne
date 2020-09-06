@@ -430,7 +430,10 @@
                   <tr>
                     <th scope="col" style="width: 86px;">건물번호</th>
                     <th scope="col" style="width: 170px;">이름</th>
-                    <th scope="col" style="width: 200px;">운영시간</th>
+                    <th scope="col" style="width: 100px;">운영시간(학기주중)</th>
+                    <th scope="col" style="width: 100px;">운영시간(학기주말)</th>
+                    <th scope="col" style="width: 100px;">운영시간(방학주중)</th>
+                    <th scope="col" style="width: 100px;">운영시간(방학주말)</th>
                     <th scope="col" style="">지도내 좌표</th>
                     <th scope="col" style="width: 100px;">수정하기</th>
                   </tr>
@@ -440,7 +443,10 @@
                     <tr id = "row_<%=i%>">
                         <th scope="row"><%=buildingData[campus][i].BID%></th>
                         <td><%=buildingData[campus][i].BNAME%></td>
-                        <td><%=buildingData[campus][i].BOPENTIME%></td>
+                        <td><%=buildingData[campus][i].BTIME_SEM_DAY%></td>
+                        <td><%=buildingData[campus][i].BTIME_SEM_END%></td>
+                        <td><%=buildingData[campus][i].BTIME_VAC_DAY%></td>
+                        <td><%=buildingData[campus][i].BTIME_VAC_END%></td>
                         <td><%=buildingData[campus][i].BAREA%></td>
                         <td id = "editCell_<%=i%>"><span class=""><a class="edit editBuilding">수정</a> | <a class="edit deleteBuilding">삭제</a></span><span class="hideButtons"><a class="edit saveBuilding ">저장</a> | <a class="edit cancelEdit ">취소</a></span></td>
                     </tr>
@@ -528,8 +534,11 @@
         var data = {
             BID : raw.cells[0].textContent,
             BNAME : raw.cells[1].firstChild.value,
-            BOPENTIME : raw.cells[2].firstChild.value,
-            BAREA : raw.cells[3].firstChild.value,
+            BTIME_SEM_DAY : raw.cells[2].firstChild.value,
+            BTIME_SEM_END : raw.cells[3].firstChild.value,
+            BTIME_VAC_DAY : raw.cells[4].firstChild.value,
+            BTIME_VAC_END : raw.cells[5].firstChild.value,
+            BAREA : raw.cells[6].firstChild.value,
         };
         for (const [key, value] of Object.entries(data)) {
             if(value == ""){
@@ -606,7 +615,8 @@
     let editBuildingFunc = (e)=>{
         e.preventDefault();
         e.stopPropagation();
-        var raw = e.target.parentNode.parentNode.parentNode
+        var raw = e.target.parentNode.parentNode.parentNode;
+        console.log(raw)
         var table = raw.parentNode.parentNode;
         
         if (focusedEditRow != null){
@@ -625,6 +635,7 @@
             input.value = temp[i].textContent
             
             tempEditVal[i] = temp[i].textContent
+            console.log(i, raw.cells[i])
             raw.cells[i].removeChild(raw.cells[i].firstChild)
             raw.cells[i].appendChild(input)
         }
@@ -644,8 +655,11 @@
         var data = {
             BID : raw.cells[0].firstChild.value,
             BNAME : raw.cells[1].firstChild.value,
-            BOPENTIME : raw.cells[2].firstChild.value,
-            BAREA : raw.cells[3].firstChild.value,
+            BTIME_SEM_DAY : raw.cells[2].firstChild.value,
+            BTIME_SEM_END : raw.cells[3].firstChild.value,
+            BTIME_VAC_DAY : raw.cells[4].firstChild.value,
+            BTIME_VAC_END : raw.cells[5].firstChild.value,
+            BAREA : raw.cells[6].firstChild.value,
         };
         for (const [key, value] of Object.entries(data)) {
             if(value == ""){
