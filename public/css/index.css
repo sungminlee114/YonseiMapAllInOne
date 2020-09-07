@@ -454,7 +454,7 @@ h2 {
 
   #phone-sidebar-toggler{
     display: block;
-    position: fixed;
+    position: absolute;
     margin-top: -10px;
     width: 25px;
     text-align: center;

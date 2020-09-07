@@ -25,8 +25,9 @@ let cacheMediaIsPhone;
 window.onload = () => {
   cacheMediaIsPhone = isPhone()
   if(!cacheMediaIsPhone)
-    toggleSideBar();
+    _ = null;
   else{
+    toggleSideBar();
     var _body = document.documentElement;
     if (_body.requestFullscreen) {
       _body.requestFullscreen();
