@@ -16,6 +16,13 @@ let get2dDiff = (i, f) => {
   return { x: f.x - i.x, y: f.y - i.y };
 };
 
+const getAnimatedValue = (initial, final, index, max_index) =>{
+  const func = Math.sin
+  
+  const ret = (final - initial) * func((index / max_index) * (Math.PI / 2)) + initial;
+  return ret
+}
+
 //점좌표가 구역안에 있는지 반환
 let isinArea = (point, area) => {
   let x = point.x,
@@ -220,14 +227,17 @@ imgClo.addEventListener("load",() => {
  /* -- functions -- */
   
 // 그림좌표계의 점좌표를 화면의 정중앙으로 이동
-let alignScreenToMiddle = (m, zoomReset = false) => {
+let alignScreenToMiddle = (m, zoomReset = false, isph = false) => {
   if (zoomReset) {
     let _zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h) + 1;
-    changeZoom(_zoom, { x: canvasSize.x, y: canvasSize.y });
+    changeZoom(_zoom, { x: canvasSize.x, y: canvasSize.y }, true);
   }
-
+  
   let a = coordIm2CanvasSingle(m),
-    b = { x: canvasSize.x + canvasSize.w / 2, y: canvasSize.y + canvasSize.h / 2 };
+  b = { x: canvasSize.x + canvasSize.w / 2, y: canvasSize.y + canvasSize.h / 2 };
+  if(isph){
+    b.y -= 95;
+  }
   let c = get2dDiff(b, a);
 
   moveScreen(c, true);
@@ -250,14 +260,16 @@ let redrawCanvas = () => {
 
 let resizeCanvas = first => {
   //canvas
-  canvasSize.w = mapContainer.getBoundingClientRect().width;
-  canvasSize.h = mapContainer.getBoundingClientRect().height;
+  let rect = mapContainer.getBoundingClientRect();
+  if(!isNaN(rect.width) && !isNaN(rect.height) && rect.width > 0 && rect.height > 0){
+  canvasSize.w = rect.width;
+  canvasSize.h = rect.height;
   ctx.canvas.width = canvasSize.w;
   ctx.canvas.height = canvasSize.h;
 
   //최적의 zoom으로 초기화
   if (first)
-    zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h) + 1;
+  zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h) + 1;
 
   screenSize.w = Math.floor(canvasSize.w / zoom);
   screenSize.h = Math.floor(canvasSize.h / zoom);
@@ -266,10 +278,13 @@ let resizeCanvas = first => {
     alignScreenToMiddle(mapMiddleCoord.sinchon);
   else
     alignScreenToMiddle(screenMiddle);
+  }
 };
 
+
+
 //zoom하기
-let changeZoom = (_zoom, cPos) => {
+let changeZoom = (_zoom, cPos, smooth) => {
   let iPos = coordCanvas2ImSingle(cPos);
   let l = get2dDiff(canvasSize, cPos);
 
@@ -282,10 +297,32 @@ let changeZoom = (_zoom, cPos) => {
     _zoom < 5 &&
     _zoom > 0
   ) {
-    (screenSize.w = rw), (screenSize.h = rh), (screenSize.x = rx), (screenSize.y = ry), (zoom = _zoom);
+      if(smooth){
+        let index = 0;
+        let maxIndex = 10;
+        let initialSize = screenSize;
+        let __zoom = zoom;
+
+        const inte = setInterval(() => {
+          screenSize.w = getAnimatedValue(initialSize.w, rw, index, maxIndex)
+          screenSize.h = getAnimatedValue(initialSize.h, rh, index, maxIndex)
+          screenSize.x = getAnimatedValue(initialSize.x, rx, index, maxIndex)
+          screenSize.y = getAnimatedValue(initialSize.y, ry, index, maxIndex)
+          zoom = getAnimatedValue(__zoom, _zoom, index, maxIndex)
+          redrawCanvas();
+          if (++index === maxIndex) {
+            clearInterval(inte);
+            (screenSize.w = rw), (screenSize.h = rh), (screenSize.x = rx), (screenSize.y = ry), (zoom = _zoom);
+            redrawCanvas();
+          }
+        }, 10);
+
+      } else {
+        (screenSize.w = rw), (screenSize.h = rh), (screenSize.x = rx), (screenSize.y = ry), (zoom = _zoom);
+        redrawCanvas();
+      }
   } 
   else console.log([rx, ry, rw, ry, _zoom]);
-  redrawCanvas();
 };
 
 //화면 옮기기
@@ -330,11 +367,15 @@ let uncheckHovering = () => {
 //click building
 let clickBuilding = (building) => {
   // 화면 맞추고 줌
+  if (!sidebarIsOpened()) toggleSideBar();
+  else if(isPhone()) toggleSideBar(false);
+
+  let av = getAveragePointOfArea(building.area)
   alignScreenToMiddle(
-    getAveragePointOfArea(building.area),
-    true
+    av, false, isPhone()
   );
-  changeZoom(1.5, coordIm2CanvasSingle({ x: building.area[0].x, y: building.area[0].y }));
+  
+  changeZoom(1.5, coordIm2CanvasSingle({ x: av.x, y:av.y }), true);
   
 
   unclickBuilding();
@@ -350,7 +391,7 @@ let clickBuilding = (building) => {
 
   isClicking = true;
 
-  if (!sidebarIsOpened()) toggleSideBar();
+  
   sidebar_loadBuildingDetail(building)
 };
 

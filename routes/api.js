@@ -70,6 +70,10 @@ router.post('/:campus/building', (req, res, next)=>{
         res.send('wrong campus');
         return;
     }
+
+    console.log(postReq)
+
+    
     db.query(`INSERT INTO BUILDINGS(BID, BNAME, BTIME_SEM_DAY, BTIME_SEM_END, BTIME_VAC_DAY, BTIME_VAC_END, BAREA, BETC)
      VALUES(${postReq.BID}, '${postReq.BNAME}', '${postReq.BTIME_SEM_DAY}', '${postReq.BTIME_SEM_END}', '${postReq.BTIME_VAC_DAY}', '${postReq.BTIME_VAC_END}', '${postReq.BAREA}', '${postReq.BETC}') `, (err, result) => {
         if(err){
@@ -117,31 +121,41 @@ router.put('/:campus/building/:BID', (req, res, next)=>{
 //Facility
 
 router.get('/:campus/facility/:BID', (req, res, next)=>{
-    //show
-    if(req.cookies.loggedIn == validateCookie){
-      var db;
-      if(req.params.campus == 'sinchon'){
-          db = dbs.sinchon
-      } else if (req.params.campus == 'songdo'){
-          db = dbs.songdo
-      } else{
-          res.send('wrong campus');
-          return;
-      }
-      db.query(`SELECT * FROM FACILITIES WHERE FBID = ${req.params.BID}`, (err, result) => {
-          if(err){
-            console.log(err)
-            res.statusCode = 400
-            res.send(err)
-          }else{
-              res.send(result)
-          }
-        });
-    } else {
-        res.statusCode = 403
-      res.send('비정상적인 접근')
+  //show
+  if(req.cookies.loggedIn == validateCookie){
+    var db;
+    if(req.params.campus == 'sinchon'){
+        db = dbs.sinchon
+    } else if (req.params.campus == 'songdo'){
+        db = dbs.songdo
+    } else{
+        res.send('wrong campus');
+        return;
     }
-  })
+    db.query(`SELECT * FROM FACILITIES WHERE FBID = ${req.params.BID}`, (err, result) => {
+        if(err){
+          console.log(err)
+          res.statusCode = 400
+          res.send(err)
+        }else{
+            res.send(result)
+        }
+      });
+  } else {
+      res.statusCode = 403
+    res.send('비정상적인 접근')
+  }
+})
+
+router.get('/:campus/facility', (req, res, next)=>{
+  if(req.params.campus == 'sinchon'){
+    res.send((req.app.get('facilityData').sinchon))
+  } else if (req.params.campus == 'songdo'){
+    res.send(req.app.get('facilityData').songdo)
+  } else{
+    return "wrong campus"
+  }
+})
 
 router.delete('/:campus/facility/:FID', (req, res, next)=>{
     //delete

@@ -30,6 +30,7 @@ router.use('/:campus/main', (req, res, next)=>{
     var buildingData = req.app.get('buildingData')
     // buildingData.sinchonBuildings[401] = 'afads'
     // console.log(buildingData['sinchon']['301'])
+    console.log(buildingData)
     res.render('admin', {buildingData:buildingData, campus: req.params.campus, building: 'main' });
 
     } else {

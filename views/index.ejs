@@ -6,8 +6,6 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <!-- <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
-    rel="stylesheet"> -->
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link rel="stylesheet" href="/css/nav.css">
   <link rel="stylesheet" href="/css/index.css">
@@ -23,6 +21,7 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
     integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
   </script>
+   <!-- <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script> -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
   </script>
@@ -31,7 +30,7 @@
 
   <div id="root">
     <div>
-      <div class="nav-bar">
+      <!-- <div class="nav-bar">
         <ul class="nav nav-pills">
           <li class="logo-nav-item nav-item">
             <a href="/" class="nav-link active">
@@ -88,22 +87,6 @@
               <div class="uparrow"></div>
             </div>
           </li>
-          <!-- <li class="first-nav-item nav-item">
-            <div id="link_4" class="nav-link">블루라인</div>
-            <div class="linkbox link_4" style="display: none;"><a href="/posts/simple/9">
-                <div class="link_sm">소개</div>
-              </a><a href="/petitions">
-                <div class="link_sm">청원게시판</div>
-              </a><a href="/posts/3">
-                <div class="link_sm">총학생회 문의</div>
-              </a><a href="/posts/12">
-                <div class="link_sm">정책제안</div>
-              </a><a href="/posts/simple/13">
-                <div class="link_sm">총학생회 SOS</div>
-              </a>
-              <div class="uparrow"></div>
-            </div>
-          </li> -->
           <div class="dropdown-div">
             <li class="nav-dropdown dropdown nav-item"><a aria-haspopup="true" href="#" class="dropdown-toggle nav-link"
                 aria-expanded="false"><svg version="1.1" id="레이어_1" focusable="false" xmlns="http://www.w3.org/2000/svg"
@@ -120,17 +103,15 @@
             </li>
           </div>
         </ul>
-      </div>
-      <div class="backgroud">
-
+      </div> -->
+      <div class="background">
+        <div class="sidebarBlock">
+        </div>
         <div class="mapBody">
           <nav id="sidebar" class="">
 
             <!-- header -->
             <div id="sidebar-header" class="">
-              <a id="phone-sidebar-toggler" href="javascript:void(0);" class="icon" onclick="toggleSideBar()">
-                <i class="fa fa-bars"></i>
-              </a>
               <h3 style="margin: 0;" id="sidebar-header-title">지도 All-in-One</h3>
               <!-- 검색 -->
               <div id="searchBoxDiv" class="input-group ui-widget form-control"
@@ -140,13 +121,21 @@
                 <div id="searchButton" class="my-btn" onclick="searchKey()">🔎</div>
               </div>
             </div>
-
+            <!-- mobile sidebar toggler-->
+            <div id="sidebar-toggler-mobile" class="my-btn closed">
+                <i class="fa fa-bars"></i>
+            </div>
             <!-- main -->
             <div id="sidebar-type-main" class="sidebar-body-frame">
             </div>
+            <div id="sidebar-type-footer">
+              <a class="sidebar-footer-link" href="#">만든 사람</a>
+              <span>|</span>
+              <a class="sidebar-footer-link" href="#">지도 정보 수정</a>
+            </div>
           </nav>
           <button id="sidebarCollapse">
-            <span id="collapseArrow" style="color:#1F3C73">▶</span>
+            <span id="collapseArrow" style="color:#1F3C73">◀</span>
           </button>
 
 
@@ -192,7 +181,6 @@
           </div>
         </div>
       </div>
-      <div class="empty"></div>
     </div>
   </div>
 

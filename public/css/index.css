@@ -14,10 +14,15 @@ body {
   position: absolute;
 } */
 
-.backgroud {
-  height: calc(100vh - 60px);
+.hide {
+  display: none;
+  visibility: hidden;
+}
+
+.background {
+  height: calc(100vh);
   background-color: #F6F6F6;
-  padding: 30px 8vw;
+  padding: 30px 8vw 30px 0;
 }
 
 #mapContainer {
@@ -80,8 +85,23 @@ h2 {
   width: 100%;
 }
 
+.dropdown-span {
+  position:absolute !important;
+  height:100%; 
+  width:40px; 
+  right:20px;
+  background: none !important;
+  border: none !important;
+  margin: 0px !important;
+  font-weight: inherit !important;
+  color:black;
+  z-index: 1000;
+}
+
 .dropdown-item {
   padding : 3px 1em 3px .4em;
+  /* width: calc(100% - 40px) !important; */
+
 }
 
 .dropdown-item:hover, .dropdown-item:focus {
@@ -91,8 +111,9 @@ h2 {
 .mapBody {
   position: relative;
   margin: 0px;
-  background-color: white;
+  background-color: #f5f5f5;
   height: 100%;
+  margin-left: 8vw;
 }
 
 /*sidebar*/
@@ -111,7 +132,9 @@ h2 {
 }
 
 #sidebar.closed {
-  margin-left: -1300px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 #sidebarCollapse {
@@ -165,7 +188,7 @@ h2 {
 
 #sidebar h2 {
   color: #1F3C73;
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-align: center;
   font-weight: 900;
 }
@@ -182,6 +205,20 @@ h2 {
   border-bottom: 0.3px solid grey !important;
 }
 
+.my-line:after {
+  content: "";
+  display: block;
+  /* This will put the pseudo element on its own line. */
+  margin: 0 auto;
+  /* This will center the border. */
+  margin-top: 4px;
+  width: 100%;
+
+  border-bottom: 0.3px solid grey !important;
+  margin-bottom: 10px;
+
+}
+
 #sidebar h3 {
   color: #1F3C73;
   font-size: 23px;
@@ -194,17 +231,17 @@ h2 {
   font-size: 0.85rem;
   text-align: left;
   font-weight: 900;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.9rem;
 }
 
 #sidebar p {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
 }
 
 .sidebar-body-frame {
   overflow-y: scroll; 
-  height: calc(100% - 155px);
-  max-height: calc(100% - 155px);
+  height: calc(100% - 185px);
+  /* min-height: calc(100% - 285px); */
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
@@ -234,6 +271,22 @@ h2 {
   margin: auto;
 }
 
+#sidebar-type-footer {
+  height: 30px;
+  border-top: 0.5px solid #ddd;
+  background-color: #f5f5f5;
+  text-align: center;
+}
+
+.sidebar-footer-link{
+  font-size: 0.7rem;
+  color: #a3a3a3;
+}
+
+#sidebar-type-footer > span{
+
+}
+
 /* spinner */
 #sidebar-building-loading {
     width: 100%;
@@ -243,15 +296,16 @@ h2 {
     justify-content: center;
 }
 
+
 /* 시설 안내 */
 
 .icon-div {
-  /* background-color: #1F3C73;
-  border-radius: 20%; */
+  padding: 0px 8px;
 }
 
-.icon-div object {
+.icon-div img {
   width: inherit;
+  background-color: #1F3C73;
 }
 
 /* 길찾기 */
@@ -429,44 +483,99 @@ h2 {
   box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
 }
 
+.sidebarBlock {
+  width: 8vw;
+  height: 100%;
+  z-index: 100;
+  background: #F6F6F6;
+  position: fixed;
+}
+
+#sidebar-toggler-mobile{
+  display:none;
+}
+
 @media screen and (max-width: 768px) {
 
+  .sidebarBlock {
+    display: none;
+  }
+
+  #sidebar-toggler-mobile{
+    width: 100vw;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    height: 45px;
+    bottom: 60px;
+    display: grid;
+    position: absolute;
+    text-align: center;
+    color: black;
+    z-index: 300;
+    background: #f5f5f5;
+    border: 0.5px solid #EDEDED;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #sidebar-header-title{
+    font-size: 18px;
+  }
+
+  .mapBody{
+    margin-left:0;
+  }
+
   /* 모바일에 사용될 스트일 시트를 여기에 작성합니다. */
-  .backgroud {
+
+  #sidebar {
+    width:0px;
+  }
+  .background {
     padding: 0px 0px;
-    height: calc(100vh - 60px);
   }
 
   #mapContainer {
-    margin-top: 95px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    margin-top: 85px;
+    margin-bottom: 105px;
   }
 
   #sidebar-header {
-    padding: 20px 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
     width: 100vw;
-    height: 95px;
+    height: 85px;
     margin-left: 0px;
+    -webkit-box-shadow: 15px 10px 12px -5px rgba(0, 0, 0, 0.38);
+  -moz-box-shadow: 15px 10px 12px -5px rgba(0, 0, 0, 0.38);
+  box-shadow: 15px 10px 12px -5px rgba(0, 0, 0, 0.38);
   }
   
   .opened {
     margin-left: 1300px !important;
   }
-
-  #phone-sidebar-toggler{
-    display: block;
-    position: absolute;
-    margin-top: -10px;
-    width: 25px;
-    text-align: center;
-    border: 0.5px solid black;
-    color: black;
-  }
   
+  .icon-div {
+    padding: 0px 20px;
+  }
 
   .sidebar-body-frame{
     background : white;
-    height: calc(100% - 95px);
-    max-height: none;
+    position: absolute;
+    height: 0px;
+    width:100vw;
+    bottom: 60px;
+  }
+
+  #sidebar-type-footer{
+    position: absolute;
+    /* max-height: none; */
+    width:100vw;
+    bottom:30px;
   }
 
 
