@@ -17,6 +17,44 @@ let _getDatas = () => {
     
 };
 
+const convertLinks = ( input ) => {
+
+  let text = input;
+  const linksFound = text.match( /(?:www|https?)[^\s]+/g );
+  const aLink = [];
+  
+  if ( linksFound != null ) {
+
+    for ( let i=0; i<linksFound.length; i++ ) {
+      let replace = linksFound[i];
+      if ( !( linksFound[i].match( /(http(s?)):\/\// ) ) ) { replace = 'http://' + linksFound[i] }
+      let linkText = replace.split( '/' )[2];
+      if ( linkText.substring( 0, 3 ) == 'www' ) { linkText = linkText.replace( 'www.', '' ) }
+      // if ( linkText.match( /youtu/ ) ) {
+
+      //   let youtubeID = replace.split( '/' ).slice(-1)[0];
+      //   aLink.push( '<div class="video-wrapper"><iframe src="https://www.youtube.com/embed/' + youtubeID + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>' )
+      // }
+      // else if ( linkText.match( /vimeo/ ) ) {
+      //   let vimeoID = replace.split( '/' ).slice(-1)[0];
+      //   aLink.push( '<div class="video-wrapper"><iframe src="https://player.vimeo.com/video/' + vimeoID + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>' )
+      // }
+      // else {
+        aLink.push( '<a href="' + replace + '" target="_blank">' + linkText + '</a>' );
+      // }
+
+      text = text.split( linksFound[i] )
+      text = text.map(item => { return aLink[i].includes('iframe') ? item.trim() : item } ).join( aLink[i] );
+
+    }
+    return text;
+
+  }
+  else {
+    return input;
+  }
+}
+
 const getFaciltiyTypeIDDict = (_facilityList) => {
   let ftypes = {}
   _facilityList.forEach((el, i) =>{
@@ -48,7 +86,7 @@ let getBuildingList = () => {
   let _buildingList = [];
   $.ajax({
     type: "get",
-    url: "api/sinchon/building",
+    url: `api/${CAMPUS}/building`,
   }).done((result) => {
     for (const [key, el] of Object.entries(result)) {
       let area = [];
@@ -68,12 +106,13 @@ let getBuildingList = () => {
       });
       _buildingList.push({
         area: area,
-        id: el.BID,
+        BID: el.BID,
         name: el.BNAME,
         BTIME_SEM_DAY: el.BTIME_SEM_DAY,
         BTIME_SEM_END: el.BTIME_SEM_END,
         BTIME_VAC_DAY: el.BTIME_VAC_DAY,
         BTIME_VAC_END: el.BTIME_VAC_END,
+        BETC: convertLinks(el.BETC),
         on: true,
       });
     }
@@ -88,12 +127,10 @@ let getFacilityList = () => {
     let _facilityList = [];
     $.ajax({
       type: "get",
-      url: "api/sinchon/facility",
+      url: `api/${CAMPUS}/facility`,
     }).done((result) => {
       for (const [key, el] of Object.entries(result)) {
-        let area = [];
-        let xy = 0;
-        let tempArea = {};
+        el.FETC1 = convertLinks(el.FETC1)
         _facilityList.push(el);
       }
       resolve(_facilityList);

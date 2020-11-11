@@ -20,6 +20,46 @@ const sidebarHeader = document.getElementById("sidebar-header");
 
 let blockPopstateEvent;
 let cacheMediaIsPhone;
+
+//preloading
+
+let icon_search_gray = new Image()
+icon_search_gray.src = "/images/_icon_search_gray.png"
+icon_search_gray.style = "width:inherit; padding:3px;"
+icon_search_gray.id = "searchButton_im"
+
+let icon_search_blue = new Image()
+icon_search_blue.src = "/images/_icon_search_blue.png"
+icon_search_blue.style = "width:inherit; padding:3px;"
+icon_search_blue.id = "searchButton_im"
+
+let icon_home = new Image()
+icon_home.src = "/images/_icon_home.png"
+icon_home.className  = "my-btn"
+icon_home.style = "width:inherit; padding:0px 7px 3px 7px"
+icon_home.id = "sidebar-building-home"
+icon_home.addEventListener("click", el => sidebar_toHome())
+
+let icon_cafeteria = new Image()
+icon_cafeteria.src = "/images/_icon_cafeteria.png"
+icon_cafeteria.alt = "식당"
+
+let icon_toilet = new Image()
+icon_toilet.src = "/images/_icon_toilet.png"
+icon_toilet.alt = "화장실"
+
+let icon_venderMachine = new Image()
+icon_venderMachine.src = "/images/_icon_venderMachine.png"
+icon_venderMachine.alt = "자판기"
+
+let icon_cafe = new Image()
+icon_cafe.src = "/images/_icon_cafe.png"
+icon_cafe.alt = "카페"
+
+let icon_facilties = [icon_cafeteria, icon_toilet, icon_venderMachine, icon_cafe]
+
+//onload
+
 window.onload = () => {
   cacheMediaIsPhone = isPhone();
   if (!cacheMediaIsPhone) _ = null;
@@ -40,6 +80,15 @@ window.onload = () => {
   sidebar_loadMain();
   resizeAll(true);
 
+  // if(CAMPUS == 'sinchon'){
+  //   let toEl = document.getElementById("link2Songdo");
+  //   toEl.setAttribute("onclick", "location.href ='/songdo'")
+  //   toEl.setAttribute("style", "cursor:pointer")
+  // } else {
+  //   toEl = document.getElementById("link2Sinchon")
+  //   toEl.setAttribute("onclick", "location.href ='/sinchon'")
+  //   toEl.setAttribute("style", "cursor:pointer")
+  // }
   if (isPhone()) {
     blockPopstateEvent = document.readyState != "complete";
     window.addEventListener(
@@ -104,6 +153,7 @@ var resizeAll = (first) => {
     searchBoxDiv.style.marginTop = `${
       95 -
       33 -
+      20 -
       document.getElementById("sidebar-header-title").getBoundingClientRect()
         .height
     }px`;
@@ -164,6 +214,7 @@ var resizeAll = (first) => {
     searchBoxDiv.style.marginTop = `${
       65 -
       33 -
+      20 -
       document.getElementById("sidebar-header-title").getBoundingClientRect()
         .height
     }px`;
@@ -267,7 +318,6 @@ const getClosestMobileSidebarState = () => {
       document.getElementsByTagName("body")[0].getBoundingClientRect().height -
       sidebarTogglerMobile.getBoundingClientRect().bottom;
     let distance = currBottom - mobileSidebarPointerInitPos;
-    console.log(distance, mobileSidebarOpenState);
     if (distance > 30 && 200 > distance) {
       if (mobileSidebarOpenState <= 1) return mobileSidebarOpenState + 1;
       else return 0;
@@ -330,7 +380,6 @@ const getClosestMobileSidebarState = () => {
   let stateStackCnt = 0;
 const changeMobileSidebarState = (state) => {
   if(state != undefined){
-    console.log(state)
     mobileSidebarOpenState = state;
     if (state > 0 && isPhone()) {
       mapSearch.blur();
@@ -343,7 +392,6 @@ const changeMobileSidebarState = (state) => {
     }
   
     
-    console.log(mobileSidebarOpenConst[2])
     return mobileSidebarOpenConst[state];
   }
 };
@@ -386,7 +434,6 @@ const mobileSidebarAnimation = (targetSize) => {
 //사이드바 토글
 let toggleSideBar = (OpenAll = false) => {
   if (isPhone()) {
-    console.log(OpenAll)
     if(OpenAll != undefined){
       changeMobileSidebarState(1 + 1*OpenAll)
     }
@@ -399,7 +446,7 @@ let toggleSideBar = (OpenAll = false) => {
     if (!sidebarIsOpened()) {
       sideBar.classList.remove("closed");
       pcSidebarAnimation(true);
-      sidebarCollapse.innerHTML = `<span id="collapseArrow" style="color:#1F3C73">◀</span>`;
+      sidebarCollapse.innerHTML = `<span id="collapseArrow" style="color:#777675">◀</span>`;
     } else {
       sideBar.classList.add("closed");
       pcSidebarAnimation(false);
@@ -446,15 +493,15 @@ let handleMouseMove = (e) => {
     e.stopPropagation();
   }
 
+
   if (inputState.action == "mouseDown") {
     inputState.action = "mouseDrag";
   } else if (inputState.action != "mouseDrag") {
     inputState.action = "mouseMove";
   }
-
   if (
     inputState.action == "mouseDrag" &&
-    new Date().getTime() - doubleClickTime.getTime() > 80
+    new Date().getTime() - doubleClickTime.getTime() > 200
   ) {
     if (dragFlag) drag(e);
   } else if (hoverFlag) {
@@ -471,7 +518,7 @@ let handleMouseUp = (e) => {
     inputState.action = "mouseClick";
     click(e);
   } else if (inputState.action == "mouseDrag") {
-    dragEnd(e);
+    // dragEnd(e);
     inputState.action = "mouseUp";
   }
 };
@@ -487,10 +534,11 @@ mapCanvas.addEventListener("mousedown", handleMouseDown);
 document.addEventListener("mousemove", handleMouseMove, {
   passive: false,
 });
-mapCanvas.addEventListener("mouseup", handleMouseUp);
+// mapCanvas.addEventListener("mouseup", handleMouseUp);
 
 document.addEventListener("mouseup", (e) => {
   dragFlag = false;
+  handleMouseUp(e)
 });
 
 mapCanvas.addEventListener(
@@ -584,7 +632,6 @@ let handleTouchEnd = (e) => {
       }, 80);
     }
   } else if (inputState.action == "touchDrag") {
-    dragEnd(e);
     clickCnt = 0;
     inputState.action = "touchEnd";
     // } else if (inputState.action == "touchDoubleClick") {
@@ -609,7 +656,6 @@ let mobileSidebarPointerInitPos = -1;
 const handlePointerDownMobileSidebar = (e) => {
   e.preventDefault();
   e.stopPropagation();
-  console.log("down");
   mobileSidebarPointerDownFlag = true;
   mobileSidebarPointerInitPos =
     document.getElementsByTagName("body")[0].getBoundingClientRect().height -
@@ -729,3 +775,24 @@ sidebarCollapse.addEventListener("mouseenter", (e) => {
 sidebarCollapse.addEventListener("mouseleave", (e) => {
   hoverFlag = true;
 });
+
+let searchButtonIm = document.getElementById("searchButton_im")
+let searchButton = document.getElementById("searchButton")
+const searchIconToBlue = (e) => {
+  searchButton.removeChild(searchButton.childNodes[0])
+  searchButton.appendChild(icon_search_blue)
+}
+
+const searchIconToGray = (e) => {
+  searchButton.removeChild(searchButton.childNodes[0])
+  searchButton.appendChild(icon_search_gray)
+}
+
+searchButton.addEventListener("mouseenter", searchIconToBlue )
+mapSearch.addEventListener("focus", searchIconToBlue)
+
+searchButton.addEventListener("mouseleave", (e) => {
+  if(!mapSearch.matches(':focus'))
+  searchIconToGray(e)
+  });
+mapSearch.addEventListener("focusout", searchIconToGray)

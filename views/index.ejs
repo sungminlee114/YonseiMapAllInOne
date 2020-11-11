@@ -30,95 +30,23 @@
 
   <div id="root">
     <div>
-      <!-- <div class="nav-bar">
-        <ul class="nav nav-pills">
-          <li class="logo-nav-item nav-item">
-            <a href="/" class="nav-link active">
-              <img class="logo"
-                src="data:image/gif;base64,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">
-            </a>
-          </li>
-          <li class="first-nav-item nav-item">
-            <div id="link_1" class="nav-link">총학생회 소개</div>
-            <div class="linkbox link_1" style="display: none;">
-              <a href="/posts/simple/2">
-                <div class="link_sm">인사말</div>
-              </a><a href="/posts/simple/3">
-                <div class="link_sm">55대 총학생회 Mate</div>
-              </a><a href="/posts/simple/4">
-                <div class="link_sm">집행위원회 소개</div>
-              </a><a href="/posts/simple/5">
-                <div class="link_sm">주소/연락처</div>
-              </a>
-              <div class="uparrow"></div>
-            </div>
-          </li>
-          <li class="first-nav-item nav-item">
-            <div id="link_2" class="nav-link">총학생회 정보</div>
-            <div class="linkbox link_2" style="display: none;"><a href="/posts/5">
-                <div class="link_sm">의결기구</div>
-              </a><a href="/posts/6">
-                <div class="link_sm">집행위원회</div>
-              </a><a href="https://drive.google.com/drive/folders/1SF8GcLC37KsPDQmJW1luROKeCLluV2Y0?usp=sharing">
-                <div class="link_sm">규정집</div>
-              </a>
-              <div class="uparrow"></div>
-            </div>
-          </li>
-          <li class="first-nav-item nav-item">
-            <div id="link_3" class="nav-link">학교생활</div>
-            <div class="linkbox link_3" style="display: none;"><a href="/posts/2">
-                <div class="link_sm">분실물센터</div>
-              </a><a href="/posts/simple/12">
-                <div class="link_sm">시설고장접수</div>
-              </a><a href="/posts/4">
-                <div class="link_sm">총학생회 알림</div>
-              </a><a href="/posts/11">
-                <div class="link_sm">학내활동 홍보</div>
-              </a><a href="/posts/8">
-                <div class="link_sm">동아리 홍보</div>
-              </a><a href="/posts/10">
-                <div class="link_sm">정보와 꿀팁</div>
-              </a><a href="/posts/simple/8">
-                <div class="link_sm">교내 연락망</div>
-              </a><a href="https://www.yonsei.ac.kr/sc/intro/website.jsp">
-                <div class="link_sm">교내 사이트 모음</div>
-              </a>
-              <div class="uparrow"></div>
-            </div>
-          </li>
-          <div class="dropdown-div">
-            <li class="nav-dropdown dropdown nav-item"><a aria-haspopup="true" href="#" class="dropdown-toggle nav-link"
-                aria-expanded="false"><svg version="1.1" id="레이어_1" focusable="false" xmlns="http://www.w3.org/2000/svg"
-                  x="0px" y="0px" viewBox="0 0 448 512">
-                  <path
-                    d="M224,256c70.7,0,128-57.3,128-128S294.7,0,224,0S96,57.3,96,128S153.3,256,224,256z M313.6,288h-16.7 c-22.2,10.2-46.9,16-72.9,16s-50.6-5.8-72.9-16h-16.7C60.2,288,0,348.2,0,422.4V464c0,26.5,21.5,48,48,48h352c26.5,0,48-21.5,48-48 v-41.6C448,348.2,387.8,288,313.6,288z">
-                  </path>
-                </svg></a>
-              <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu"><a href="/login" tabindex="0"
-                  role="menuitem" class="dropdown-item">로그인</a>
-                <div tabindex="-1" class="dropdown-divider"></div><a href="/signup" tabindex="0" role="menuitem"
-                  class="dropdown-item">회원가입</a>
-              </div>
-            </li>
-          </div>
-        </ul>
-      </div> -->
       <div class="background">
-        <div class="sidebarBlock">
-        </div>
+        <!-- <div class="sidebarBlock">
+        </div> -->
         <div class="mapBody">
           <nav id="sidebar" class="">
 
             <!-- header -->
             <div id="sidebar-header" class="">
-              <h3 style="margin: 0;" id="sidebar-header-title">지도 All-in-One</h3>
+              <h3 style="margin: 0; cursor:pointer" id="sidebar-header-title" onclick="location.reload()">지도 All-in-One</h3>
+              <div style="margin-top: 10px; text-align: center; height: 20px;">
+                  <span class="my-btn" id="link2Sinchon" onclick="location.href ='/sinchon'">신촌지도</span> <span>|</span> <span id="link2Songdo" class = "my-btn"onclick="location.href ='/songdo'">송도지도</span>
+              </div>
               <!-- 검색 -->
-              <div id="searchBoxDiv" class="input-group ui-widget form-control"
-                style="height: 33px; padding: 3px 5px; display: none;">
+              <div id="searchBoxDiv" class="input-group ui-widget form-control">
                 <input type="text" class="" id="mapSearch" placeholder="건물, 시설 검색"
                   style="height: 100%; font-size: 0.7em; border: none; outline: none; width: calc(100% - 25px);">
-                <div id="searchButton" class="my-btn" onclick="searchKey()">🔎</div>
+                <div id="searchButton" class="my-btn" onclick="searchKey()"><img id="searchButton_im" src="/images/_icon_search_gray.png" style="width:inherit; padding:3px"></div>
               </div>
             </div>
             <!-- mobile sidebar toggler-->
@@ -130,60 +58,43 @@
             </div>
             <div id="sidebar-type-footer">
               <a class="sidebar-footer-link" href="#">만든 사람</a>
-              <span>|</span>
-              <a class="sidebar-footer-link" href="#">지도 정보 수정</a>
+              <span class="sidebar-footer-link">|</span>
+              <a class="sidebar-footer-link" href="#">지도 정보 제보</a>
             </div>
           </nav>
           <button id="sidebarCollapse">
-            <span id="collapseArrow" style="color:#1F3C73">◀</span>
+            <span id="collapseArrow" style="color:#777675">◀</span>
           </button>
 
 
           <!-- 슬라이더 -->
-          <div id="toggleCampus" class="sliderBack left">
+          <div id="toggleCampus" class="sliderBack left hide">
             <div class="left selected">신촌</div>
             <div class="right">송도</div>
-            <!-- <span id="Floor" class="sliderBody left"></span> -->
           </div>
 
-          <div id="toggleFloor" class="sliderBack left">
+          <div id="toggleFloor" class="sliderBack left hide">
             <div class="left selected">지하</div>
             <div class="right">지상</div>
-            <!-- <span id="Floor" class="sliderBody left"></span> -->
           </div>
 
-          <div id="toggleTime" class="sliderBack left">
+          <div id="toggleTime" class="sliderBack left hide">
             <div class="left selected">실시간</div>
             <div class="right">전시간</div>
-            <!-- <span id="Floor" class="sliderBody left"></span> -->
           </div>
-
-          <!-- <div class="" style="border: black solid 1px; margin-bottom: 20px; padding: 15px;">
-            <input id="switch1" type="checkbox" data-toggle="toggle" data-height="30" data-offstyle="outline-secondary"
-              oninput="handleTimeFilter">
-            <label for="switch1" class="form-check-label" style="height: 30px; line-height: 30px;">현재 운영중인 시설만 보기</p>
-            </label>
-          </div> -->
-          <!-- 맵 -->
           <div id="mapContainer">
             <canvas id="mapCanvas" style="background-color: gray; border:0">
 
             </canvas>
-            <!-- <img src="/images/sinchon_mainmap.png" id="map" style="z-index: 2; left: -341px; top: -1514px;" usemap="#clickable"></img>
-            <map name="clickable" id="clickable">
-              <area shape="poly" coords="850,1656,850,1712,852,1712,852,1751,891,1751,891,1656" alt="학생회관">
-            </map> -->
-            <!-- <svg src="/images/sinchon_mainmap.svg" style="z-index: 399; fill:black; float:left">
-              <svg src="/images/sinchon_mainmap.png" id="map" style="z-index: 2; left: -341px; top: -1514px;" usemap="#clickable"></svg> -->
-            <!-- <polygon points="0,0 0,56 2,56 2,95 41,95 41,0" style="fill:lime;stroke:purple;stroke-width:1; z-index:400; position:absolute"/>
-            </svg> -->
-
           </div>
         </div>
       </div>
     </div>
   </div>
-
+  <script>
+    const CAMPUS = `<%= campus %>`
+    console.log(CAMPUS)
+  </script>
   <script src="/javascripts/data.js"></script>
   <script src="/javascripts/map.js"></script>
   <script src="/javascripts/sidebar.js"></script>

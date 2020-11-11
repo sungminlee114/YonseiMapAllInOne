@@ -48,8 +48,9 @@ let searchKey = (_key, _type = undefined) => {
     // }
 
   // } else { //'시설'
-  buildingFilter = buildingList.filter((el) => el.name.includes(key));
-  facilityFilter = facilityList.filter((el) => (el.FTYPE.includes(key) || el.FNAME.includes(key)));
+  allFilteredList = source.filter(el => el.label.includes(key));
+  buildingFilter = buildingList.filter(el => allFilteredList.filter(el => el.type == '건물').map(el => el.value).includes(el.name))
+  facilityFilter = facilityList.filter(el => {let a = allFilteredList.filter(el => el.type == '시설').map(el => el.value); return a.includes(el.FTYPE) || a.includes(el.FNAME)});
   showSearchList(buildingFilter, facilityFilter)
   // }
 };
@@ -122,6 +123,8 @@ let initAutocomplete = (_buildingList, _facilityTypeIdDict, _facilitesList, _fac
       type: '시설'
     };
   })));
+  
+  source = source.filter((item, index) => source.map(el=> el.value).indexOf(item.value) === index);
 
   console.log(source)
   
@@ -225,21 +228,28 @@ let sidebar_loadMain = () => {
   sidebarBodyFrame.id = sidebarDataStateEnum.main
   sidebarBodyFrame.innerHTML = `
   <div class="sidebar-body" id="sidebar-main-facilitys">
-    <h2> 시설 안내 </h2>
+    <h2 class="no-after" style="margin-bottom:20px"> 시설 안내 </h2>
     <div class="row icons">
-      <div class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn">
-        <img src="/images/식당.png" alt="식당">
+      <div id="icon-div-cafeteria" class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+        
       </div>
-      <div class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn">
-        <img src="/images/화장실.png" alt="화장실">
+      <div id="icon-div-toilet" class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+        
       </div>
-      <div class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn">
-        <img src="/images/자판기.png" alt="자판기">
+      <div id="icon-div-venderMachine" class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+        
       </div>
-      <div class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn">
-        <img src="/images/카페.png" alt="카페">
+      <div id="icon-div-cafe" class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+        
       </div>
     </div>
+  </div>
+
+  <div class="sidebar-body" id="sidebar-main-report" style="margin-top:20px; text-align:center;">
+    <h2 class="no-after" style="margin-bottom:20px"> 지도 정보 제보 </h2>
+    <p> 오류나 새로운 정보를 <a href='/report'>여기</a>서 제보해 주세요.
+    <br/>
+    사소한 관심이 큰 변화를 만듭니다 :) </p>
   </div>
   `
 
@@ -261,8 +271,10 @@ let sidebar_loadMain = () => {
   //     </div>
   //   </div>
   // </div>
-
+  let i = 0;
   Array.from(document.getElementsByClassName("sidebar-facility-IconSearch")).forEach((element) => {
+
+    element.appendChild(icon_facilties[i++])
     element.addEventListener("click", (e) => {
       let alt = e.target.getAttribute('alt')
       searchKey(alt)
@@ -276,35 +288,38 @@ let sidebar_loadBuilding = (_building) => {
       resolve();
 
     sidebarBodyFrame.id = sidebarDataStateEnum.building
+    sidebarBodyFrame.dataset.bid = _building.BID
 
     //정보 가져오기
     
 
     sidebarBodyFrame.innerHTML = `
-    <div class="sidebar-body row" id="sidebar-building-buildingDetail">
-      <div style="width: 30px;">
-        <img src="/images/icon_home.png" class="my-btn" style="border:0.5px solid black; width:inherit" id="sidebar-building-home" onclick="sidebar_toHome();">
+    <div class="sidebar-body sidebar-body-header row" id="sidebar-building-buildingDetail">
+      <div style="width: 28.5px;" id="sidebar-header-leftBox">
+      
         <!-- <i class="material-icons my-btn" id="sidebar-building-home" style="font-size:0.75rem;" onclick="sidebar_toHome();">home</i> --!>
       </div>
-      <div style="justify-content:center; width:calc(100% - 60px)">
+      <div style="justify-content:center; width:calc(100% - 60px); display:flex; align-items:center">
         <h2 class="no-after" style="margin-bottom:0; font-size:1rem"> ${_building.name} </h3>
       </div>
-      <div style="width: 30px;">
+      <div style="width: 28.5px;" id="sidebar-header-rightBox">
       </div>
     </div>
-    <div class="sidebar-body no-after">
+    <div class="sidebar-body no-after sidebar-body-scrY">
       <div class="row" id="sidebar-building-tab">
         <div class="col-6">
-          <h2 id="sidebar-tab-detail" type="button" onclick="sidebar_loadBuildingDetailOnclick(this)" data-BID="${_building.id}"> 건물 정보 </h2>
+          <h2 id="sidebar-tab-detail" class="sidebar-tab" type="button" onclick="sidebar_loadBuildingDetailOnclick(this)" data-BID="${_building.BID}"> 건물 정보 </h2>
         </div>
         <div class="col-6">
-          <h2 id="sidebar-tab-facilities" type="button" onclick="sidebar_loadBuildingFacilitiesOnclick(this)" data-BID="${_building.id}"> 시설 정보 </h2>
+          <h2 id="sidebar-tab-facilities" class="sidebar-tab" type="button" onclick="sidebar_loadBuildingFacilitiesOnclick(this)" data-BID="${_building.BID}"> 시설 정보 </h2>
         </div>
       </div>
       <div class="sidebar-body-tabBody">
       </div>
     </div>
     `
+
+    document.getElementById("sidebar-header-leftBox").appendChild(icon_home)
     resolve()
   })
 }
@@ -324,17 +339,23 @@ async function sidebar_loadBuildingDetail(_building = null){
   sidebarTabBody.id = sidebarDataStateEnum.buildingDetail
   sidebarTabBody.innerHTML = `
   <h5> 사진 </h5>
-  <img src="/images/buildings/sinchon/baekyang.png" id="sidebar-building-picture"/>
+  <img src="/images/buildings/${CAMPUS}/${_building.BID}.jpg" id="sidebar-building-picture"/>
   <h5> 운영 시간 </h5>
   <p> 학기중 평일 : ${_building.BTIME_SEM_DAY} </p>
   <p> 학기중 주말 : ${_building.BTIME_SEM_END} </p>
   <p> 방학중 평일 : ${_building.BTIME_VAC_DAY} </p>
   <p> 방학중 주말 : ${_building.BTIME_VAC_END} </p>
   <h5> 건물 정보</h5>
-  <p> Lorem Ipsum </p>
+  <p> ${_building.BETC} </p>
   <h5> 연락처 </h5>
   <p> 02-1234-5678 </p>
   `
+
+  document.getElementById("sidebar-building-picture").addEventListener("error", (e) => {
+    e.target.src='/images/no_image.gif';
+    e.target.setAttribute("onclick", "location.href ='/report'")
+    e.target.setAttribute("style", "cursor:pointer")
+  })
 
   sidebarDataState = sidebarDataStateEnum.buildingDetail
   if(_building != null){
@@ -344,11 +365,11 @@ async function sidebar_loadBuildingDetail(_building = null){
 }
 
 let sidebar_loadBuildingDetailOnclick = (e) =>{
-  sidebar_loadBuildingDetail(buildingList.find(el=>el.id === parseInt(e.dataset.bid)));
+  sidebar_loadBuildingDetail(buildingList.find(el=>el.BID === parseInt(e.dataset.bid)));
 }
 
 let sidebar_loadBuildingFacilitiesOnclick = (e) =>{
-  sidebar_loadBuildingFacilities(buildingList.find(el=>el.id === parseInt(e.dataset.bid)));
+  sidebar_loadBuildingFacilities(buildingList.find(el=>el.BID === parseInt(e.dataset.bid)));
 }
 
 function sidebar_loadBuildingFacilities(_building) {
@@ -368,7 +389,7 @@ function sidebar_loadBuildingFacilities(_building) {
   sidebarTabBody.id = sidebarDataStateEnum.buildingFacilities
   res = []
   // console.log(_building, facilityList['14'].FBID, typeof(facilityList['14'].FBID), _building.id, typeof(_building.id))
-  res = facilityList.filter(el => el.FBID === _building.id)
+  res = facilityList.filter(el => el.FBID === _building.BID)
 
   let resHTML = `
   <div class="dropdown" id="sidebar-buildingFacilities-dropdownOuter">
@@ -411,33 +432,45 @@ function sidebar_loadBuildingFacilities(_building) {
 }
 
 const sidebar_handle_facilities_dropdown = (e, ftype=undefined)=>{
-    if(ftype == undefined)
+    if(ftype == undefined){
       ftype = e.dataset.ftype;
+    }
+    bid = document.getElementById(sidebarDataStateEnum.building).dataset.bid;
     let resHTML = '';
     let floc = {};
 
     document.getElementById("sidebar-buildingFacilities-dropdown").innerText = ftype
 
-    facilityTypeIdDict[ftype].forEach(el => {
+    let arr = facilityTypeIdDict[ftype];
+    if(bid !== null){
+      arr = arr.filter(el => el.FBID == bid)
+    }
+
+    arr.forEach(el => {
       if(!(el.FLOCATION in floc)){
         floc[el.FLOCATION] = [];
       }
-
+      
       floc[el.FLOCATION].push(el)
     })
 
     for (const [k, v] of Object.entries(floc)) {
       resHTML += `
         <h5> ${k} </h5>
+        <span class="my-line"></span>
         `
-      v.forEach(el => {
+      let top = 0
+      v.forEach((el,index) => {
+        console.log(el, index)
+        if(index == 1)
+          top = 2
         resHTML += `
-        <p style="font-weight:bold; font-size: 0.9rem"> [${el.FNAME}] </p>
+        <p style="font-weight:bold; font-size: 1rem; margin-top:${top}rem"> ${el.FNAME} </p>
         <p> 학기중 평일 : ${el.FTIME_SEM_DAY} </p>
         <p> 학기중 주말 : ${el.FTIME_SEM_END} </p>
         <p> 방학중 평일 : ${el.FTIME_VAC_DAY} </p>
         <p> 방학중 주말 : ${el.FTIME_VAC_END} </p>
-        <span class="my-line"></span>
+        <p> 시설 정보 : ${el.FETC1} </p>
       `
       })
     }
@@ -450,7 +483,6 @@ const sidebar_handle_facilities_dropdown = (e, ftype=undefined)=>{
 }
 
 const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
-  console.log(buildingFilter, facilityFilter)
   return new Promise((resolve, reject) => {
   sidebarDataState = sidebarDataStateEnum.searchResult;
   sidebarBodyFrame.id = sidebarDataState;
@@ -459,16 +491,16 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
   //   typeEn = 'facility'
 
   st = `
-  <div class="sidebar-body" id="sidebar-searchResult-header">
-    <h2 class="no-after"> 검색결과 </h2>
+  <div class="sidebar-body sidebar-body-header row" id="sidebar-searchResult-header">
+    <h2 class="no-after" style="font-size:1rem; padding-top:1px"> 검색결과 </h2>
   </div>
-  <div class="sidebar-body no-after" id="sidebar-searchResult-tabs">
+  <div class="sidebar-body sidebar-body-scrY no-after" id="sidebar-searchResult-tabs">
     <div class="row" id="sidebar-building-tab">
       <div class="col-6">
-        <h2 id="sidebar-searchResultTab-building" type="button" onclick="sidebar_loadSearchResultBuildingOnClick(this)" class="mytab-selected"> 건물 </h2>
+        <h2 id="sidebar-searchResultTab-building" class="sidebar-tab" type="button" onclick="sidebar_loadSearchResultBuildingOnClick(this)" class="mytab-selected"> 건물 </h2>
       </div>
       <div class="col-6">
-        <h2 id="sidebar-searchResultTab-facilities" type="button" onclick="sidebar_loadSearchResultFacilitiesOnClick(this)"> 시설 </h2>
+        <h2 id="sidebar-searchResultTab-facilities" class="sidebar-tab" type="button" onclick="sidebar_loadSearchResultFacilitiesOnClick(this)"> 시설 </h2>
       </div>
     </div>
     <div id="sidebar-searchResult-building" class="sidebar-body-tabBody">`
@@ -478,9 +510,28 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
     } else {
     
       buildingFilter.forEach(el=>{
+        let b = [];
+        for (const [key, value] of Object.entries(facilityList.filter(facility => facility.FBID == el.BID))) {
+          b.push(value.FTYPE)
+        }
+        let a = "";
+        console.log(b)
+        if(b === []){
+          a = ""
+        }else {
+          b = b.filter((item, index) => b.indexOf(item) === index);
+          a = b.join(', ')
+        }
         st += 
         `
-        <p class="searchResultBuildingEl my-btn" style="font-weight:bold; font-size: 0.9rem" data="${el.id}">${el.name}</p>
+        <div class="searchResultElWrap searchResultBuildingEl" style="font-weight:bold; font-size: 0.9rem" building="${el.BID}" >
+          <div class="searchResultBar">
+          </div>
+          <div class="searchResultEl">
+            <p class="searchResultElHead">${el.name}</p>
+            <p class="searchResultElBody">${a}</p>
+          </div>
+        </div>
         `
       });
     }
@@ -495,7 +546,14 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
       facilityFilter.forEach(el=>{
         st += 
         `
-        <p class="searchResultFacilityEl my-btn" style="font-weight:bold; font-size: 0.9rem" building="${el.FBID}" facility="${el.FID}" >${el.FNAME} (${buildingList.find(e => e.id == el.FBID).name})</p>
+        <div class="searchResultElWrap searchResultFacilityEl" style="font-weight:bold; font-size: 0.9rem" building="${el.FBID}" facility="${el.FID}" >
+          <div class="searchResultBar">
+          </div>
+          <div class="searchResultEl" >
+            <p style="font-weight:bold; font-size:1rem; margin-bottom:0.5rem">${el.FNAME}</p>
+            <p style="font-size:0.7rem; color:gray">${buildingList.find(e => e.BID == el.FBID).name}</p>
+          </div>
+        </div>
         `
       });
     }
@@ -508,22 +566,25 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
   
   if(buildingFilter.length == 0 && facilityFilter.length != 0)
     sidebar_loadSearchResultFacilites()
+  else
+    sidebar_loadSearchResultBuilding()
+
 
   Array.from(document.getElementsByClassName("searchResultBuildingEl")).forEach((element) => {
     element.addEventListener("click", (e) => {
-      let bid = parseInt(e.target.getAttribute('data'))
-      console.log(e.target, bid)
-      clickBuilding(buildingList.find((el) => el.id == bid))
+      let target = element
+      let bid = parseInt(target.getAttribute('building'))
+      clickBuilding(buildingList.find((el) => el.BID == bid))
     });
   });
 
   Array.from(document.getElementsByClassName("searchResultFacilityEl")).forEach((element) => {
     element.addEventListener("click",async (e) => {
-      let target = e.target
+      let target = element
       let bid = target.getAttribute('building')
       let fid = target.getAttribute('facility')
-      clickBuilding(buildingList.find((el) => el.id == bid))
-      await sidebar_loadBuildingFacilities(buildingList.find((el) => el.id == bid));
+      clickBuilding(buildingList.find((el) => el.BID == bid))
+      await sidebar_loadBuildingFacilities(buildingList.find((el) => el.BID == bid));
       sidebar_handle_facilities_dropdown(null, facilityList.find(el => el.FID == fid).FTYPE)
     });
   });

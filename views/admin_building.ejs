@@ -449,6 +449,8 @@
     let deleteFacilityFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if(!confirm("삭제하시겠습니까?"))
+            return;
         
         var raw = e.target.parentNode.parentNode.parentNode
         try {     
@@ -488,6 +490,8 @@
     let saveFacilityFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if(!confirm("저장하시겠습니까?"))
+            return;
         
         var raw = e.target.parentNode.parentNode.parentNode
         var data = {
@@ -502,12 +506,12 @@
             FETC1 : raw.cells[8].firstChild.value,
         };
 
-        for (const [key, value] of Object.entries(data)) {
-            if(value == "" && key != 'FETC1'){
-                alert("데이터에 공백이 있을 순 없습니다.")
-                return
-            }
-        }
+        // for (const [key, value] of Object.entries(data)) {
+        //     if(value == "" && key != 'FETC1'){
+        //         alert("데이터에 공백이 있을 순 없습니다.")
+        //         return
+        //     }
+        // }
         try {     
             const response = await fetch(`/api/<%=campus%>/facility/${raw.cells[0].textContent}`, {
                 method: 'PUT', // *GET, POST, PUT, DELETE, etc.
@@ -552,6 +556,9 @@
     let cancelEditFunc = (e) => {
         e.preventDefault();
         e.stopPropagation();
+
+        if(!confirm("취소하시겠습니까?"))
+            return;
         
         var raw = e.target.parentNode.parentNode.parentNode
         var table = raw.parentNode.parentNode;
@@ -618,6 +625,8 @@
     let registerFacilityFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if(!confirm("등록하시겠습니까?"))
+            return;
         
         var raw = e.target.parentNode.parentNode.parentNode
         var data = {
@@ -632,12 +641,12 @@
             FETC1 : raw.cells[8].firstChild.value,
         };
 
-        for (const [key, value] of Object.entries(data)) {
-            if(value == "" && key != 'FETC1'){
-                alert("데이터에 공백이 있을 순 없습니다.")
-                return
-            }
-        }
+        // for (const [key, value] of Object.entries(data)) {
+        //     if(value == "" && key != 'FETC1'){
+        //         alert("데이터에 공백이 있을 순 없습니다.")
+        //         return
+        //     }
+        // }
         try {     
             const response = await fetch('/api/<%=campus%>/facility', {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -684,6 +693,8 @@
     let cancelRegisterFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if(!confirm("취소하시겠습니까?"))
+            return;
         var raw = e.target.parentNode.parentNode.parentNode
         raw.parentNode.removeChild(raw);
         document.getElementById('addFacilities').classList.remove("hideButtons")

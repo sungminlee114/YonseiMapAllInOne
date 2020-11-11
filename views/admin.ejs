@@ -434,7 +434,8 @@
                     <th scope="col" style="width: 100px;">운영시간(학기주말)</th>
                     <th scope="col" style="width: 100px;">운영시간(방학주중)</th>
                     <th scope="col" style="width: 100px;">운영시간(방학주말)</th>
-                    <th scope="col" style="">지도내 좌표</th>
+                    <th scope="col" style="width: 100px;">지도내 좌표</th>
+                    <th scope="col" style="width: 100px;">건물정보</th>
                     <th scope="col" style="width: 100px;">수정하기</th>
                   </tr>
                 </thead>
@@ -448,11 +449,12 @@
                         <td><%=buildingData[campus][i].BTIME_VAC_DAY%></td>
                         <td><%=buildingData[campus][i].BTIME_VAC_END%></td>
                         <td><%=buildingData[campus][i].BAREA%></td>
+                        <td><%=buildingData[campus][i].BETC%></td>
                         <td id = "editCell_<%=i%>"><span class=""><a class="edit editBuilding">수정</a> | <a class="edit deleteBuilding">삭제</a></span><span class="hideButtons"><a class="edit saveBuilding ">저장</a> | <a class="edit cancelEdit ">취소</a></span></td>
                     </tr>
                     <% }) %>
                     <tr>
-                        <th scope="row" colspan="5" id = "addBuildings" >건물 추가하기</td>
+                        <th scope="row" colspan="9" id = "addBuildings" >건물 추가하기</td>
                     </tr>
                 </tbody>
               </table>
@@ -488,7 +490,8 @@
     let deleteBuildingFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+        if(!confirm("삭제하시겠습니까?"))
+            return;
         var raw = e.target.parentNode.parentNode.parentNode
         try {     
             const response = await fetch(`/api/<%=campus%>/building/${raw.cells[0].textContent}`, {
@@ -529,7 +532,8 @@
     let saveBuildingFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+        if(!confirm("저장하시겠습니까?"))
+            return;
         var raw = e.target.parentNode.parentNode.parentNode
         var data = {
             BID : raw.cells[0].textContent,
@@ -539,14 +543,15 @@
             BTIME_VAC_DAY : raw.cells[4].firstChild.value,
             BTIME_VAC_END : raw.cells[5].firstChild.value,
             BAREA : raw.cells[6].firstChild.value,
+            BETC : raw.cells[7].firstChild.value,
         };
-        for (const [key, value] of Object.entries(data)) {
-            if(value == ""){
-                alert("데이터에 공백이 있을 순 없습니다.")
-                return
-            }
-        }
-        try {     
+        // for (const [key, value] of Object.entries(data)) {
+        //     if(value == ""){
+        //         alert("데이터에 공백이 있을 순 없습니다.")
+        //         return
+        //     }
+        // }
+        try {
             const response = await fetch(`/api/<%=campus%>/building/${raw.cells[0].textContent}`, {
                 method: 'PUT', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, cors, *same-origin
@@ -592,7 +597,8 @@
     let cancelEditFunc = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+        if(!confirm("취소하시겠습니까?"))
+            return;
         var raw = e.target.parentNode.parentNode.parentNode
         var table = raw.parentNode.parentNode;
         for(var i = 1; i < table.rows[0].cells.length - 1; i++){
@@ -612,11 +618,14 @@
     }
     var tempEditVal = {}
     var focusedEditRow = null;
+
+
+    
     let editBuildingFunc = (e)=>{
         e.preventDefault();
         e.stopPropagation();
         var raw = e.target.parentNode.parentNode.parentNode;
-        console.log(raw)
+        // console.log(raw)
         var table = raw.parentNode.parentNode;
         
         if (focusedEditRow != null){
@@ -628,15 +637,16 @@
         focusedEditRow = raw.rowIndex;
         let temp = raw.cells
         for(var i = 1; i < table.rows[0].cells.length - 1; i++){
-            var input = document.createElement("input")
+            var input = document.createElement("textarea")
             input.type = "text"
             input.name = `cell_${i}`
             input.style = "width: 100%;"
             input.value = temp[i].textContent
             
             tempEditVal[i] = temp[i].textContent
-            console.log(i, raw.cells[i])
-            raw.cells[i].removeChild(raw.cells[i].firstChild)
+            // console.log(i, raw.cells[i], raw.cells[i].childElementCount, raw.cells[i].firstChild)
+            if(tempEditVal[i] !== "")
+                raw.cells[i].removeChild(raw.cells[i].firstChild)
             raw.cells[i].appendChild(input)
         }
         raw.cells[table.rows[0].cells.length - 1].firstChild.classList.add("hideButtons")
@@ -650,7 +660,9 @@
     let registerBuildingFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+    
+        if(!confirm("등록하시겠습니까?"))
+            return;
         var raw = e.target.parentNode.parentNode.parentNode
         var data = {
             BID : raw.cells[0].firstChild.value,
@@ -660,13 +672,14 @@
             BTIME_VAC_DAY : raw.cells[4].firstChild.value,
             BTIME_VAC_END : raw.cells[5].firstChild.value,
             BAREA : raw.cells[6].firstChild.value,
+            BETC : raw.cells[7].firstChild.value,
         };
-        for (const [key, value] of Object.entries(data)) {
-            if(value == ""){
-                alert("데이터에 공백이 있을 순 없습니다.")
-                return
-            }
-        }
+        // for (const [key, value] of Object.entries(data)) {
+        //     if(value == ""){
+        //         alert("데이터에 공백이 있을 순 없습니다.")
+        //         return
+        //     }
+        // }
         try {     
             const response = await fetch('/api/<%=campus%>/building', {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -712,6 +725,9 @@
     let cancelRegisterFunc = async (e) => {
         e.preventDefault();
         e.stopPropagation();
+        
+        if(!confirm("취소하시겠습니까?"))
+            return;
         var raw = e.target.parentNode.parentNode.parentNode
         raw.parentNode.removeChild(raw);
         document.getElementById('addBuildings').classList.remove("hideButtons")

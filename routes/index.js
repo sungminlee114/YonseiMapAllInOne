@@ -8,11 +8,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/sinchon', function(req, res, next) {
-  res.render('index', { campus: 'Sinchon' });
+  res.render('index', { campus: 'sinchon' });
 });
 
 router.get('/songdo', function(req, res, next) {
-  res.render('index', { campus: 'Songdo' });
+  res.render('index', { campus: 'songdo' });
 });
 
 module.exports = router;
