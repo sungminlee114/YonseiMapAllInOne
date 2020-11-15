@@ -8,6 +8,35 @@ const app = require('../app');
 
 var validateCookie = 'bqweqeqDFQW12'
 
+//Campus Setting
+
+router.put('/:campus/settings/photo/:photoName', (req, res, next)=>{
+  //modify
+  console.log(req.body.length)
+//   if(req.cookies.loggedIn == validateCookie){
+//     var postReq = req.data
+//     // var db;
+//     // if(req.params.campus == 'sinchon'){
+//       //     db = dbs.sinchon
+//       // } else if (req.params.campus == 'songdo'){
+//         //     db = dbs.songdo
+//         // } 
+//         if (req.params.campus != 'sinchon' && req.params.campus != 'songdo'){
+//           res.send('wrong campus');
+//           return;
+//         }
+        
+//   console.log(req)
+//   return postReq
+
+  
+// } else {
+//   res.send('비정상적인 접근')
+// }
+})
+
+//Building
+
 router.get('/:campus/building', (req, res, next) =>{
   
   if(req.params.campus == 'sinchon'){

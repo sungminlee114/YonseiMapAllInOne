@@ -364,9 +364,10 @@
                         </a>
                         <a href="#sinchon" data-toggle="collapse" aria-expanded="false"id = "sinchon_dropdown" class="dropdownBtn" >▼</a>
                     </div>
-                    <script>
-                    </script>
                     <ul class="collapse list-unstyled" id="sinchon">
+                        <li>
+                            <a href="/admin/sinchon/settings" id = "sinchon_settings" style="text-decoration:underline">캠퍼스 세팅</a>
+                        </li>
                         <% Object.keys(buildingData['sinchon']).forEach((i)=>{ %>
                             <li>
                                 <a href="/admin/sinchon/<%=buildingData['sinchon'][i].BID%>" id = "sinchon_<%=buildingData['sinchon'][i].BID%>"><%=buildingData['sinchon'][i].BNAME%></a>
@@ -382,6 +383,9 @@
                         <a href="#songdo" data-toggle="collapse" aria-expanded="false"  id = "songdo_dropdown" class="dropdownBtn">▼</a>
                     </div>
                     <ul class="collapse list-unstyled" id="songdo">
+                        <li>
+                            <a href="/admin/songdo/settings" id = "songdo_settings" style="text-decoration:underline">캠퍼스 세팅</a>
+                        </li>
                         <% Object.keys(buildingData['songdo']).forEach((i)=>{ %>
                             <li>
                                 <a href="/admin/songdo/<%=buildingData['songdo'][i].BID%>" id = "songdo_<%=buildingData['songdo'][i].BID%>"><%=buildingData['songdo'][i].BNAME%></a>

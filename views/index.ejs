@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+  <title>지도 올인원 | <% if (campus == 'sinchon') { %>신촌<% } else { %>송도<%}%>캠퍼스</title>
+	<meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -57,9 +59,11 @@
             <div id="sidebar-type-main" class="sidebar-body-frame">
             </div>
             <div id="sidebar-type-footer">
-              <a class="sidebar-footer-link" href="#">만든 사람</a>
+              <a class="sidebar-footer-link" href="/credit" target="_blank">만든 사람들</a>
               <span class="sidebar-footer-link">|</span>
-              <a class="sidebar-footer-link" href="#">지도 정보 제보</a>
+              <a class="sidebar-footer-link" href="/info" target="_blank">기타 정보</a>
+              <span class="sidebar-footer-link">|</span>
+              <a class="sidebar-footer-link" href="/report" target="_blank">지도 정보 제보</a>
             </div>
           </nav>
           <button id="sidebarCollapse">

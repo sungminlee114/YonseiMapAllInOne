@@ -9,7 +9,7 @@ let updateBuildingData = async (app)=> {
     res.songdo.forEach(element => {
         temp.songdo[element.BID] = element;
     });
-    console.log(temp)
+    // console.log(temp)
     app.set('buildingData' ,temp)
 }
 

@@ -30,13 +30,28 @@ router.use('/:campus/main', (req, res, next)=>{
     var buildingData = req.app.get('buildingData')
     // buildingData.sinchonBuildings[401] = 'afads'
     // console.log(buildingData['sinchon']['301'])
-    console.log(buildingData)
+    // console.log(buildingData)
     res.render('admin', {buildingData:buildingData, campus: req.params.campus, building: 'main' });
 
     } else {
     res.redirect('/admin')
     }
 })
+
+router.use('/:campus/settings', (req, res, next)=>{
+
+      if(req.cookies.loggedIn == validateCookie){
+          console.log("asdfa")
+        var buildingData = req.app.get('buildingData')
+        // buildingData.sinchonBuildings[401] = 'afads'
+        // console.log(buildingData['sinchon']['301'])
+        // console.log(buildingData)
+        res.render('admin_campusSetting', {buildingData:buildingData, campus: req.params.campus, building: 'main' });
+  
+      } else {
+      res.redirect('/admin')
+      }
+  })
 
 router.use('/:campus/:building', (req, res, next)=>{
   

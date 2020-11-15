@@ -247,7 +247,7 @@ let sidebar_loadMain = () => {
 
   <div class="sidebar-body" id="sidebar-main-report" style="margin-top:20px; text-align:center;">
     <h2 class="no-after" style="margin-bottom:20px"> 지도 정보 제보 </h2>
-    <p> 오류나 새로운 정보를 <a href='/report'>여기</a>서 제보해 주세요.
+    <p> 오류나 새로운 정보를 <a href="/report" target="_blank">여기</a>서 제보해 주세요.
     <br/>
     사소한 관심이 큰 변화를 만듭니다 :) </p>
   </div>
