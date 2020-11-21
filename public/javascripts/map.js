@@ -4,6 +4,81 @@
 만든이 : 연세대학교 제55대 총학생회 Mate 사무운영국원, 공과대학 글로벌융합공학부 18학번 이성민 (starmin114@yonsei.ac.kr)
 */
 
+/* -- load image -- */ 
+let MAPS = {
+  '1F':new Image(),
+  'B1F':new Image()
+};
+let drawQ = [];
+let isHovering = false;
+let isClicking = false;
+let pointingBuilding = null;
+let clickedBuilding = null;
+let lastAnimating = null;
+let mapBackup = null;
+let imgClo = null;
+
+for (const[k, v] of Object.entries(MAPS)){
+  MAPS[k].src = `./images/${CAMPUS}/maps/${k}.png`;
+  MAPS[k].addEventListener("load",() => {
+    console.log(`load img ${CAMPUS} ${k}`);
+    if(k == FLOORCONTEXT){
+      changeMap(k)
+    }
+  },false);
+}
+
+const getMap = (key) => {
+  return new Promise((resolve, reject) =>{
+    if(!Object.keys(MAPS).includes(key)){
+      let imPath;
+      key = key.slice(key.indexOf("_")+1)
+      imPath = `${CAMPUS}/maps/${clickedBuilding.BID}/${key}`;
+      MAPS[key] = myLoadImage(`./images/${imPath}.png`)
+      MAPS[key].addEventListener("load",() => {
+        resolve(MAPS[key]);
+      },false);
+    } else {
+      resolve(MAPS[key])
+    }
+  });
+};
+
+const saveMap = () => {
+  if(imgClo !== null){
+   mapBackup = [drawQ, clickedBuilding];
+  }
+}
+
+const restoreMap = () => {
+  if(mapBackup !== null){
+    drawQ = mapBackup[0];
+    clickedBuilding = mapBackup[1];
+    if(clickedBuilding !== null){
+      clickBuilding(clickedBuilding);
+      return;
+    }
+    resizeCanvas(true);
+  }
+}
+const changeMap = async (fc) => {
+  if(fc != '1F'){
+    saveMap();
+  }
+  imgClo = await getMap(fc);
+  imageSize.w = imgClo.width;
+  imageSize.h = imgClo.height;
+  drawQ = [];
+  isHovering = false;
+  isClicking = false;
+  pointingBuilding = null;
+  lastAnimating = null;
+  if(fc == '1F')
+    restoreMap();
+  else
+    resizeCanvas(true);
+}
+
 
 /* -- [utils] -- */
 let wrapFunction = function (fn, context, params) {
@@ -11,6 +86,13 @@ let wrapFunction = function (fn, context, params) {
     fn.apply(context, params);
   };
 };
+
+function getUUID() { // UUID v4 generator in JavaScript (RFC4122 compliant)
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 3 | 8);
+    return v.toString(16);
+  });
+}
 
 //두 점좌표의 차이(f - i) 반환
 let get2dDiff = (i, f) => {
@@ -43,8 +125,8 @@ let isinArea = (point, area) => {
   return inside;
 };
 
-//한 건물의 area의 평균 구하기
-let getAveragePointOfArea = (area) => {
+//한 area의 평균 구하기
+let getAveragePointOfCoords = (area) => {
   let len = area.length;
   let pos = {x:0, y:0};
   for(let i = 0; i < len; i++){
@@ -55,6 +137,73 @@ let getAveragePointOfArea = (area) => {
     x: pos.x / len,
     y: pos.y / len
   }
+  return pos
+}
+
+const getAveragePointOfBuilding = (building) => {
+  if(Object.keys(building).includes('areaAverage')){
+    return building['areaAverage']
+  } else {
+    let av = getAveragePointOfCoords(building.area)
+    let idx = buildingList.findIndex(el => el.BID == building.BID)
+    buildingList[idx]['areaAverage'] = av;
+    return av;
+  }
+}
+
+const getMathematicalAreaOfCoords = (vertices) => {
+  let total = 0;
+
+  for (var i = 0, l = vertices.length; i < l; i++) {
+    var addX = vertices[i].x;
+    var addY = vertices[i == vertices.length - 1 ? 0 : i + 1].y;
+    var subX = vertices[i == vertices.length - 1 ? 0 : i + 1].x;
+    var subY = vertices[i].y;
+
+    total += (addX * addY * 0.5);
+    total -= (subX * subY * 0.5);
+  }
+
+  return Math.abs(total);
+}
+
+//무게중심 구하기
+let getCoGOfCoords = (vertices) => {
+
+  let area = getMathematicalAreaOfCoords(vertices);
+  let sumX = 0, sumY = 0;
+  
+  for (var i = 0; i < vertices.length; i++) {
+    let sumOx = vertices[i].x + vertices[i == vertices.length - 1 ? 0 : i + 1].x;
+    let sumOy = vertices[i].y + vertices[i == vertices.length - 1 ? 0 : i + 1].y;
+    let cross = vertices[i].x*vertices[i == vertices.length - 1 ? 0 : i + 1].y - vertices[i == vertices.length - 1 ? 0 : i + 1].x*vertices[i].y;
+    
+    sumX += sumOx * cross;
+    sumY += sumOy * cross;
+  }
+  
+  let area6 = 1/(6*area);
+
+  return {x: Math.abs(area6 * sumX), y: Math.abs(area6 * sumY)}
+}
+
+const getCoGOfBuilding = (building) => {
+  if(Object.keys(building).includes('areaCoG')){
+    return building['areaCoG']
+  } else {
+    let av = getCoGOfCoords(building.area);
+    let idx = buildingList.findIndex(el => el.BID == building.BID)
+    buildingList[idx]['areaCoG'] = av;
+    return av;
+  }
+}
+
+let getSquareBoxPointOfMiddleAndSize = (middle, size) => {
+  let pos = {}
+  pos.x = middle.x - size.w/2
+  pos.y = middle.y - size.h/2
+  pos.w = size.w
+  pos.h = size.h
   return pos
 }
 
@@ -195,20 +344,43 @@ const padByImageVertex = (area, color, filter = null) => {
   ctx.restore();
 };
 
+const drawImageOnTheCOGOfImageVertex = (building, image, filter = null) => {
+  if (filter !== null){
+    ctx.filter = filter
+  }
+  middle = getCoGOfBuilding(building); // currently ImageCoord not CanvasCoord
+  cmiddle = coordIm2CanvasSingle(middle)
+
+  resizedImageSize = {}
+  resizedImageSize.w = 50;
+  resizedImageSize.h = 50;
+
+  squarePoint = getSquareBoxPointOfMiddleAndSize(cmiddle, resizedImageSize)
+  squarePoint.y -= resizedImageSize.h/2;
+  ctx.drawImage(image, 0, 0, image.width, image.height, squarePoint.x, squarePoint.y, squarePoint.w, squarePoint.h);
+
+  if (filter !== null){
+    ctx.filter = "none"
+  }
+};
+
 // draw할 것들을 저장
-let pushDrawQ = (building, color, filter, state, type, draw = true) => {
+let pushDrawQ = (building, colorOrImage, filter, state, type, draw = true) => {
   let f;
   //이스터에그
   if (drawQ.findIndex(el => el.state == state && el.id == building.BID && el.type == type) == -1) {
     if (type == "stroke")
-      f = wrapFunction(strokeByImageVertex, this, [building.area, color, filter]);
+      f = wrapFunction(strokeByImageVertex, this, [building.area, colorOrImage, filter]);
     else if (type == "fill")
-      f = wrapFunction(fillByImageVertex, this, [building.area, color, filter]);
+      f = wrapFunction(fillByImageVertex, this, [building.area, colorOrImage, filter]);
     else if (type == "clip")
-      f = wrapFunction(clipByImageVertex, this, [building.area, color, filter])
+      f = wrapFunction(clipByImageVertex, this, [building.area, colorOrImage, filter]);
     else if (type == "pad")
-      f = wrapFunction(padByImageVertex, this, [building.area, color, filter]);;
-    drawQ.push({ func: f, id: building.BID, state: state, type: type });
+      f = wrapFunction(padByImageVertex, this, [building.area, colorOrImage, filter]);
+    else if (type.startsWith("image"))
+      f = wrapFunction(drawImageOnTheCOGOfImageVertex, this, [building, colorOrImage, filter])
+    
+      drawQ.push({ func: f, id: building.BID, state: state, type: type });
     if (draw) redrawCanvas();
     // console.log("push", building, state, Q)
   }
@@ -233,12 +405,24 @@ let deleteDrawQ = (building, state, draw = true) => {
 //각 지도의 중앙좌표 상수
 const mapMiddleCoord = {
   sinchon: {
-    x : 1112,
-    y : 2045
+    '1F' : {
+      x : 1112,
+      y : 2045
+    },
+    'B1F' : {
+      x : 1112,
+      y : 2045
+    },
   },
   songdo: {
-    x : 500,
-    y : 300
+    '1F' : {
+      x : 500,
+      y : 300
+    },
+    'B1F' : {
+      x : 500,
+      y : 300
+    },
   }
 };
 
@@ -272,31 +456,16 @@ let screenMiddle = {
 
 let mapCanvas = document.getElementById("mapCanvas");
 let ctx = mapCanvas.getContext("2d");
-let drawQ = [];
 
-let isHovering = false,
-  isClicking = false;
-
-/* -- load image -- */ 
-
-let imgClo = new Image();
-imgClo.src = `/images/${CAMPUS}_mainmap.png`;
-
-imgClo.addEventListener("load",() => {
-    console.log("load img");
-    imageSize.w = imgClo.width;
-    imageSize.h = imgClo.height;
-    resizeCanvas(true);
-  },false);
 
  /* -- functions -- */
   
 // 그림좌표계의 점좌표를 화면의 정중앙으로 이동
-let alignScreenToMiddle = (m, zoomReset = false, isph = false, smooth = false) => {
-  if (zoomReset) {
-    let _zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h) + 1;
-    changeZoom(_zoom, { x: canvasSize.x, y: canvasSize.y }, true);
-  }
+let alignScreenToMiddle = (m, isph = false, smooth = false) => {
+  // if (zoomReset) {
+  //   let _zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h) + 1;
+  //   changeZoom(_zoom, { x: canvasSize.x, y: canvasSize.y }, true);
+  // }
   
   let a = coordIm2CanvasSingle(m),
   b = { x: canvasSize.x + canvasSize.w / 2, y: canvasSize.y + canvasSize.h / 2 };
@@ -304,8 +473,9 @@ let alignScreenToMiddle = (m, zoomReset = false, isph = false, smooth = false) =
     b.y -= 95;
   }
   let c = get2dDiff(b, a);
-
-  moveScreen(c, true, smooth);
+  
+  console.log(m, a, b, screenSize)
+  moveScreen(c, smooth);
 
   //redraw안에서 m 업데이트시켜줌.
   redrawCanvas();
@@ -316,6 +486,7 @@ let redrawCanvas = (filter = null) => {
   if(filter !== null){
     ctx.filter = filter
   }
+  ctx.clearRect(canvasSize.x,canvasSize.y,canvasSize.w ,canvasSize.h );
   ctx.drawImage(imgClo, screenSize.x, screenSize.y, screenSize.w, screenSize.h, canvasSize.x, canvasSize.y, canvasSize.w, canvasSize.h);
   screenMiddle.x = screenSize.x + screenSize.w / 2;
   screenMiddle.y = screenSize.y + screenSize.h / 2;
@@ -339,10 +510,14 @@ let resizeCanvas = first => {
 
   //최적의 zoom으로 초기화
   if (first){
-    if(CAMPUS == 'sinchon'){
+    if(CAMPUS == 'sinchon' && FLOORCONTEXT == '1F'){
       zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h) + 1;
+    // } else if (CAMPUS == 'sinchon' && FLOORCONTEXT == 'B1F'){
+    //   zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h) - 0.3;
+    } else if(CAMPUS == 'songdo'){
+      zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h);
     } else {
-      zoom =  Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h);
+      zoom = Math.max(canvasSize.w / imageSize.w, canvasSize.h / imageSize.h);
     }
   }
 
@@ -350,7 +525,10 @@ let resizeCanvas = first => {
   screenSize.h = Math.floor(canvasSize.h / zoom);
 
   if (first){
-    alignScreenToMiddle(mapMiddleCoord[CAMPUS]);
+    if(mapMiddleCoord[CAMPUS][FLOORCONTEXT] !== undefined)
+      alignScreenToMiddle(mapMiddleCoord[CAMPUS][FLOORCONTEXT]);
+    else
+      alignScreenToMiddle({x: screenSize.x/2, y: screenSize.y/2});
   }
   else
     alignScreenToMiddle(screenMiddle);
@@ -360,11 +538,15 @@ let resizeCanvas = first => {
 
 
 //zoom하기
-let changeZoom = (_zoom, cPos, smooth = false) => {
-  
+let changeZoom = (_zoom, cPos, uid = null) => {
+
+  if(uid === null){
+    uid = getUUID();
+    lastAnimating = uid;
+  }
+
   let iPos = coordCanvas2ImSingle(cPos);
   let l = get2dDiff(canvasSize, cPos);
-
   let rw = canvasSize.w / _zoom,
     rh = canvasSize.h / _zoom,
     rx = iPos.x - ( l.x / canvasSize.w) * rw,
@@ -374,36 +556,36 @@ let changeZoom = (_zoom, cPos, smooth = false) => {
     _zoom < 5 &&
     _zoom > 0
   ) {
-      if(smooth){
-        let index = 0;
-        let maxIndex = 10;
-        let initialSize = screenSize;
-        let __zoom = zoom;
+      // if(smooth){
+      //   let index = 0;
+      //   let maxIndex = 10;
+      //   let initialSize = screenSize;
+      //   let __zoom = zoom;
 
-        const inte = setInterval(() => {
-          screenSize.w = getAnimatedValue(initialSize.w, rw, index, maxIndex)
-          screenSize.h = getAnimatedValue(initialSize.h, rh, index, maxIndex)
-          screenSize.x = getAnimatedValue(initialSize.x, rx, index, maxIndex)
-          screenSize.y = getAnimatedValue(initialSize.y, ry, index, maxIndex)
-          zoom = getAnimatedValue(__zoom, _zoom, index, maxIndex)
-          redrawCanvas();
-          if (++index === maxIndex) {
-            clearInterval(inte);
-            (screenSize.w = rw), (screenSize.h = rh), (screenSize.x = rx), (screenSize.y = ry), (zoom = _zoom);
-            redrawCanvas();
-          }
-        }, 20);
+      //   const inte = setInterval(() => {
+      //     screenSize.w = getAnimatedValue(initialSize.w, rw, index, maxIndex)
+      //     screenSize.h = getAnimatedValue(initialSize.h, rh, index, maxIndex)
+      //     screenSize.x = getAnimatedValue(initialSize.x, rx, index, maxIndex)
+      //     screenSize.y = getAnimatedValue(initialSize.y, ry, index, maxIndex)
+      //     zoom = getAnimatedValue(__zoom, _zoom, index, maxIndex)
+      //     redrawCanvas();
+      //     if (++index === maxIndex) {
+      //       clearInterval(inte);
+      //       (screenSize.w = rw), (screenSize.h = rh), (screenSize.x = rx), (screenSize.y = ry), (zoom = _zoom);
+      //       redrawCanvas();
+      //     }
+      //   }, 20);
 
-      } else {
+      // } else {
         (screenSize.w = rw), (screenSize.h = rh), (screenSize.x = rx), (screenSize.y = ry), (zoom = _zoom);
         redrawCanvas();
-      }
+      // }
   } 
   else console.log([rx, ry, rw, rh, _zoom]);
 };
 
 //화면 옮기기
-const moveScreen = (diff, large = false, smooth = false) => {
+const moveScreen = (diff, smooth = false, uid = null) => {
   let mcx = diff.x,
   mcy = diff.y;
   let msx = mcx / zoom;
@@ -416,6 +598,10 @@ const moveScreen = (diff, large = false, smooth = false) => {
   let ttry = msy >= 0 ? Math.min(ry, imageSize.h - screenSize.h - 1) : Math.max(ry, 0);
     
   if(smooth){
+    if(uid === null){
+      uid = getUUID();
+      lastAnimating = uid;
+    }
     // const befInte = setInterval(() => {
     //   let index = 0;
     //   if (++index === 2) {
@@ -424,18 +610,18 @@ const moveScreen = (diff, large = false, smooth = false) => {
     // }, 200);
     
     let index = 0;
-    let maxIndex = 25;
+    let maxIndex = 40;
     let initialSize = screenSize;
     
     const inte = setInterval(() => {
       screenSize.x = getAnimatedValue(initialSize.x, ttrx, index, maxIndex)
       screenSize.y = getAnimatedValue(initialSize.y, ttry, index, maxIndex)
       redrawCanvas();
+      if(lastAnimating !== uid){
+        clearInterval(inte)
+      }
       if (++index === maxIndex) {
         (screenSize.x = ttrx), (screenSize.y = ttry);
-        // if(callback == true){
-        //   // changeZoom(1.5, {x:canvasSize.w/2, y: canvasSize.h/2}, true);
-        // }
         redrawCanvas();
         clearInterval(inte);
       }
@@ -449,16 +635,18 @@ const moveScreen = (diff, large = false, smooth = false) => {
   return true;
 };
 
-let pointingBuilding = null,
-  prevClickingBuilding;
-
 let checkHovering = (e) => {
+  if(FLOORCONTEXT != '1F'){
+    mapCanvas.style.cursor = "default";
+    return;
+  }
   let pos = getPointerPosinImage(e);
   pointingBuilding = isinBuildings(pos, buildingList);
   if (inputState && pointingBuilding != null) {
     mapCanvas.style.cursor = "pointer";
-    pushDrawQ(pointingBuilding, "white", null, "hover", "pad", drawQ);
-    pushDrawQ(pointingBuilding, null, null, "hover", "clip", drawQ);
+    pushDrawQ(pointingBuilding, "red", "null", "hover", "stroke", drawQ);
+    // pushDrawQ(pointingBuilding, "white", null, "hover", "pad", drawQ);
+    // pushDrawQ(pointingBuilding, null, null, "hover", "clip", drawQ);
     isHovering = true;
   } else if (isHovering && pointingBuilding == null) {
     mapCanvas.style.cursor = "default";
@@ -468,11 +656,19 @@ let checkHovering = (e) => {
 };
 
 let uncheckHovering = () => {
+  if(FLOORCONTEXT != 'B1F'){
+    return;
+  }
   deleteDrawQ(null, "hover", drawQ);
   isHovering = false;
 }
 
-const zoomNmove = (m, isph) => {
+const zoomNmove = (m, isph, uid = null) => {
+  if(uid === null){
+    uid = getUUID();
+    lastAnimating = uid;
+  }
+
   let a = coordIm2CanvasSingle(m),
   b = { x: canvasSize.x + canvasSize.w / 2, y: canvasSize.y + canvasSize.h / 2 };
   if(isph){
@@ -487,10 +683,12 @@ const zoomNmove = (m, isph) => {
   d.x = d.x / maxIndex;
   d.y = d.y / maxIndex;
   const inte = setInterval(() => {
-    moveScreen(d, true);
-
-    changeZoom(getAnimatedValue(initialZoom, 1.5, index, maxIndex), coordIm2CanvasSingle(m), false)
+    moveScreen(d, false, uid);
+    changeZoom(getAnimatedValue(initialZoom, 1.5, index, maxIndex), coordIm2CanvasSingle(m), uid = uid)
     redrawCanvas();
+    if(lastAnimating !== uid){
+      clearInterval(inte);
+    }
     if (++index === maxIndex) {
       redrawCanvas();
       clearInterval(inte);
@@ -499,20 +697,71 @@ const zoomNmove = (m, isph) => {
 
 }
 
+let toggleBuildingFloorListener = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  let currBut = e.target;
+  if(FLOORCONTEXT == currBut.dataset.floor){
+    return;
+  }
+  let context = currBut.parentNode;
+  
+  Array.from(document.getElementsByClassName("sliderInnerFloor")).forEach(el => {
+    el.classList.remove("selected");
+  })
+
+  Array.from(document.getElementsByClassName("sliderInnerBuildingFloor")).forEach(el => {
+    el.classList.remove("selected");
+  })
+
+  currBut.classList.add("selected");
+  FLOORCONTEXT = currBut.dataset.floor;
+  changeMap(FLOORCONTEXT)
+
+  return false;
+};
+
+const checkAvailableFloorsInBuilding = building => {
+  let avFloor = building.BAVFLOOR;
+  if(avFloor === null){
+    toggleBuildingFloor.classList.add("hide")
+    toggleBuildingFloor.innerHTML = "";
+    return;
+  }
+
+  let floors = avFloor.split(",");
+  let st = ""
+
+  floors.forEach(floor => {
+    st += `<div class="slider my-btn sliderInnerBuildingFloor" data-floor="${building.BID}_${floor}">${floor}</div>`
+  })
+  
+  toggleBuildingFloor.innerHTML = st;
+  toggleBuildingFloor.classList.remove("hide")
+
+  Array.from(document.getElementsByClassName("sliderInnerBuildingFloor")).forEach((element) => {
+    element.addEventListener("pointerdown", toggleBuildingFloorListener);
+  });
+}
+
 //click building
 let clickBuilding = (building) => {
+  if(FLOORCONTEXT != '1F'){
+    return;
+  }
+  console.log(building.name, building.area)
   // 화면 맞추고 줌
   if (!sidebarIsOpened()) toggleSideBar();
   else if(isPhone()) toggleSideBar(false);
 
-  let av = getAveragePointOfArea(building.area)
+  let av = getAveragePointOfBuilding(building)
   // changeZoom(1.5, coordIm2CanvasSingle(av), true);
   // alignScreenToMiddle(
   //   av, false, isPhone(), true, true
   //   );
-  if(Math.abs(1.5 - zoom) < 0.001)
+  if(Math.abs(1.5 - zoom) < 0.01)
     alignScreenToMiddle(
-      av, false, isPhone(), true
+      av, isPhone(), true
       );
   else
     zoomNmove(av, isPhone())
@@ -529,7 +778,8 @@ let clickBuilding = (building) => {
   
 
   unclickBuilding();
-  pointingBuilding = building
+  pointingBuilding = building;
+  clickedBuilding = building;
   // if (pointingBuilding == null) pointingBuilding = building;
   // prevClickingBuilding = pointingBuilding;
   if (
@@ -542,16 +792,21 @@ let clickBuilding = (building) => {
     // pushDrawQ(pointingBuilding, "red", null, "hover", "stroke", drawQ);
     pushDrawQ(building, "gray", null, "click", "pad", true);
     pushDrawQ(building, "rgba(255,0,0,0.0)", null, "click", "clip", true)
+    pushDrawQ(building, icon_pin_blue, null, "click", "image", true)
     // redrawCanvas("blur(5px)")
   isClicking = true;
 
   
   sidebar_loadBuildingDetail(building)
+  checkAvailableFloorsInBuilding(building);
+
+
 };
 
 let unclickBuilding = (building) => {
   deleteDrawQ(building, "click", true);
   isClicking = false;
+  clickedBuilding = null;
   sidebar_loadMain();
 };
 

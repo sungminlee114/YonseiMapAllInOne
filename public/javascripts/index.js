@@ -23,44 +23,116 @@ let cacheMediaIsPhone;
 
 //preloading
 
-let icon_search_gray = new Image()
-icon_search_gray.src = "/images/_icon_search_gray.png"
-icon_search_gray.style = "width:inherit; padding:3px;"
-icon_search_gray.id = "searchButton_im"
+const myLoadImage = (src, id=null, className = null, style=null, alt=null) => {
+  let image = new Image();
+  image.src = src
+  if(id !== null){
+    image.id = id
+  }
+  if(className !== null){
+    image.className = className
+  }
+  if(style !== null){
+    image.style = style
+  }
+  if(alt !== null){
+    image.alt = alt
+  }
+  return image;
+}
 
-let icon_search_blue = new Image()
-icon_search_blue.src = "/images/_icon_search_blue.png"
-icon_search_blue.style = "width:inherit; padding:3px;"
-icon_search_blue.id = "searchButton_im"
+let icon_search_gray = myLoadImage(
+  "./images/_icon_search_gray.png",
+  "searchButton_im",
+  null,
+  "width:inherit; padding:3px;"
+  );
 
-let icon_home = new Image()
-icon_home.src = "/images/_icon_home.png"
-icon_home.className  = "my-btn"
-icon_home.style = "width:inherit; padding:0px 7px 3px 7px"
-icon_home.id = "sidebar-building-home"
+let icon_search_blue = myLoadImage(
+  "./images/_icon_search_blue.png",
+  "searchButton_im",
+  null,
+  "width:inherit; padding:3px;"
+  )
+
+let icon_home = myLoadImage(
+  "./images/_icon_home.png",
+  "sidebar-building-home",
+  "my-btn",
+  "width:inherit; padding:0px 7px 3px 7px"
+  )
 icon_home.addEventListener("click", el => sidebar_toHome())
 
-let icon_cafeteria = new Image()
-icon_cafeteria.src = "/images/_icon_cafeteria.png"
-icon_cafeteria.alt = "식당"
+let icon_cafeteria = myLoadImage(
+  "./images/_icon_cafeteria.png",
+  null,
+  null,
+  null,
+  "식당"
+  )
 
-let icon_toilet = new Image()
-icon_toilet.src = "/images/_icon_toilet.png"
-icon_toilet.alt = "화장실"
+let icon_toilet = myLoadImage(
+  "./images/_icon_toilet.png",
+  null,
+  null,
+  null,
+  "화장실"
+  )
 
-let icon_venderMachine = new Image()
-icon_venderMachine.src = "/images/_icon_venderMachine.png"
-icon_venderMachine.alt = "자판기"
+let icon_venderMachine = myLoadImage(
+  "./images/_icon_venderMachine.png",
+  null,
+  null,
+  null,
+  "자판기"
+  )
 
-let icon_cafe = new Image()
-icon_cafe.src = "/images/_icon_cafe.png"
-icon_cafe.alt = "카페"
+let icon_cafe = myLoadImage(
+  "./images/_icon_cafe.png",
+  null,
+  null,
+  null,
+  "카페"
+  )
 
-let icon_facilties = [icon_cafeteria, icon_toilet, icon_venderMachine, icon_cafe]
+let icon_copyCenter = myLoadImage(
+  "./images/_icon_copyCenter.png",
+  null,
+  null,
+  null,
+  "복사실"
+  );
+
+let icon_cvs = myLoadImage(
+  "./images/_icon_cvs.png",
+  null,
+  null,
+  null,
+  "편의점"
+  );
+
+let icon_facilties = [icon_cafeteria, icon_toilet, icon_venderMachine, icon_cafe, icon_copyCenter, icon_cvs]
+
+let icon_pin_gray = myLoadImage(
+  "./images/_icon_pin_gray.png",
+  null,
+  null,
+  null,
+  null
+);
+
+let icon_pin_blue = myLoadImage(
+  "./images/_icon_pin_blue.png",
+  null,
+  null,
+  null,
+  null
+);
 
 //onload
 
 window.onload = () => {
+  
   cacheMediaIsPhone = isPhone();
   if (!cacheMediaIsPhone) _ = null;
   else {
@@ -189,13 +261,13 @@ var resizeAll = (first) => {
       sidebarBodyFrame.style.removeProperty("height");
       sideBar.style.removeProperty("bottom");
       mapContainer.style.removeProperty("margin-bottom");
-      Array.from(document.getElementsByClassName("sliderBack")).forEach(
-        (element) => {
-          // console.log(`${parseFloat(element.style.top) + 95}px`)
-          element.style.top = `${tops[i]}px`;
-          i += 1;
-        }
-      );
+      // Array.from(document.getElementsByClassName("sliderBack")).forEach(
+      //   (element) => {
+      //     // console.log(`${parseFloat(element.style.top) + 95}px`)
+      //     element.style.top = `${tops[i]}px`;
+      //     i += 1;
+      //   }
+      // );
 
       document.getElementsByClassName("sidebar-body")[0].style.top = null;
     }
@@ -229,17 +301,17 @@ var resizeAll = (first) => {
     // mapContainer.style.marginBottom = `105px`;
     // }
 
-    let tops = [100, 155, 210];
-    let i = 0;
+    // let tops = [100, 155, 210];
+    // let i = 0;
     //sliderback
     if (first == true) {
-      Array.from(document.getElementsByClassName("sliderBack")).forEach(
-        (element) => {
-          // console.log(`${parseFloat(element.style.top) + 95}px`)
-          element.style.top = `${tops[i]}px`;
-          i += 1;
-        }
-      );
+      // Array.from(document.getElementsByClassName("sliderBack")).forEach(
+      //   (element) => {
+      //     // console.log(`${parseFloat(element.style.top) + 95}px`)
+      //     element.style.top = `${tops[i]}px`;
+      //     i += 1;
+      //   }
+      // );
       mapContainer.style.marginLeft = null;
     }
   }
@@ -266,6 +338,43 @@ let toggleSlider = (e) => {
     context.children[1].classList.add("selected");
     context.children[0].classList.remove("selected");
   }
+};
+
+let toggleFloorListener = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  let currBut = e.target;
+  if(FLOORCONTEXT == currBut.dataset.floor)
+    return;
+  let context = currBut.parentNode;
+  
+  Array.from(document.getElementsByClassName("sliderInnerFloor")).forEach(el => {
+    el.classList.remove("selected");
+  })
+
+  Array.from(document.getElementsByClassName("sliderInnerBuildingFloor")).forEach(el => {
+    el.classList.remove("selected");
+  })
+
+  currBut.classList.add("selected");
+  FLOORCONTEXT = currBut.dataset.floor;
+  changeMap(FLOORCONTEXT)
+
+  return false;
+};
+
+
+let toggleTimeListener = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if(TIMECONTEXT == 'off'){
+    e.target.classList.add("selected")
+    TIMECONTEXT = 'on'
+  } else {
+    e.target.classList.remove("selected")
+    TIMECONTEXT = 'off'
+  }
+  return false;
 };
 
 let mobileSidebarOpenState = 0; // 0 closed 1 middle 2 top
@@ -468,13 +577,13 @@ let inputState = {
   tool: null,
   action: null,
 };
-let dragFlag = false;
+let mouseIsDown = false;
 let hoverFlag = true;
 let mobileSidebarPointerDownFlag = false;
 
 /* -- handle mouse -- */
 let handleMouseDown = (e) => {
-  dragFlag = true;
+  mouseIsDown = true;
   // document.ondragstart= () => {return false}
   // e.preventDefault();
   // e.stopPropagation();
@@ -488,27 +597,31 @@ let handleMouseDown = (e) => {
 };
 
 let handleMouseMove = (e) => {
-  if (dragFlag) {
+  if (mouseIsDown) {
     e.preventDefault();
     e.stopPropagation();
   }
-
 
   if (inputState.action == "mouseDown") {
     inputState.action = "mouseDrag";
   } else if (inputState.action != "mouseDrag") {
     inputState.action = "mouseMove";
   }
+
+
   if (
     inputState.action == "mouseDrag" &&
-    new Date().getTime() - doubleClickTime.getTime() > 200
+    new Date().getTime() - doubleClickTime.getTime() > 50
   ) {
-    if (dragFlag) drag(e);
-  } else if (hoverFlag) {
+    if (mouseIsDown) drag(e);
+  } else if (inputState.action == "mouseMove"
+  ){
+     if (hoverFlag) {
     checkHovering(e);
   } else {
     uncheckHovering();
   }
+}
 };
 
 let handleMouseUp = (e) => {
@@ -537,7 +650,7 @@ document.addEventListener("mousemove", handleMouseMove, {
 // mapCanvas.addEventListener("mouseup", handleMouseUp);
 
 document.addEventListener("mouseup", (e) => {
-  dragFlag = false;
+  mouseIsDown = false;
   handleMouseUp(e)
 });
 
@@ -760,7 +873,7 @@ mapSearch.addEventListener("focus", (e) => {
 /* -- 공통 -- */
 
 Array.from(document.getElementsByClassName("sliderBack")).forEach((element) => {
-  element.addEventListener("click", toggleSlider);
+  // element.addEventListener("click", toggleSlider);
   element.addEventListener("mouseenter", (e) => {
     hoverFlag = false;
   });
@@ -768,6 +881,15 @@ Array.from(document.getElementsByClassName("sliderBack")).forEach((element) => {
     hoverFlag = true;
   });
 });
+
+Array.from(document.getElementsByClassName("sliderInnerFloor")).forEach((element) => {
+  element.addEventListener("pointerdown", toggleFloorListener);
+});
+
+Array.from(document.getElementsByClassName("sliderInnerTime")).forEach((element) => {
+  element.addEventListener("pointerdown", toggleTimeListener);
+});
+
 sidebarCollapse.addEventListener("click", toggleSideBar);
 sidebarCollapse.addEventListener("mouseenter", (e) => {
   hoverFlag = false;
@@ -796,3 +918,19 @@ searchButton.addEventListener("mouseleave", (e) => {
   searchIconToGray(e)
   });
 mapSearch.addEventListener("focusout", searchIconToGray)
+
+let keyDownList = [];
+
+document.onkeydown = (e) => {
+  if(keyDownList.find(el => el == 'Control') && e.key == 'f'){
+    mapSearch.focus();
+    mapSearch.select();
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  keyDownList.push(e.key)
+}
+
+document.onkeyup = (e) => {
+  keyDownList.pop(e.key)
+}

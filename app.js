@@ -24,6 +24,8 @@ app.use(express.urlencoded({limit: '100mb', extended: true, parameterLimit: 1000
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+require('./api/cleanData')()
+
 require('./api/updateBuildngData')(app)
 require('./api/updateFacilityData')(app)
 

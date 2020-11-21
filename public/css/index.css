@@ -1,5 +1,10 @@
 @import url(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css);
 
+:root {
+  --mateColor: #1F3C73;
+  --white: #ffffff;
+}
+
 body {
   font-family: "NanumSquare", sans-serif !important;
   -webkit-font-smoothing: antialiased;
@@ -58,8 +63,12 @@ h2 {
 }
 
 .my-btn {
-  font-family: "NanumSquare";
   cursor: pointer;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
 .my-btn:hover{
@@ -107,7 +116,7 @@ h2 {
 }
 
 #sidebar h2.mytab-selected::after {
-  border-bottom: 3px solid #1F3C73 !important;
+  border-bottom: 3px solid var(--mateColor) !important;
   width: 100%;
 }
 
@@ -228,7 +237,7 @@ h2 {
 }
 
 #sidebar h2 {
-  color: #1F3C73;
+  color: var(--mateColor);
   font-size: 0.9rem;
   text-align: center;
   font-weight: 900;
@@ -247,7 +256,7 @@ h2 {
 }
 
 .sidebar-tab:hover::after{
-  border-bottom: 3px solid #1F3C73 !important;
+  border-bottom: 3px solid var(--mateColor) !important;
   width: 100%;
 }
 
@@ -266,14 +275,14 @@ h2 {
 }
 
 #sidebar h3 {
-  color: #1F3C73;
+  color: var(--mateColor);
   font-size: 23px;
   text-align: center;
   font-weight: 900;
 }
 
 #sidebar h5 {
-  color: #1F3C73;
+  color: var(--mateColor);
   font-size: 0.7rem;
   text-align: left;
   font-weight: 900;
@@ -333,10 +342,6 @@ h2 {
   color: #a3a3a3;
 }
 
-#sidebar-type-footer > span{
-
-}
-
 /* spinner */
 #sidebar-building-loading {
     width: 100%;
@@ -346,16 +351,15 @@ h2 {
     justify-content: center;
 }
 
-
 /* 시설 안내 */
 
 .icon-div {
-  padding: 0px 8px;
+  padding: 0px 15px;
 }
 
 .icon-div img {
   width: inherit;
-  /* background-color: #1F3C73; */
+  /* background-color: var(--mateColor); */
 }
 
 /* 길찾기 */
@@ -377,7 +381,7 @@ h2 {
 #direction_search {
   float: right;
   background-color: white;
-  border-color: #1F3C73;
+  border-color: var(--mateColor);
   font-size: 0.7rem;
 }
 
@@ -518,6 +522,42 @@ h2 {
 
 /*silder*/
 .sliderBack {
+  z-index: 22;
+  width: 46px;
+  right: 10px;
+  position: absolute;
+  background: white;
+  padding: 3px;
+  border-radius: 3px;
+  border: 1px solid black;
+  font-size: 0.75rem;
+}
+
+.slider {
+  border-radius: 3px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider.selected{
+  background: var(--mateColor);
+  color: white;
+}
+
+#toggleFloor{
+  top: 10px;
+}
+
+#toggleBuildingFloor{
+  top: 110px;
+}
+
+#toggleTime{
+  top: 210px;
+}
+/* .sliderBack {
   height: 36px;
   width: 90px;
   border-radius: 30px;
@@ -529,26 +569,26 @@ h2 {
   background-color: #ABCADD;
   display: flex;
   cursor: pointer;
-  /* padding: 0px 4px; */
   -webkit-box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.6);
   -moz-box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.6);
   box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.6);
-}
+} */
 
-.sliderBack div {
+/* .sliderBack div {
+  z-index: 120;
+
+} */
+
+/* .sliderBack div {
   z-index: 120;
   color: white;
   font-size: 13px;
-  /* display: inline; */
-  /* display: flex; */
   height: 100%;
   width: 50%;
   align-self: center;
   text-align: center;
   margin: 0;
   padding: 0;
-  /* position: absolute;
-  top: 2px; */
   border-radius: 30px;
   display: flex;
   justify-content: center;
@@ -556,9 +596,9 @@ h2 {
   -webkit-box-shadow: inset 0px -58px 61px -61px rgba(0, 0, 0, 0.3);
   -moz-box-shadow: inset 0px -58px 61px -61px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px -58px 61px -61px rgba(0, 0, 0, 0.3);
-}
+} */
 
-.sliderBack .left {
+/* .sliderBack .left {
   border-radius: 30px 0px 0px 30px;
 }
 
@@ -567,19 +607,19 @@ h2 {
 }
 
 .sliderBack .selected {
-  background-color: #1F3C73;
+  background-color: var(--mateColor);
   -webkit-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
   -moz-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
   box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
-}
+} */
 
-.sidebarBlock {
+/* .sidebarBlock {
   width: 8vw;
   height: 100%;
   z-index: 100;
   background: #F6F6F6;
   position: fixed;
-}
+} */
 
 #sidebar-toggler-mobile{
   display:none;
@@ -587,9 +627,9 @@ h2 {
 
 @media screen and (max-width: 768px) {
 
-  .sidebarBlock {
+  /* .sidebarBlock {
     display: none;
-  }
+  } */
 
   #sidebar-toggler-mobile{
     width: 100vw;
@@ -745,7 +785,7 @@ h2 {
   }
 
   .sliderBack .selected {
-    background-color: #1F3C73ab;
+    background-color: var(--mateColor)ab;
     -webkit-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
     -moz-box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);
     box-shadow: inset 0px 200px 35px -195px rgba(0, 0, 0, 0.6);

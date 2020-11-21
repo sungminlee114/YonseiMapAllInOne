@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-
+fs = require('fs');
+path = require('path')
 console.log("api.js");
 
 var dbs = require('../api/dbs');
@@ -12,27 +13,28 @@ var validateCookie = 'bqweqeqDFQW12'
 
 router.put('/:campus/settings/photo/:photoName', (req, res, next)=>{
   //modify
-  console.log(req.body.length)
-//   if(req.cookies.loggedIn == validateCookie){
-//     var postReq = req.data
-//     // var db;
-//     // if(req.params.campus == 'sinchon'){
-//       //     db = dbs.sinchon
-//       // } else if (req.params.campus == 'songdo'){
-//         //     db = dbs.songdo
-//         // } 
-//         if (req.params.campus != 'sinchon' && req.params.campus != 'songdo'){
-//           res.send('wrong campus');
-//           return;
-//         }
-        
-//   console.log(req)
-//   return postReq
-
   
-// } else {
-//   res.send('비정상적인 접근')
-// }
+  if(req.cookies.loggedIn == validateCookie){
+    
+    if (req.params.campus != 'sinchon' && req.params.campus != 'songdo'){
+      res.send('wrong campus');
+      return;
+    }
+
+    let fileData = req.body.val;
+    let fileName = req.body.name;
+    
+    fs.writeFile(path.join(__dirname, `../public/images/${req.params.campus}/maps/${req.params.photoName}.png`), fileData, 'base64', function (err) {
+      if (err) return console.log(err);
+      console.log(`Saved ${fileName} as ${req.params.campus}/maps/${req.params.photoName}.png .`)
+      res.send("ok")
+    });
+    return;
+  
+} else {
+  res.statusCode = 403
+  res.send('비정상적인 접근')
+}
 })
 
 //Building
@@ -103,8 +105,8 @@ router.post('/:campus/building', (req, res, next)=>{
     console.log(postReq)
 
     
-    db.query(`INSERT INTO BUILDINGS(BID, BNAME, BTIME_SEM_DAY, BTIME_SEM_END, BTIME_VAC_DAY, BTIME_VAC_END, BAREA, BETC)
-     VALUES(${postReq.BID}, '${postReq.BNAME}', '${postReq.BTIME_SEM_DAY}', '${postReq.BTIME_SEM_END}', '${postReq.BTIME_VAC_DAY}', '${postReq.BTIME_VAC_END}', '${postReq.BAREA}', '${postReq.BETC}') `, (err, result) => {
+    db.query(`INSERT INTO BUILDINGS(BID, BNAME, BTIME_SEM_DAY, BTIME_SEM_END, BTIME_VAC_DAY, BTIME_VAC_END, BAREA, BETC, BAVFLOOR)
+     VALUES(${postReq.BID}, '${postReq.BNAME}', '${postReq.BTIME_SEM_DAY}', '${postReq.BTIME_SEM_END}', '${postReq.BTIME_VAC_DAY}', '${postReq.BTIME_VAC_END}', '${postReq.BAREA}', '${postReq.BETC}', '${postReq.BAVFLOOR}') `, (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400
@@ -132,7 +134,7 @@ router.put('/:campus/building/:BID', (req, res, next)=>{
         res.send('wrong campus');
         return;
     }
-    db.query(`UPDATE BUILDINGS SET BNAME = '${postReq.BNAME}', BTIME_SEM_DAY = '${postReq.BTIME_SEM_DAY}', BTIME_SEM_END = '${postReq.BTIME_SEM_END}', BTIME_VAC_DAY = '${postReq.BTIME_VAC_DAY}', BTIME_VAC_END = '${postReq.BTIME_VAC_END}', BAREA = '${postReq.BAREA}', BETC = '${postReq.BETC}' WHERE BID = ${postReq.BID}`, (err, result) => {
+    db.query(`UPDATE BUILDINGS SET BNAME = '${postReq.BNAME}', BTIME_SEM_DAY = '${postReq.BTIME_SEM_DAY}', BTIME_SEM_END = '${postReq.BTIME_SEM_END}', BTIME_VAC_DAY = '${postReq.BTIME_VAC_DAY}', BTIME_VAC_END = '${postReq.BTIME_VAC_END}', BAREA = '${postReq.BAREA}', BETC = '${postReq.BETC}, BAVFLOOR = '${postReq.BAVFLOOR}' WHERE BID = ${postReq.BID}`, (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400
@@ -143,7 +145,8 @@ router.put('/:campus/building/:BID', (req, res, next)=>{
         }
       });
   } else {
-    res.send('비정상적인 접근')
+    res.statusCode = 403
+  res.send('비정상적인 접근')
   }
 })
 
@@ -238,7 +241,8 @@ router.post('/:campus/facility', (req, res, next)=>{
         }
       });
   } else {
-    res.send('비정상적인 접근')
+    res.statusCode = 403
+  res.send('비정상적인 접근')
   }
 })
 
@@ -271,7 +275,8 @@ router.put('/:campus/facility/:FID', (req, res, next)=>{
         }
       });
   } else {
-    res.send('비정상적인 접근')
+    res.statusCode = 403
+  res.send('비정상적인 접근')
   }
 })
 

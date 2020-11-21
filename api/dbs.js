@@ -1,4 +1,4 @@
-var mysql      = require('mysql');
+var mysql      = require('mysql2');
 var sinchonDB = mysql.createConnection({
     host     : 'localhost',
     user     : 'admin',
@@ -12,7 +12,7 @@ var songdoDB = mysql.createConnection({
   user     : 'admin',
   password : '1234',
   port     : 3306,
-  database : 'SongDo'
+  database : 'Songdo'
 });
 
 module.exports = {'sinchon' : sinchonDB, 'songdo' : songdoDB};

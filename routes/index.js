@@ -19,13 +19,12 @@ router.get('/info', function(req, res, next) {
   res.render('credit');
 });
 
-
 router.get('/sinchon', function(req, res, next) {
-  res.render('index', { campus: 'sinchon' });
+  res.render('index');
 });
 
 router.get('/songdo', function(req, res, next) {
-  res.render('index', { campus: 'songdo' });
+  res.render('index');
 });
 
 module.exports = router;

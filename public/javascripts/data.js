@@ -113,6 +113,7 @@ let getBuildingList = () => {
         BTIME_VAC_DAY: el.BTIME_VAC_DAY,
         BTIME_VAC_END: el.BTIME_VAC_END,
         BETC: convertLinks(el.BETC),
+        BAVFLOOR: el.BAVFLOOR,
         on: true,
       });
     }

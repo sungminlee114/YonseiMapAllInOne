@@ -2,20 +2,20 @@
 <html lang="en">
 
 <head>
-  <title>지도 올인원 | <% if (campus == 'sinchon') { %>신촌<% } else { %>송도<%}%>캠퍼스</title>
+  <title>지도 올인원 | 로딩중</title>
 	<meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="/css/nav.css">
-  <link rel="stylesheet" href="/css/index.css">
+  <link rel="stylesheet" href="./css/nav.css">
+  <link rel="stylesheet" href="./css/index.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
-<body>
+<body style="width:100vw">
   <noscript>You need to enable JavaScript to run this app.</noscript>
 
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -40,7 +40,7 @@
 
             <!-- header -->
             <div id="sidebar-header" class="">
-              <h3 style="margin: 0; cursor:pointer" id="sidebar-header-title" onclick="location.reload()">지도 All-in-One</h3>
+              <h3 style="margin: 0;" class="my-btn" id="sidebar-header-title" onclick="location.reload()">지도 All-in-One</h3>
               <div style="margin-top: 10px; text-align: center; height: 20px;">
                   <span class="my-btn" id="link2Sinchon" onclick="location.href ='/sinchon'">신촌지도</span> <span>|</span> <span id="link2Songdo" class = "my-btn"onclick="location.href ='/songdo'">송도지도</span>
               </div>
@@ -48,7 +48,7 @@
               <div id="searchBoxDiv" class="input-group ui-widget form-control">
                 <input type="text" class="" id="mapSearch" placeholder="건물, 시설 검색"
                   style="height: 100%; font-size: 0.7em; border: none; outline: none; width: calc(100% - 25px);">
-                <div id="searchButton" class="my-btn" onclick="searchKey()"><img id="searchButton_im" src="/images/_icon_search_gray.png" style="width:inherit; padding:3px"></div>
+                <div id="searchButton" class="my-btn" onclick="searchKey()"><img id="searchButton_im" src="./images/_icon_search_gray.png" style="width:inherit; padding:3px"></div>
               </div>
             </div>
             <!-- mobile sidebar toggler-->
@@ -72,20 +72,23 @@
 
 
           <!-- 슬라이더 -->
-          <div id="toggleCampus" class="sliderBack left hide">
-            <div class="left selected">신촌</div>
-            <div class="right">송도</div>
+          <div id="toggleFloor" class="sliderBack">
+            <div class="slider my-btn sliderInnerFloor selected" data-floor="1F">지상</div>
+            <div class="slider my-btn sliderInnerFloor"data-floor="B1F">지하</div>
           </div>
 
-          <div id="toggleFloor" class="sliderBack left hide">
-            <div class="left selected">지하</div>
-            <div class="right">지상</div>
+          <div id="toggleBuildingFloor" class="sliderBack hide">
           </div>
 
-          <div id="toggleTime" class="sliderBack left hide">
+          <div id="toggleTime" class="sliderBack hide">
+            <div class="slider my-btn sliderInnerTime">실시간</div>
+          </div>
+
+          <!-- <div id="toggleTime" class="sliderBack left">
             <div class="left selected">실시간</div>
             <div class="right">전시간</div>
-          </div>
+          </div> -->
+
           <div id="mapContainer">
             <canvas id="mapCanvas" style="background-color: gray; border:0">
 
@@ -96,14 +99,29 @@
     </div>
   </div>
   <script>
-    const CAMPUS = `<%= campus %>`
-    console.log(CAMPUS)
+    FLOORCONTEXT = '1F';
+    TIMECONTEXT = 'off';
+    let path = window.location.pathname.slice(1);
+
+    if (path.startsWith('songdo')){
+      CAMPUS = 'songdo'
+      CAMPUS_KOREAN = '송도'
+    } else if (path.startsWith('sinchon')){
+      CAMPUS = 'sinchon'
+      CAMPUS_KOREAN = '신촌'
+    } else {
+      CAMPUS = undefined;
+      CAMPUS_KOREAN = undefined;
+    }
+    
+      console.log(CAMPUS, FLOORCONTEXT, TIMECONTEXT)
+      document.title = `지도 올인원 | ${CAMPUS_KOREAN}캠퍼스`
   </script>
-  <script src="/javascripts/data.js"></script>
-  <script src="/javascripts/map.js"></script>
-  <script src="/javascripts/sidebar.js"></script>
-  <script src="/javascripts/filter.js"></script>
-  <script src="/javascripts/index.js"></script>
+  <script src="./javascripts/data.js"></script>
+  <script src="./javascripts/map.js"></script>
+  <script src="./javascripts/sidebar.js"></script>
+  <script src="./javascripts/filter.js"></script>
+  <script src="./javascripts/index.js"></script>
 
 
   <!-- <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script> -->

@@ -440,6 +440,7 @@
                     <th scope="col" style="width: 100px;">운영시간(방학주말)</th>
                     <th scope="col" style="width: 100px;">지도내 좌표</th>
                     <th scope="col" style="width: 100px;">건물정보</th>
+                    <th scope="col" style="width: 100px;">가능층수</th>
                     <th scope="col" style="width: 100px;">수정하기</th>
                   </tr>
                 </thead>
@@ -454,6 +455,7 @@
                         <td><%=buildingData[campus][i].BTIME_VAC_END%></td>
                         <td><%=buildingData[campus][i].BAREA%></td>
                         <td><%=buildingData[campus][i].BETC%></td>
+                        <td><%=buildingData[campus][i].BAVFLOOR%></td>
                         <td id = "editCell_<%=i%>"><span class=""><a class="edit editBuilding">수정</a> | <a class="edit deleteBuilding">삭제</a></span><span class="hideButtons"><a class="edit saveBuilding ">저장</a> | <a class="edit cancelEdit ">취소</a></span></td>
                     </tr>
                     <% }) %>
@@ -548,6 +550,7 @@
             BTIME_VAC_END : raw.cells[5].firstChild.value,
             BAREA : raw.cells[6].firstChild.value,
             BETC : raw.cells[7].firstChild.value,
+            BAVFLOOR : raw.cells[8].firstChild.value,
         };
         // for (const [key, value] of Object.entries(data)) {
         //     if(value == ""){
@@ -677,6 +680,7 @@
             BTIME_VAC_END : raw.cells[5].firstChild.value,
             BAREA : raw.cells[6].firstChild.value,
             BETC : raw.cells[7].firstChild.value,
+            BAVFLOOR : raw.cells[8].firstChild.value,
         };
         // for (const [key, value] of Object.entries(data)) {
         //     if(value == ""){
@@ -770,6 +774,7 @@
         row.insertCell(tbody.parentNode.rows[0].cells.length - 1).appendChild(span)
         document.getElementById('addBuildings').classList.add("hideButtons")
     });
+    
     window.onload = () =>{
         //Focus & Activate Effect
         document.getElementById('list_<%=campus%>').classList.add("active")

@@ -46,7 +46,7 @@ router.use('/:campus/settings', (req, res, next)=>{
         // buildingData.sinchonBuildings[401] = 'afads'
         // console.log(buildingData['sinchon']['301'])
         // console.log(buildingData)
-        res.render('admin_campusSetting', {buildingData:buildingData, campus: req.params.campus, building: 'main' });
+        res.render('admin_campusSetting', {buildingData:buildingData, campus: req.params.campus, building: 'settings' });
   
       } else {
       res.redirect('/admin')

@@ -230,16 +230,24 @@ let sidebar_loadMain = () => {
   <div class="sidebar-body" id="sidebar-main-facilitys">
     <h2 class="no-after" style="margin-bottom:20px"> 시설 안내 </h2>
     <div class="row icons">
-      <div id="icon-div-cafeteria" class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+      <div id="icon-div-cafeteria" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
         
       </div>
-      <div id="icon-div-toilet" class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+      <div id="icon-div-toilet" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
         
       </div>
-      <div id="icon-div-venderMachine" class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+      <div id="icon-div-venderMachine" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
         
       </div>
-      <div id="icon-div-cafe" class="icon-div col-3 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+      <div id="icon-div-cafe" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+        
+      </div>
+
+      <div id="icon-div-copyCenter" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+        
+      </div>
+
+      <div id="icon-div-cvs" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
         
       </div>
     </div>
@@ -273,7 +281,6 @@ let sidebar_loadMain = () => {
   // </div>
   let i = 0;
   Array.from(document.getElementsByClassName("sidebar-facility-IconSearch")).forEach((element) => {
-
     element.appendChild(icon_facilties[i++])
     element.addEventListener("click", (e) => {
       let alt = e.target.getAttribute('alt')
@@ -337,22 +344,27 @@ async function sidebar_loadBuildingDetail(_building = null){
   
   const sidebarTabBody = document.getElementsByClassName("sidebar-body-tabBody")[0];
   sidebarTabBody.id = sidebarDataStateEnum.buildingDetail
-  sidebarTabBody.innerHTML = `
+  st = `
   <h5> 사진 </h5>
-  <img src="/images/buildings/${CAMPUS}/${_building.BID}.jpg" id="sidebar-building-picture"/>
+  <img src="./images/buildings/${CAMPUS}/${_building.BID}.jpg" id="sidebar-building-picture"/>
   <h5> 운영 시간 </h5>
   <p> 학기중 평일 : ${_building.BTIME_SEM_DAY} </p>
   <p> 학기중 주말 : ${_building.BTIME_SEM_END} </p>
   <p> 방학중 평일 : ${_building.BTIME_VAC_DAY} </p>
   <p> 방학중 주말 : ${_building.BTIME_VAC_END} </p>
-  <h5> 건물 정보</h5>
-  <p> ${_building.BETC} </p>
-  <h5> 연락처 </h5>
-  <p> 02-1234-5678 </p>
   `
+  if(_building.BETC !== ''){
+    st += 
+    `<h5> 건물 정보</h5>
+    <p> ${_building.BETC} </p>
+    `
+  }
+
+  sidebarTabBody.innerHTML = st;
+  
 
   document.getElementById("sidebar-building-picture").addEventListener("error", (e) => {
-    e.target.src='/images/no_image.gif';
+    e.target.src='./images/no_image.gif';
     e.target.setAttribute("onclick", "location.href ='/report'")
     e.target.setAttribute("style", "cursor:pointer")
   })
