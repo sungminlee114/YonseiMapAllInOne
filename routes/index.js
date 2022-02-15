@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/report', function(req, res, next) {
-  res.render('report');
+  res.redirect('https://forms.gle/d6EazoDAya851Wr4A');
 });
 
 router.get('/credit', function(req, res, next) {
@@ -16,7 +16,7 @@ router.get('/credit', function(req, res, next) {
 });
 
 router.get('/info', function(req, res, next) {
-  res.render('credit');
+  res.render('info');
 });
 
 router.get('/sinchon', function(req, res, next) {

@@ -3,7 +3,6 @@
 
 만든이 : 연세대학교 제55대 총학생회 Mate 사무운영국원, 공과대학 글로벌융합공학부 18학번 이성민 (starmin114@yonsei.ac.kr)
 */
-
 // getLocation();
 
 //검색
@@ -41,25 +40,46 @@ const myLoadImage = (src, id=null, className = null, style=null, alt=null) => {
   return image;
 }
 
-let icon_search_gray = myLoadImage(
-  "./images/_icon_search_gray.png",
-  "searchButton_im",
+let icon_main_logo = myLoadImage(
+  "./images/main_logo_invert.png",
   null,
-  "width:inherit; padding:3px;"
-  );
+  null,
+  null,
+  null
+)
+icon_main_logo.addEventListener("load", im => {
+  document.getElementById("sidebar-header-title").appendChild(icon_main_logo)
+})
 
-let icon_search_blue = myLoadImage(
-  "./images/_icon_search_blue.png",
-  "searchButton_im",
-  null,
-  "width:inherit; padding:3px;"
-  )
+// let icon_search_gray = myLoadImage(
+//   "./images/_icon_search_gray.png",
+//   "searchButton_im_g",
+//   null,
+//   "width:inherit; padding:3px;"
+//   );
+// icon_search_gray.addEventListener("click", el => {
+//   e.preventDefault();
+//   e.stopPropagation();
+//   searchKey()
+// });
+
+// let icon_search_blue = myLoadImage(
+//   "./images/_icon_search_blue.png",
+//   "searchButton_im_b",
+//   null,
+//   "width:inherit; padding:3px;"
+//   )
+// icon_search_blue.addEventListener("click", el => {
+//   e.preventDefault();
+//   e.stopPropagation();
+//   searchKey()
+// });
 
 let icon_home = myLoadImage(
   "./images/_icon_home.png",
   "sidebar-building-home",
   "my-btn",
-  "width:inherit; padding:0px 7px 3px 7px"
+  "width:inherit; padding:7px 7px 9px 7px"
   )
 icon_home.addEventListener("click", el => sidebar_toHome())
 
@@ -131,27 +151,35 @@ let icon_pin_blue = myLoadImage(
 
 //onload
 
+
 window.onload = () => {
+
+  window.addEventListener("resize", () => {
+    console.log("rsz")
+    resizeAll(false, lastAnimating);
+  });
+
   
   cacheMediaIsPhone = isPhone();
   if (!cacheMediaIsPhone) _ = null;
   else {
     // toggleSideBar();
     var _body = document.documentElement;
-    if (_body.requestFullscreen) {
-      _body.requestFullscreen();
-    } else if (_body.webkitrequestFullscreen) {
-      _body.webkitrequestFullscreen();
-    } else if (_body.mozrequestFullscreen) {
-      _body.mozrequestFullscreen();
-    } else if (_body.msrequestFullscreen) {
-      _body.msrequestFullscreen();
-    }
+    // if (_body.requestFullscreen) {
+    //   _body.requestFullscreen();
+    // } else if (_body.webkitrequestFullscreen) {
+    //   _body.webkitrequestFullscreen();
+    // } else if (_body.mozrequestFullscreen) {
+      //   _body.mozrequestFullscreen();
+    // } else if (_body.msrequestFullscreen) {
+    //   _body.msrequestFullscreen();
+    // }
     window.scrollTo(0, 0);
   }
   sidebar_loadMain();
   resizeAll(true);
-
+  
+  window.addEventListener("resize", mediaChanged);
   // if(CAMPUS == 'sinchon'){
   //   let toEl = document.getElementById("link2Songdo");
   //   toEl.setAttribute("onclick", "location.href ='/songdo'")
@@ -215,21 +243,21 @@ const sidebarFooter = document.getElementById("sidebar-type-footer");
 //모든 요소의 레이아웃을 재 계산한다.
 //수정할 때 media에 따른 설정을 각각 수정해주자.
 const sidebarTogglerMobile = document.getElementById("sidebar-toggler-mobile");
-var resizeAll = (first) => {
+var resizeAll = (first, uid=null) => {
   let bottomMap = mapBody.getBoundingClientRect().height;
   let widthMap = mapBody.getBoundingClientRect().width;
 
   //휴대폰이 아닐경우
   if (isPhone() == false) {
     //sidebarheader
-    searchBoxDiv.style.marginTop = `${
-      95 -
-      33 -
-      20 -
-      document.getElementById("sidebar-header-title").getBoundingClientRect()
-        .height
-    }px`;
-    searchBoxDiv.style.display = "flex";
+    // searchBoxDiv.style.marginTop = `${
+    //   95 -
+    //   33 -
+    //   20 -
+    //   document.getElementById("sidebar-header-title").getBoundingClientRect()
+    //     .height
+    // }px`;
+    // searchBoxDiv.style.display = "flex";
 
     //sidebarCollapse
     // sidebarCollapse.style.top = `${bottomMap/2 - 33}px`;
@@ -278,20 +306,21 @@ var resizeAll = (first) => {
       60,
       250,
       document.getElementsByTagName("body")[0].getBoundingClientRect().height -
-        130,
+        142.5,
     ];
 
-    mobileSidebarNoAnim(changeMobileSidebarState(mobileSidebarOpenState));
+    
 
-    searchBoxDiv.style.marginTop = `${
-      65 -
-      33 -
-      20 -
-      document.getElementById("sidebar-header-title").getBoundingClientRect()
-        .height
-    }px`;
+    // searchBoxDiv.style.marginTop = `${
+    //   65 -
+    //   33 +
+    //   15 -
+    //   20 -
+    //   document.getElementById("sidebar-header-title").getBoundingClientRect()
+    //     .height
+    // }px`;
 
-    searchBoxDiv.style.display = "flex";
+    // searchBoxDiv.style.display = "flex";
     // if(sidebarIsOpened()){
     // ch = document.getElementsByTagName("body")[0].getBoundingClientRect().height;
     //   mapContainer.style.marginBottom = `${
@@ -300,7 +329,7 @@ var resizeAll = (first) => {
     // } else {
     // mapContainer.style.marginBottom = `105px`;
     // }
-
+    mobileSidebarNoAnim(changeMobileSidebarState(mobileSidebarOpenState), first, uid);
     // let tops = [100, 155, 210];
     // let i = 0;
     //sliderback
@@ -312,6 +341,7 @@ var resizeAll = (first) => {
       //     i += 1;
       //   }
       // );
+      
       mapContainer.style.marginLeft = null;
     }
   }
@@ -320,45 +350,40 @@ var resizeAll = (first) => {
 
   //sidebar inside
   resizeSidebarInside();
-  resizeCanvas(first);
-  resizeCanvas(first);
+  resizeCanvas(first, uid);
 };
 
 //우상단에 있는 슬라이더 토글
-let toggleSlider = (e) => {
-  let context = e.target.parentNode;
-  if (context.classList[1] == "right") {
-    context.classList.add("left");
-    context.classList.remove("right");
-    context.children[0].classList.add("selected");
-    context.children[1].classList.remove("selected");
-  } else {
-    context.classList.add("right");
-    context.classList.remove("left");
-    context.children[1].classList.add("selected");
-    context.children[0].classList.remove("selected");
-  }
+// let toggleSlider = (e) => {
+//   let context = e.target.parentNode;
+//   if (context.classList[1] == "right") {
+//     context.classList.add("left");
+//     context.classList.remove("right");
+//     context.children[0].classList.add("selected");
+//     context.children[1].classList.remove("selected");
+//   } else {
+//     context.classList.add("right");
+//     context.classList.remove("left");
+//     context.children[1].classList.add("selected");
+//     context.children[0].classList.remove("selected");
+//   }
+// };
+
+let toggleZoomListener = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  // console.log(e)
+  let currBut = e.target;
+  changeZoom(zoom + currBut.dataset.zoom * zoom * 0.1, {x: canvasSize.w/2, y: canvasSize.h/2})
+
+  return false;
 };
 
 let toggleFloorListener = (e) => {
   e.preventDefault();
   e.stopPropagation();
   let currBut = e.target;
-  if(FLOORCONTEXT == currBut.dataset.floor)
-    return;
-  let context = currBut.parentNode;
-  
-  Array.from(document.getElementsByClassName("sliderInnerFloor")).forEach(el => {
-    el.classList.remove("selected");
-  })
-
-  Array.from(document.getElementsByClassName("sliderInnerBuildingFloor")).forEach(el => {
-    el.classList.remove("selected");
-  })
-
-  currBut.classList.add("selected");
-  FLOORCONTEXT = currBut.dataset.floor;
-  changeMap(FLOORCONTEXT)
+  changeFloor(currBut.dataset.floor)
 
   return false;
 };
@@ -379,9 +404,7 @@ let toggleTimeListener = (e) => {
 
 let mobileSidebarOpenState = 0; // 0 closed 1 middle 2 top
 let mobileSidebarOpenConst = [
-  60,
-  250,
-  document.getElementsByTagName("body")[0].getBoundingClientRect().height - 130,
+  
 ];
 
 //사이드바가 열려있는지
@@ -418,7 +441,7 @@ const pcSidebarAnimation = (open = false) => {
       sidebarCollapse.style.left = `${targetSize}px`;
       // redrawCanvas();
     }
-  }, 10);
+  }, 20);
 };
 
 const getClosestMobileSidebarState = () => {
@@ -505,12 +528,21 @@ const changeMobileSidebarState = (state) => {
   }
 };
 
-const mobileSidebarNoAnim = (targetSize) => {
+const mobileSidebarNoAnim = (targetSize, first = false, uid=null) => {
   sidebarTogglerMobile.style.bottom = `${targetSize}px`;
-  sidebarBodyFrame.style.height = `${targetSize - 45}px`;
+  sidebarBodyFrame.style.height = `${targetSize - 50}px`;
+  if(!first){
+    mapContainer.style.marginBottom = `${
+      targetSize + 45
+    }px`;
+    resizeCanvas(false, uid)
+  }
 };
 
-const mobileSidebarAnimation = (targetSize) => {
+const mobileSidebarAnimation = async (targetSize, uid = null) => {
+  return new Promise((resolve, reject) =>{
+
+
   let index = 0;
   let maxIndex = 10;
   let initialSize =
@@ -522,6 +554,16 @@ const mobileSidebarAnimation = (targetSize) => {
   //   [initialSize, targetSize] = [targetSize, initialSize];
   // }
 
+  mapContainer.style.marginBottom = `${
+    targetSize + 45
+  }px`;
+  resizeCanvas(false, uid).then(
+    () => {
+      resolve();
+    }
+  );
+  
+
   const inte = setInterval(() => {
     let animatedValue = getAnimatedValue(
       initialSize,
@@ -530,26 +572,27 @@ const mobileSidebarAnimation = (targetSize) => {
       maxIndex
     );
     sidebarTogglerMobile.style.bottom = `${animatedValue}px`;
-    sidebarBodyFrame.style.height = `${animatedValue - 45}px`;
+    sidebarBodyFrame.style.height = `${animatedValue - 50}px`;
     if (++index === maxIndex) {
       clearInterval(inte);
-      sidebarTogglerMobile.style.bottom = `${targetSize}px`;
-      sidebarBodyFrame.style.height = `${targetSize - 45}px`;
+      mobileSidebarNoAnim(targetSize,false, uid);
       // redrawCanvas();
     }
   }, 10);
+})
 };
 
 //사이드바 토글
-let toggleSideBar = (OpenAll = false) => {
+let toggleSideBar = async (uid = null) => {
   if (isPhone()) {
-    if(OpenAll != undefined){
-      changeMobileSidebarState(1 + 1*OpenAll)
-    }
-    else if (!sidebarIsOpened()) {
-      mobileSidebarAnimation(changeMobileSidebarState(1));
+    // if(OpenAll != false){
+    //   changeMobileSidebarState(1 + 1*OpenAll)
+    // }
+    // else 
+    if (!sidebarIsOpened()) {
+      await mobileSidebarAnimation(changeMobileSidebarState(1), uid);
     } else {
-      mobileSidebarAnimation(changeMobileSidebarState(0));
+      await mobileSidebarAnimation(changeMobileSidebarState(0), uid);
     }
   } else {
     if (!sidebarIsOpened()) {
@@ -562,14 +605,10 @@ let toggleSideBar = (OpenAll = false) => {
       sidebarCollapse.innerHTML = `<span id="collapseArrow" style="color:#1F3C73">▶</span>`;
     }
   }
-  resizeAll();
+  resizeAll(false, uid);
 };
 
-window.addEventListener("resize", () => {
-  resizeAll();
-});
-window.addEventListener("resize", mediaChanged);
-window.addEventListener("scroll", resizeAll);
+// window.addEventListener("scroll", resizeAll);
 
 /* [User Interaction] */
 
@@ -597,10 +636,15 @@ let handleMouseDown = (e) => {
 };
 
 let handleMouseMove = (e) => {
+  if(e.movementX == 0 && e.movementY == 0){
+    return;
+  }
+
   if (mouseIsDown) {
     e.preventDefault();
     e.stopPropagation();
   }
+
 
   if (inputState.action == "mouseDown") {
     inputState.action = "mouseDrag";
@@ -625,6 +669,8 @@ let handleMouseMove = (e) => {
 };
 
 let handleMouseUp = (e) => {
+  // console.log(getPointerPosinCanvas(e))
+  // console.log(getPointerPosinImage(e))
   clickCnt = 0;
   // document.ondragstart= () => {return true}
   if (inputState.action == "mouseDown") {
@@ -757,14 +803,12 @@ let handleTouchEnd = (e) => {
 };
 
 mapCanvas.addEventListener("touchstart", handleTouchStart);
-mapCanvas.addEventListener("touchmove", handleTouchMove, {
-  passive: false,
-});
-mapCanvas.addEventListener("touchend", handleTouchEnd, {
-  passive: false,
-});
+mapCanvas.addEventListener("touchmove", handleTouchMove);
+mapCanvas.addEventListener("touchend", handleTouchEnd);
 
 let mobileSidebarPointerInitPos = -1;
+
+let mobileSidebarMoveSum = 0;
 
 const handlePointerDownMobileSidebar = (e) => {
   e.preventDefault();
@@ -773,6 +817,7 @@ const handlePointerDownMobileSidebar = (e) => {
   mobileSidebarPointerInitPos =
     document.getElementsByTagName("body")[0].getBoundingClientRect().height -
     sidebarTogglerMobile.getBoundingClientRect().bottom;
+    
 };
 
 const handlePointerUpMobileSidebar = (e) => {
@@ -802,11 +847,12 @@ const handlePointerMoveMobileSidebar = (e) => {
       document.getElementsByTagName("body")[0].getBoundingClientRect().bottom -
       e.clientY -
       22.5;
+
+    if(a > mobileSidebarOpenConst[2] || a < mobileSidebarOpenConst[0]){
+      return;
+    }
     sidebarTogglerMobile.style.bottom = `${a}px`;
-    sidebarBodyFrame.style.height = `${a - 45}px`;
-    // mapContainer.style.marginBottom = `${
-    //   a + 30
-    // }px`;
+    sidebarBodyFrame.style.height = `${a - 50}px`;
   }
 };
 sidebarTogglerMobile.addEventListener(
@@ -865,7 +911,7 @@ sidebarTogglerMobile.addEventListener(
 );
 
 mapSearch.addEventListener("focus", (e) => {
-  if (isPhone()) {
+  if (isPhone() && mobileSidebarOpenState!=0) {
     mobileSidebarAnimation(changeMobileSidebarState(0));
   }
 });
@@ -880,6 +926,10 @@ Array.from(document.getElementsByClassName("sliderBack")).forEach((element) => {
   element.addEventListener("mouseleave", (e) => {
     hoverFlag = true;
   });
+});
+
+Array.from(document.getElementsByClassName("sliderInnerZoom")).forEach((element) => {
+  element.addEventListener("pointerdown", toggleZoomListener);
 });
 
 Array.from(document.getElementsByClassName("sliderInnerFloor")).forEach((element) => {
@@ -898,25 +948,26 @@ sidebarCollapse.addEventListener("mouseleave", (e) => {
   hoverFlag = true;
 });
 
-let searchButtonIm = document.getElementById("searchButton_im")
+// let searchButtonIm = document.getElementById("searchButton_im")
 let searchButton = document.getElementById("searchButton")
 const searchIconToBlue = (e) => {
-  searchButton.removeChild(searchButton.childNodes[0])
-  searchButton.appendChild(icon_search_blue)
+  document.getElementById("searchButton_im_g").classList.add("hide")
+  document.getElementById("searchButton_im_b").classList.remove("hide")
 }
 
 const searchIconToGray = (e) => {
-  searchButton.removeChild(searchButton.childNodes[0])
-  searchButton.appendChild(icon_search_gray)
+  document.getElementById("searchButton_im_g").classList.remove("hide")
+  document.getElementById("searchButton_im_b").classList.add("hide")
 }
 
-searchButton.addEventListener("mouseenter", searchIconToBlue )
+searchButton.addEventListener("mouseenter", searchIconToBlue)
 mapSearch.addEventListener("focus", searchIconToBlue)
 
 searchButton.addEventListener("mouseleave", (e) => {
   if(!mapSearch.matches(':focus'))
   searchIconToGray(e)
   });
+
 mapSearch.addEventListener("focusout", searchIconToGray)
 
 let keyDownList = [];

@@ -14,51 +14,87 @@ let resizeSidebarInside = () => {
 
 const mapSearch = document.getElementById("mapSearch");
 
-let searchKey = (_key, _type = undefined) => {
-  document.getElementById("mapSearch").blur()
+const waitIntilBlur = () => {
+  return new Promise((res, rej) => {
+    let index = 0;
+    const inte = setInterval(() => {
+      document.getElementById("mapSearch").blur()
+      if (++index === 10) {
+        clearInterval(inte);
+        res()
+      }
+    }, 10);
+  });
+}
+let searchKey = async (_key, _type = undefined) => {
+  await waitIntilBlur();
+  // if()
+  // mapSearch.readOnly = true;
   let key = _key;
   //검색일 경우..?
-  console.log(key, _type)
   if (key == null || key ==""){
-    if(mapSearch.value == "")
+    if(mapSearch.value == ""){
+      sidebar_toHome();
       return;
+    }
     else
-      key = mapSearch.value;
+    key = mapSearch.value;
   }
+  console.log(key, _type)
   
-  // if(!_type){
-  //   if(facilityTypeIdDict[key] == undefined)
-  //     _type = "빌딩";
-  // }
+  if(!_type){
+    if(facilityTypeIdDict[key] == undefined)
+      _type = "빌딩";
+    }
+    
+    // 1층으로 바꾸기
+  if(FLOORCONTEXT != "1F"){
+    await changeFloor('1F', false);
+  }
 
+  let uid = getUUID();
+  lastAnimating = uid;
+  
   if(_type == "건물"){
     //확실히 하나만 있으면
     //이때 type이 정의되었다는건 자동완성을 눌렀다는 뜻
 
     // let index = buildingList.find((el) => el.name == key)
     // if (index != -1) {
-      clickBuilding(buildingList.find((el) => el.name == key));
+      clickBuilding(buildingList.find((el) => el.name == key), true, false, uid);
     // }
     return;
   }
 
-    // if (index == -1){
-    //   filterRes = buildingList.filter((el) => el.name.includes(key));
-    //   showSearchList(filterRes, _type)
-    // }
+  // document.activeElement = mapCanvas;
+
+  //   // if (index == -1){
+  //   //   filterRes = buildingList.filter((el) => el.name.includes(key));
+  //   //   showSearchList(filterRes, _type)
+  //   // }
 
   // } else { //'시설'
+  // mapSearch.readOnly = true
+
+
+  // document.getElementById("mapSearch").blur()
+  if (!sidebarIsOpened()) await toggleSideBar(uid);
+
+  // // mapSearch.readOnly = false;
+
   allFilteredList = source.filter(el => el.label.includes(key));
   buildingFilter = buildingList.filter(el => allFilteredList.filter(el => el.type == '건물').map(el => el.value).includes(el.name))
   facilityFilter = facilityList.filter(el => {let a = allFilteredList.filter(el => el.type == '시설').map(el => el.value); return a.includes(el.FTYPE) || a.includes(el.FNAME)});
-  showSearchList(buildingFilter, facilityFilter)
+  showSearchList(key, uid)
+  
   // }
 };
 
-const showSearchList = (buildingFilter, facilityFilter) => {
-  document.getElementById("mapSearch").blur()
-  sidebar_loadsearchResult(buildingFilter, facilityFilter)
-  if (!sidebarIsOpened()) toggleSideBar(true);
+const showSearchList = async (key, uid) => {
+  deleteAvailableFloorsInBuilding();
+  document.getElementById("mapSearch").blur();
+  await sidebar_loadsearchResult(key, uid);
+  // mapSearch.readOnly = false;
 }
 
 // <!-- This part is to use API -->
@@ -69,6 +105,9 @@ let initAutocomplete = (_buildingList, _facilityTypeIdDict, _facilitesList, _fac
   source = $.map( _buildingList , function (item) {
     chosung = "";
     // full = Hangul.disassemble(item).join("").replace(/ /gi, "");
+
+    if(item.ee != undefined)
+      return;
 
     Hangul.d(item.name, true).forEach(function (strItem, index) {
       if (strItem[0] != " ") {
@@ -126,18 +165,24 @@ let initAutocomplete = (_buildingList, _facilityTypeIdDict, _facilitesList, _fac
   
   source = source.filter((item, index) => source.map(el=> el.value).indexOf(item.value) === index);
 
-  console.log(source)
+  // console.log(source)
   
 
   $("#mapSearch")
     .autocomplete({
       source: source,
       select: function (event, ui) {
-        document.getElementById("mapSearch").blur()
+        event.preventDefault();
+        event.stopPropagation();
         searchKey(ui.item.value, ui.item.type);
+        // while(document.activeElement == mapSearch){
+        //   mapSearch.blur()
+        //   $("#mapSearch").focusout()
+        // }
       },
       focus: function (event, ui) {
         event.preventDefault();
+        event.stopPropagation();
         return false;
       },
       open: (e, ui) => {
@@ -174,6 +219,11 @@ let initAutocomplete = (_buildingList, _facilityTypeIdDict, _facilitesList, _fac
 
 
 let sidebar_toHome = (e) => {
+  deleteDrawQ(null, "search");
+  
+  if(FLOORCONTEXT !== '1F'){
+    changeFloor('1F')
+  }
   unclickBuilding();
 }
 
@@ -228,26 +278,26 @@ let sidebar_loadMain = () => {
   sidebarBodyFrame.id = sidebarDataStateEnum.main
   sidebarBodyFrame.innerHTML = `
   <div class="sidebar-body" id="sidebar-main-facilitys">
-    <h2 class="no-after" style="margin-bottom:20px"> 시설 안내 </h2>
+    <h2 class="no-after" style="margin-bottom:20px"> 시설 안내 </h3>
     <div class="row icons">
-      <div id="icon-div-cafeteria" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+      <div id="icon-div-cafeteria" class="icon-div col-4 col-sm-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
         
       </div>
-      <div id="icon-div-toilet" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+      <div id="icon-div-toilet" class="icon-div col-4 col-sm-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
         
       </div>
-      <div id="icon-div-venderMachine" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+      <div id="icon-div-venderMachine" class="icon-div col-4 col-sm-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
         
       </div>
-      <div id="icon-div-cafe" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
-        
-      </div>
-
-      <div id="icon-div-copyCenter" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+      <div id="icon-div-cafe" class="icon-div col-4 col-sm-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
         
       </div>
 
-      <div id="icon-div-cvs" class="icon-div col-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+      <div id="icon-div-copyCenter" class="icon-div col-4 col-sm-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
+        
+      </div>
+
+      <div id="icon-div-cvs" class="icon-div col-4 col-sm-2 col-md-4 d-flex sidebar-facility-IconSearch my-btn2 no-border">
         
       </div>
     </div>
@@ -303,11 +353,9 @@ let sidebar_loadBuilding = (_building) => {
     sidebarBodyFrame.innerHTML = `
     <div class="sidebar-body sidebar-body-header row" id="sidebar-building-buildingDetail">
       <div style="width: 28.5px;" id="sidebar-header-leftBox">
-      
-        <!-- <i class="material-icons my-btn" id="sidebar-building-home" style="font-size:0.75rem;" onclick="sidebar_toHome();">home</i> --!>
       </div>
       <div style="justify-content:center; width:calc(100% - 60px); display:flex; align-items:center">
-        <h2 class="no-after" style="margin-bottom:0; font-size:1rem"> ${_building.name} </h3>
+        <h2 class="no-after" style="margin-bottom:0; font-size:1rem; padding-top:1px"> ${_building.name} </h2>
       </div>
       <div style="width: 28.5px;" id="sidebar-header-rightBox">
       </div>
@@ -344,15 +392,27 @@ async function sidebar_loadBuildingDetail(_building = null){
   
   const sidebarTabBody = document.getElementsByClassName("sidebar-body-tabBody")[0];
   sidebarTabBody.id = sidebarDataStateEnum.buildingDetail
-  st = `
-  <h5> 사진 </h5>
-  <img src="./images/buildings/${CAMPUS}/${_building.BID}.jpg" id="sidebar-building-picture"/>
-  <h5> 운영 시간 </h5>
-  <p> 학기중 평일 : ${_building.BTIME_SEM_DAY} </p>
-  <p> 학기중 주말 : ${_building.BTIME_SEM_END} </p>
-  <p> 방학중 평일 : ${_building.BTIME_VAC_DAY} </p>
-  <p> 방학중 주말 : ${_building.BTIME_VAC_END} </p>
-  `
+  st = ''
+  console.log(_building.ee)
+
+  if(_building.BID !== ''){
+    st += 
+    `<h5> 건물 번호</h5>
+    <p> ${_building.BID} </p>
+    `
+  }
+
+  if(_building.ee == undefined){
+    st += `
+    <h5> 사진 </h5>
+    <img src="./images/${CAMPUS}/buildings/${_building.BID}.jpg" id="sidebar-building-picture"/>
+    <h5> 운영 시간 </h5>
+    <p> 학기중 평일 : ${_building.BTIME_SEM_DAY} </p>
+    <p> 학기중 주말 : ${_building.BTIME_SEM_END} </p>
+    <p> 방학중 평일 : ${_building.BTIME_VAC_DAY} </p>
+    <p> 방학중 주말 : ${_building.BTIME_VAC_END} </p>
+    `
+  }
   if(_building.BETC !== ''){
     st += 
     `<h5> 건물 정보</h5>
@@ -473,7 +533,6 @@ const sidebar_handle_facilities_dropdown = (e, ftype=undefined)=>{
         `
       let top = 0
       v.forEach((el,index) => {
-        console.log(el, index)
         if(index == 1)
           top = 2
         resHTML += `
@@ -482,8 +541,13 @@ const sidebar_handle_facilities_dropdown = (e, ftype=undefined)=>{
         <p> 학기중 주말 : ${el.FTIME_SEM_END} </p>
         <p> 방학중 평일 : ${el.FTIME_VAC_DAY} </p>
         <p> 방학중 주말 : ${el.FTIME_VAC_END} </p>
-        <p> 시설 정보 : ${el.FETC1} </p>
       `
+
+      if(el.FETC1 !== ''){
+        st += `
+        <p> 시설 정보 : ${el.FETC1} </p>
+        `
+      }
       })
     }
 
@@ -494,7 +558,8 @@ const sidebar_handle_facilities_dropdown = (e, ftype=undefined)=>{
     
 }
 
-const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
+const sidebar_loadsearchResult = (key, uid = null)=>{
+  
   return new Promise((resolve, reject) => {
   sidebarDataState = sidebarDataStateEnum.searchResult;
   sidebarBodyFrame.id = sidebarDataState;
@@ -504,7 +569,13 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
 
   st = `
   <div class="sidebar-body sidebar-body-header row" id="sidebar-searchResult-header">
-    <h2 class="no-after" style="font-size:1rem; padding-top:1px"> 검색결과 </h2>
+    <div style="width: 28.5px;" id="sidebar-header-leftBox">
+    </div>
+    <div style="justify-content:center; width:calc(100% - 60px); display:flex; align-items:center">
+      <h2 class="no-after" style="margin-bottom:0; font-size:1rem; padding-top:1px"> 검색결과 </h2>
+    </div>
+    <div style="width: 28.5px;" id="sidebar-header-rightBox">
+    </div> 
   </div>
   <div class="sidebar-body sidebar-body-scrY no-after" id="sidebar-searchResult-tabs">
     <div class="row" id="sidebar-building-tab">
@@ -518,7 +589,8 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
     <div id="sidebar-searchResult-building" class="sidebar-body-tabBody">`
 
     if(buildingFilter.length == 0){
-      st += `<p style="text-align: center"> 검색 결과가 없습니다. </p>`
+      st += `<h2 style="text-align: center; margin-bottom:20px; font-size:0.85rem" class="no-after"> <span style="font-weight:bold; font-size:1rem">"${key}"</span> <br/>에 대한 건물 검색 결과가 없습니다. </h2>`
+      st += `<p style="text-align: center"> <span style="font-weight:bold">"${key}"</span><br/>에 대한 건물정보를 <a href="/report" target="_blank">여기</a>서 제보해 주세요.</p>`
     } else {
     
       buildingFilter.forEach(el=>{
@@ -527,7 +599,6 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
           b.push(value.FTYPE)
         }
         let a = "";
-        console.log(b)
         if(b === []){
           a = ""
         }else {
@@ -553,7 +624,8 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
     <div id="sidebar-searchResult-facilities" class="sidebar-body-tabBody hide">`
 
     if(facilityFilter.length == 0){
-      st += `<p style="text-align: center"> 검색 결과가 없습니다. </p>`
+      st += `<h2 style="text-align: center; margin-bottom:20px; font-size:0.85rem" class="no-after"> <span style="font-weight:bold; font-size:1rem">"${key}"</span> <br/>에 대한 시설 검색 결과가 없습니다. </h2>`
+      st += `<p style="text-align: center"> <span style="font-weight:bold">"${key}"</span><br/>에 대한 시설정보를 <a href="/report" target="_blank">여기</a>서 제보해 주세요.</p>`
     } else {
       facilityFilter.forEach(el=>{
         st += 
@@ -562,8 +634,8 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
           <div class="searchResultBar">
           </div>
           <div class="searchResultEl" >
-            <p style="font-weight:bold; font-size:1rem; margin-bottom:0.5rem">${el.FNAME}</p>
-            <p style="font-size:0.7rem; color:gray">${buildingList.find(e => e.BID == el.FBID).name}</p>
+            <p class="searchResultElHead">${el.FNAME}</p>
+            <p class="searchResultElBody">${buildingList.find(e => e.BID == el.FBID).name}</p>
           </div>
         </div>
         `
@@ -575,18 +647,22 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
   `
 
   sidebarBodyFrame.innerHTML = st
+
+  document.getElementById("sidebar-header-leftBox").appendChild(icon_home)
   
   if(buildingFilter.length == 0 && facilityFilter.length != 0)
-    sidebar_loadSearchResultFacilites()
+    sidebar_loadSearchResultFacilites(uid)
   else
-    sidebar_loadSearchResultBuilding()
+    sidebar_loadSearchResultBuilding(uid)
+  
+    
 
 
   Array.from(document.getElementsByClassName("searchResultBuildingEl")).forEach((element) => {
     element.addEventListener("click", (e) => {
       let target = element
       let bid = parseInt(target.getAttribute('building'))
-      clickBuilding(buildingList.find((el) => el.BID == bid))
+      clickBuilding(buildingList.find((el) => el.BID == bid), true, true)
     });
   });
 
@@ -595,7 +671,7 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
       let target = element
       let bid = target.getAttribute('building')
       let fid = target.getAttribute('facility')
-      clickBuilding(buildingList.find((el) => el.BID == bid))
+      await clickBuilding(buildingList.find((el) => el.BID == bid), true, true)
       await sidebar_loadBuildingFacilities(buildingList.find((el) => el.BID == bid));
       sidebar_handle_facilities_dropdown(null, facilityList.find(el => el.FID == fid).FTYPE)
     });
@@ -606,18 +682,70 @@ const sidebar_loadsearchResult = (buildingFilter, facilityFilter)=>{
 
 
 
-async function sidebar_loadSearchResultBuilding(_building = null){
+async function sidebar_loadSearchResultBuilding(uid = null){
   document.getElementById("sidebar-searchResultTab-building").classList.add("mytab-selected")
   document.getElementById("sidebar-searchResultTab-facilities").classList.remove("mytab-selected")
   document.getElementById("sidebar-searchResult-building").classList.remove("hide")
   document.getElementById("sidebar-searchResult-facilities").classList.add("hide")
+
+  if(buildingFilter.length == 0){
+    return;
+  }
+
+  if(FLOORCONTEXT != '1F')
+    return;
+
+  let areas = buildingFilter.map(building=>building.area)
+  let xs = areas.map(area => area.map(coord => coord.x)).flat();
+  let ys = areas.map(area => area.map(coord => coord.y)).flat();
+  let xx = Math.max.apply(null, xs), nx = Math.min.apply(null, xs);
+  let xy = Math.max.apply(null, ys), ny = Math.min.apply(null, ys);
+  let padding = getCoordMult(imageSize, 0.01);
+  let av = {x:(xx + nx)/2 - padding.x, y:(xy + ny)/2 - padding.y, w:xx-nx + padding.x * 2, h:xy-ny  + padding.y * 2};
+
+  zoomNmove(av, uid, true, calcBasicZoom(av, true, [0, mapMiddleCoord[CAMPUS]['defaultZoom']]));
+  
+  deleteDrawQ(null, "search", null, false)
+  buildingFilter.map(building => {
+    pushDrawQ(building, icon_pin_gray, null, "search", "image", true)
+  });
+  
 }
 
-async function sidebar_loadSearchResultFacilites(_building = null){
+async function sidebar_loadSearchResultFacilites( uid = null){
   document.getElementById("sidebar-searchResultTab-building").classList.remove("mytab-selected")
   document.getElementById("sidebar-searchResultTab-facilities").classList.add("mytab-selected")
   document.getElementById("sidebar-searchResult-building").classList.add("hide")
   document.getElementById("sidebar-searchResult-facilities").classList.remove("hide")
+
+  if(facilityFilter.length == 0){
+    return;
+  }
+
+  if(FLOORCONTEXT != '1F')
+    return;
+
+  let buildings = facilityFilter.map(fac=>buildingList.find((el) => el.BID == fac.FBID))
+  let areas = buildings.map(building=>building.area)
+  let xs = areas.map(area => area.map(coord => coord.x)).flat();
+  let ys = areas.map(area => area.map(coord => coord.y)).flat();
+  let xx = Math.max.apply(null, xs), nx = Math.min.apply(null, xs);
+  let xy = Math.max.apply(null, ys), ny = Math.min.apply(null, ys);
+
+  let padding = getCoordMult(imageSize, 0.01);
+  // padding = {x:0, y:0}
+  let av = {x:(xx + nx)/2 - padding.x, y:(xy + ny)/2 - padding.y, w:xx-nx + padding.x * 2, h:xy-ny  + padding.y * 2};
+  // console.log(padding, av)
+
+  let tZoom = calcBasicZoom(av, true, 'default');
+  zoomNmove(av, uid, true, tZoom);
+  
+  deleteDrawQ(null, "search", null, false)
+  buildings.map(building => {
+    pushDrawQ(building, icon_pin_gray, null, "search", "image", true)
+  });
+  
+
 }
 
 let sidebar_loadSearchResultBuildingOnClick = (e) =>{

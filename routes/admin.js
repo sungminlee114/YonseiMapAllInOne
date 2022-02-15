@@ -15,11 +15,11 @@ console.log("admin.js");
 // var dbs = require('../api/dbs')
 
 // var ID = 'admin@yonsei.ac.kr'
-var ID = 'admin'
-var PW = 'admin'
+var ID = 'yonseistudent2020'
+var PW = 's2s22020'
 // var ID = '1'
 // var PW = '1'
-var validateCookie = 'bqweqeqDFQW12'
+var validateCookie = 'pbwb1235epbn@'
 
 router.use('/:campus/main', (req, res, next)=>{
 

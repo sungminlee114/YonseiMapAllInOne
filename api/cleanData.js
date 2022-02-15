@@ -32,40 +32,66 @@ const parse = (element, db) => {
     }
 }
 
+const areaMult = (element, db) => {
+    if(element.BNAME !== '송도학사A~C')
+        return;
+    let area = element.BAREA;
+    let tarea = area;
+    let rat = 0.995
+    // let rat = ((7861 / 2256) + 0.0112) * ((7861 / 2256) + 0.0112) + 0.073
+    
+    areas = area.split(/[ |\t]/g)
+    areas = areas.map(el => Math.ceil(parseInt(el) * rat));
+    area = areas.join(" ");
+    // console.log(area)
+    if(tarea != area){
+        console.log("아아아아악",element.BNAME, tarea, "||", area)
+        db.query(`UPDATE BUILDINGS SET BAREA = '${area}' WHERE BID = ${element.BID}`, (err, result) => {
+            // console.log(err, result)
+        });
+    }
+}
+
 const parseETC = (element, db, type) => {
     let val = (type[0] == "B") ? element.BTEC : element.FETC1; 
     let tval = val;
 
     // console.log(val)
-    val = val.replace(/<a href="/g, "")
-    val = val.replace(/".*\/a>/g, "")
+    // val = val.replace(/<a href="/g, "")
+    // val = val.replace(/".*\/a>/g, "")
+
+    if (val == '정보 없음' || val == ',' || val == '.'  || val == ' ' || val == '\t')
+        val = ''
     if(tval != val){
-        console.log("아아아아악",element.BNAME, val)
         let id = (type[0] == "B") ? element.BID : element.FID; 
-        db.query(`UPDATE ${type} SET ${type[0]}ETC${(type[0] == "B") ? '' : '1'} = '${val}' WHERE ${type[0]}ID = ${id}`, (err, result) => {
+        let qS = `UPDATE ${type} SET ${type[0]}ETC${(type[0] == "B") ? '' : '1'} = '${val}' WHERE ${type[0]}ID = ${id}`;
+        console.log("아아아아악",element.FNAME, val, qS)
+        db.query(qS, (err, result) => {
         });
     }
 }
 
-const parseBTIME = (element, db) => {
-    const ls = ["BTIME_SEM_DAY", "BTIME_SEM_END", "BTIME_VAC_DAY", "BTIME_VAC_END"]
+const parseBTIME = (element, db, type) => {
+    let typeC = type[0]
+    let id = (type[0] == "B") ? element.BID : element.FID; 
+    const ls = [`${typeC}TIME_SEM_DAY`, `${typeC}TIME_SEM_END`, `${typeC}TIME_VAC_DAY`, `${typeC}TIME_VAC_END`]
     let a = {};
     let vals = ls.map(el => {
-        var str = element[el];
-        if(str == ''){
+        var val = element[el];
+        if(val == ',' || val == '.'  || val == ' ' || val == '\t'){
             a[el] = '정보 없음';
         }
-        return str;
+        return val;
     })
     let tr = 0;
-    qur = `UPDATE BUILDINGS SET `
+    qur = `UPDATE ${type} SET `
     for (const [key, value] of Object.entries(a)) {
         
         qur += `${key}='${value}', `
         tr += 1;
     }
     qur = qur.slice(0, -2)
-    qur += ` WHERE BID=${element.BID}`
+    qur += ` WHERE ${typeC}ID=${id}`
     if(tr > 0){
         console.log(qur)
         db.query(qur, (err, result) => {
@@ -88,9 +114,9 @@ let cleanETCData = (res, type)=> {
     res.songdo.map(el => parseETC(el, dbs.songdo, type));
 }
 
-const cleanTimeData = res => {
-    res.sinchon.map(el => parseBTIME(el, dbs.sinchon));
-    res.songdo.map(el => parseBTIME(el, dbs.songdo));
+const cleanTimeData = (res,type) => {
+    res.sinchon.map(el => parseBTIME(el, dbs.sinchon, type));
+    res.songdo.map(el => parseBTIME(el, dbs.songdo, type));
 }
 
 const avFD = (element, campus, db) => {
@@ -105,7 +131,18 @@ const avFD = (element, campus, db) => {
                 return fileName.slice(0, -4);
             })
             
+            //먼저오는게 고층
+            files.sort((a, b) => {
+                let ast = a.startsWith("B"), bst = b.startsWith("B");
+               if((ast && bst) || !(ast||bst)){
+                    return parseInt(b) - parseInt(a);
+               } else {
+                   return ast
+               }
+            });
+
             let qStr = files.join(',');
+
             if (element.BAVFLOOR !== qStr){
                 db.query(`UPDATE BUILDINGS SET BAVFLOOR = '${files.join(',')}' WHERE BID = ${bid}`, (err, result) => {
                     console.log(campus, bid)
@@ -118,19 +155,20 @@ const avFD = (element, campus, db) => {
 
 const updateAvailableFloorData = res => {
     
-    
-
     res.sinchon.map(el => avFD(el, 'sinchon', dbs.sinchon));
     res.songdo.map(el => avFD(el, 'songdo', dbs.songdo));
 }
 
 const cleanData = async () => {
     var building = await queryBuildingData();
-    // var facility = await queryFacilityData();
+    var facility = await queryFacilityData();
     updateAvailableFloorData(building);
     cleanAreaData(building);
-    // cleanETCData(facility, 'FACILITIES');
-    cleanTimeData(building);
+    cleanETCData(building, 'BUILDINGS');
+    cleanETCData(facility, 'FACILITIES');
+    cleanTimeData(building, 'BUILDINGS');
+    cleanTimeData(facility, 'FACILITIES');
+    
     console.log("doneClean")
 }
 

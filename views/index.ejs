@@ -2,10 +2,17 @@
 <html lang="en">
 
 <head>
-  <title>지도 올인원 | 로딩중</title>
-	<meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>연세인맵</title>
+	<meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+  <meta property="og:description" content="연세대학교 제 55대 총학생회 MATE가 만든 &#10;&#13; 손 안의 캠퍼스지도, 연세인맵"/>
+  <meta property="og:image" content="http://18.222.140.246/images/Banner.png"/>
+  <meta property="article:author" content="연세대학교 제 55대 총학생회 MATE"/>
+  <!-- <meta property="og:url" content="http://18.222.140.246">
+  <meta property="og:type" content="website"/> -->
+  
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -14,6 +21,18 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+<!-- 
+  
+ /$$     /$$ /$$$$$$  /$$   /$$  /$$$$$$  /$$$$$$$$ /$$$$$$       /$$$$$$       starmin114      /$$      /$$  /$$$$$$  /$$$$$$$ 
+|  $$   /$$//$$__  $$| $$$ | $$ /$$__  $$| $$_____/|_  $$_/      |_  $$_/        @yonsei.ac.kr | $$$    /$$$ /$$__  $$| $$__  $$
+ \  $$ /$$/| $$  \ $$| $$$$| $$| $$  \__/| $$        | $$          | $$   /$$$$$$$             | $$$$  /$$$$| $$  \ $$| $$  \ $$
+  \  $$$$/ | $$  | $$| $$ $$ $$|  $$$$$$ | $$$$$     | $$          | $$  | $$__  $$            | $$ $$/$$ $$| $$$$$$$$| $$$$$$$/
+   \  $$/  | $$  | $$| $$  $$$$ \____  $$| $$__/     | $$          | $$  | $$  \ $$            | $$  $$$| $$| $$__  $$| $$____/ 
+    | $$   | $$  | $$| $$\  $$$ /$$  \ $$| $$        | $$          | $$  | $$  | $$            | $$\  $ | $$| $$  | $$| $$      
+    | $$   |  $$$$$$/| $$ \  $$|  $$$$$$/| $$$$$$$$ /$$$$$$       /$$$$$$| $$  | $$            | $$ \/  | $$| $$  | $$| $$      
+    |__/    \______/ |__/  \__/ \______/ |________/|______/      |______/|__/  |__/            |__/     |__/|__/  |__/|__/ 
+                                                                                                                                                          
+  -->
 
 <body style="width:100vw">
   <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -40,15 +59,15 @@
 
             <!-- header -->
             <div id="sidebar-header" class="">
-              <h3 style="margin: 0;" class="my-btn" id="sidebar-header-title" onclick="location.reload()">지도 All-in-One</h3>
-              <div style="margin-top: 10px; text-align: center; height: 20px;">
+              <div style="margin: 0;" class="my-btn" id="sidebar-header-title" onclick="location.reload()"></div>
+              <div style="margin-top: 10px; text-align: center; height: 20px; font-size: 16px;">
                   <span class="my-btn" id="link2Sinchon" onclick="location.href ='/sinchon'">신촌지도</span> <span>|</span> <span id="link2Songdo" class = "my-btn"onclick="location.href ='/songdo'">송도지도</span>
               </div>
               <!-- 검색 -->
               <div id="searchBoxDiv" class="input-group ui-widget form-control">
                 <input type="text" class="" id="mapSearch" placeholder="건물, 시설 검색"
                   style="height: 100%; font-size: 0.7em; border: none; outline: none; width: calc(100% - 25px);">
-                <div id="searchButton" class="my-btn" onclick="searchKey()"><img id="searchButton_im" src="./images/_icon_search_gray.png" style="width:inherit; padding:3px"></div>
+                <div id="searchButton" class="my-btn" onclick="searchKey()"><img id="searchButton_im_g" src="./images/_icon_search_gray.png" style="width:inherit; padding:3px" onclick="searchKey()"><img id="searchButton_im_b" src="./images/_icon_search_blue.png" class="hide" style="width:inherit; padding:3px" onclick="searchKey()"></div>
               </div>
             </div>
             <!-- mobile sidebar toggler-->
@@ -59,22 +78,33 @@
             <div id="sidebar-type-main" class="sidebar-body-frame">
             </div>
             <div id="sidebar-type-footer">
-              <a class="sidebar-footer-link" href="/credit" target="_blank">만든 사람들</a>
+              <a class="sidebar-footer-link my-btn" href="/credit" target="_blank">만든 사람들</a>
+              <span class="sidebar-footer-link my-btn">|</span>
+              <a class="sidebar-footer-link my-btn" href="/info" target="_blank">고지 사항</a>
               <span class="sidebar-footer-link">|</span>
-              <a class="sidebar-footer-link" href="/info" target="_blank">기타 정보</a>
-              <span class="sidebar-footer-link">|</span>
-              <a class="sidebar-footer-link" href="/report" target="_blank">지도 정보 제보</a>
+              <a class="sidebar-footer-link my-btn" href="/report" target="_blank">지도 정보 제보</a>
             </div>
           </nav>
           <button id="sidebarCollapse">
-            <span id="collapseArrow" style="color:#777675">◀</span>
+            <span id="collapseArrow" style="color:#777675" class="my-btn">◀</span>
           </button>
 
 
           <!-- 슬라이더 -->
+
+          <!-- <div id="toggleZoomsR" class="sliderBack2">
+            <div class="slider2 my-btn sliderZooms selected" style="border-right: 0.5px solid rgb(226,226, 226);" data-zoom="1">+</div>
+            <div class="slider2 my-btn sliderZooms" style="border-left: 0.5px solid rgb(226,226, 226);" data-zoom="-1">-</div>
+          </div> -->
+
+          <div id="toggleZooms" class="sliderBack">
+            <div class="slider my-btn sliderInnerZoom" data-zoom="1"><img src="./images/_icon_plus.png" data-zoom="1"></div>
+            <div class="slider my-btn sliderInnerZoom" data-zoom="-1"><img src="./images/_icon_minus.png" data-zoom="-1"></div>
+          </div>
+
           <div id="toggleFloor" class="sliderBack">
             <div class="slider my-btn sliderInnerFloor selected" data-floor="1F">지상</div>
-            <div class="slider my-btn sliderInnerFloor"data-floor="B1F">지하</div>
+            <div class="slider my-btn sliderInnerFloor" id="toogleFloorInnerB1F" data-floor="B1">지하</div>
           </div>
 
           <div id="toggleBuildingFloor" class="sliderBack hide">
@@ -109,13 +139,14 @@
     } else if (path.startsWith('sinchon')){
       CAMPUS = 'sinchon'
       CAMPUS_KOREAN = '신촌'
+      // toogleFloorInnerB1F.dataset.floor = "107-B1F"
+      // toggleBuildingFloor.style.top = `${parseInt(getComputedStyle(toggleBuildingFloor).top) - 50}px`
     } else {
       CAMPUS = undefined;
       CAMPUS_KOREAN = undefined;
     }
-    
       console.log(CAMPUS, FLOORCONTEXT, TIMECONTEXT)
-      document.title = `지도 올인원 | ${CAMPUS_KOREAN}캠퍼스`
+      document.title = `연세인맵 | ${CAMPUS_KOREAN}캠퍼스`
   </script>
   <script src="./javascripts/data.js"></script>
   <script src="./javascripts/map.js"></script>

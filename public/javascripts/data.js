@@ -6,12 +6,12 @@ let _getDatas = () => {
     Promise.all([b,  f]).then((values) => {
       buildingList =  values[0]
       facilityList = values[1]
-      console.log(buildingList)
-      console.log(facilityList)
+      // console.log(buildingList)
+      // console.log(facilityList)
       facilityTypeIdDict = getFaciltiyTypeIDDict(facilityList)
       faciltiyIDDict = getFaciltiyIDDict(facilityList)
-      console.log(facilityTypeIdDict)
-      console.log(faciltiyIDDict)
+      // console.log(facilityTypeIdDict)
+      // console.log(faciltiyIDDict)
       initAutocomplete(values[0], facilityTypeIdDict, values[1], faciltiyIDDict)
     });
     
@@ -88,22 +88,28 @@ let getBuildingList = () => {
     type: "get",
     url: `api/${CAMPUS}/building`,
   }).done((result) => {
+    
+    // let ratio = CAMPUS == 'sinchon'? 1 : 1.002;
+    let ratio = 1
     for (const [key, el] of Object.entries(result)) {
+      // let ratio = el.BNAME != '송도학사A~C'? 1 : 0.995;
       let area = [];
       let xy = 0;
       let tempArea = {};
+
       Array.from(
         el.BAREA.split("\n").join("\t").split(" ").join("\t").split("\t")
       ).forEach((e) => {
         if (xy == 0) {
-          tempArea.x = parseInt(e);
+          tempArea.x = Math.ceil(parseInt(e) * ratio);
         } else {
-          tempArea.y = parseInt(e);
+          tempArea.y = Math.ceil(parseInt(e) * ratio);
           area.push(tempArea);
           tempArea = {};
         }
         xy = (xy + 1) % 2;
       });
+
       _buildingList.push({
         area: area,
         BID: el.BID,
@@ -113,12 +119,44 @@ let getBuildingList = () => {
         BTIME_VAC_DAY: el.BTIME_VAC_DAY,
         BTIME_VAC_END: el.BTIME_VAC_END,
         BETC: convertLinks(el.BETC),
-        BAVFLOOR: el.BAVFLOOR,
+        BAVFLOOR: el.BAVFLOOR !== '' ? el.BAVFLOOR : null,
         on: true,
       });
     }
+    /*4 eee */
+    if(CAMPUS == 'sinchon'){
+      _buildingList.push({
+        area : [
+          {x: 826, y: 2069.4540581789656},
+          {x: 833.0468369109548, y: 2099.285603821149},
+          {x: 816.0541843299642, y: 2102.3065198355475},
+          {x: 781.6912646661833, y: 2157.060622596517},
+          {x: 753.7477915329989, y: 2114.3901838931406},
+          {x: 818.3198713407629, y: 2072.852588695164},
+        ],
+        name: '라이프 아카데미',
+        ee: true,
+        BETC: convertLinks("<strong>이스터에그 발견!</strong><br>발견하신 이스터에그는 혼자만 알고있는 센스~ 꼭 지켜주실거죠?<br><br>생띵대의 건물 증축을 응원합니다.<br>https://docs.google.com/forms/d/1x2qvGjVrbrMMMUmf5X9H86QZmWfMaUUusYWOJKEPZv0/edit?usp=sharing<br>"),
+        BID: 825825
+      })
+
+      _buildingList.push({
+          area : [
+            {x: 698.3420035156511, y: 1653.569414777132},
+            {x: 712.8060530428959, y: 1641.8005569325774},
+            {x: 715.0380778065182, y: 1652.9606807506893},
+            {x: 719.7050386759105, y: 1656.4101735671966},
+            {x: 716.8642798858457, y: 1660.0625777258515},
+            {x: 709.153648884241, y: 1659.2509323572615},
+          ],
+          name: '구관이 명관',
+          ee: true,
+          BETC: convertLinks("<strong>이스터에그 발견!</strong><br>발견하신 이스터에그는 혼자만 알고있는 센스~ 꼭 지켜주실거죠?<br><br>연희전문학교를 설립하신 언더우드 선교사님을 기립니다.<br>https://docs.google.com/forms/d/1twOan3wijq4pQqRNNVd6-keTM_gCvZBT4j7DMEhj2KI/edit?usp=sharing<br>"),
+          BID: 1885
+        });
+      }
+    });
     resolve(_buildingList);
-  });
 });
   
 };

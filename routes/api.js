@@ -5,9 +5,10 @@ path = require('path')
 console.log("api.js");
 
 var dbs = require('../api/dbs');
+const updateFacilityData = require('../api/updateFacilityData');
 const app = require('../app');
 
-var validateCookie = 'bqweqeqDFQW12'
+var validateCookie = 'pbwb1235epbn@'
 
 //Campus Setting
 
@@ -69,17 +70,17 @@ router.delete('/:campus/building/:BID', (req, res, next)=>{
             res.statusCode = 400
             res.send(err)
           }else{
-            db.query(`DELETE FROM FACILITIES WHERE FBID = ${req.params.BID} `, (err, result) => {
+            db.query(`DELETE FROM FACILITIES WHERE FBID = ${req.params.BID} `, async (err, result) => {
                 if(err){
                   console.log(err)
                   res.statusCode = 400
                   res.send(err)
                 }else{
+                    await require('../api/cleanData')()
                     require('../api/updateBuildngData')(req.app)
                     res.send('success')
                 }
               });
-              
           }
         });
     } else {
@@ -106,12 +107,13 @@ router.post('/:campus/building', (req, res, next)=>{
 
     
     db.query(`INSERT INTO BUILDINGS(BID, BNAME, BTIME_SEM_DAY, BTIME_SEM_END, BTIME_VAC_DAY, BTIME_VAC_END, BAREA, BETC, BAVFLOOR)
-     VALUES(${postReq.BID}, '${postReq.BNAME}', '${postReq.BTIME_SEM_DAY}', '${postReq.BTIME_SEM_END}', '${postReq.BTIME_VAC_DAY}', '${postReq.BTIME_VAC_END}', '${postReq.BAREA}', '${postReq.BETC}', '${postReq.BAVFLOOR}') `, (err, result) => {
+     VALUES(${postReq.BID}, '${postReq.BNAME}', '${postReq.BTIME_SEM_DAY}', '${postReq.BTIME_SEM_END}', '${postReq.BTIME_VAC_DAY}', '${postReq.BTIME_VAC_END}', '${postReq.BAREA}', '${postReq.BETC}', '${postReq.BAVFLOOR}') `, async (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400
           res.send(err)
         }else{
+            await require('../api/cleanData')()
             require('../api/updateBuildngData')(req.app)
             res.send('success')
         }
@@ -134,13 +136,15 @@ router.put('/:campus/building/:BID', (req, res, next)=>{
         res.send('wrong campus');
         return;
     }
-    db.query(`UPDATE BUILDINGS SET BNAME = '${postReq.BNAME}', BTIME_SEM_DAY = '${postReq.BTIME_SEM_DAY}', BTIME_SEM_END = '${postReq.BTIME_SEM_END}', BTIME_VAC_DAY = '${postReq.BTIME_VAC_DAY}', BTIME_VAC_END = '${postReq.BTIME_VAC_END}', BAREA = '${postReq.BAREA}', BETC = '${postReq.BETC}, BAVFLOOR = '${postReq.BAVFLOOR}' WHERE BID = ${postReq.BID}`, (err, result) => {
+    db.query(`UPDATE BUILDINGS SET BNAME = '${postReq.BNAME}', BTIME_SEM_DAY = '${postReq.BTIME_SEM_DAY}', BTIME_SEM_END = '${postReq.BTIME_SEM_END}', BTIME_VAC_DAY = '${postReq.BTIME_VAC_DAY}', BTIME_VAC_END = '${postReq.BTIME_VAC_END}', BAREA = '${postReq.BAREA}', BETC = '${postReq.BETC}', BAVFLOOR = '${postReq.BAVFLOOR}' WHERE BID = ${postReq.BID}`, async (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400
           res.send(err)
         }else{
+            await require('../api/cleanData')()
             require('../api/updateBuildngData')(req.app)
+
             res.send('success')
         }
       });
@@ -231,12 +235,14 @@ router.post('/:campus/facility', (req, res, next)=>{
         return;
     }
     db.query(`INSERT INTO FACILITIES(FTYPE, FNAME, FBID, FTIME_SEM_DAY, FTIME_SEM_END, FTIME_VAC_DAY, FTIME_VAC_END, FLOCATION, FETC1) 
-    VALUES('${postReq.FTYPE}', '${postReq.FNAME}', ${postReq.FBID}, '${postReq.FTIME_SEM_DAY}', '${postReq.FTIME_SEM_END}', '${postReq.FTIME_VAC_DAY}', '${postReq.FTIME_VAC_END}', '${postReq.FLOCATION}', '${postReq.FETC1}') `, (err, result) => {
+    VALUES('${postReq.FTYPE}', '${postReq.FNAME}', ${postReq.FBID}, '${postReq.FTIME_SEM_DAY}', '${postReq.FTIME_SEM_END}', '${postReq.FTIME_VAC_DAY}', '${postReq.FTIME_VAC_END}', '${postReq.FLOCATION}', '${postReq.FETC1}') `, async (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400
           res.send(err)
         }else{
+            await require('../api/cleanData')()
+            require('../api/updateFacilityData')(req.app)
             res.send('success')
         }
       });
@@ -264,13 +270,14 @@ router.put('/:campus/facility/:FID', (req, res, next)=>{
     FTIME_SEM_END = '${postReq.FTIME_SEM_END}',
     FTIME_VAC_DAY = '${postReq.FTIME_VAC_DAY}',
     FTIME_VAC_END = '${postReq.FTIME_VAC_END}', FLOCATION = '${postReq.FLOCATION}',
-    FETC1 = '${postReq.FETC1}' WHERE FID = ${postReq.FID}`, (err, result) => {
+    FETC1 = '${postReq.FETC1}' WHERE FID = ${postReq.FID}`, async (err, result) => {
         if(err){
           console.log(err)
           res.statusCode = 400
           res.send(err)
         }else{
-            
+          await require('../api/cleanData')()
+          require('../api/updateFacilityData')(req.app)
             res.send('success')
         }
       });
